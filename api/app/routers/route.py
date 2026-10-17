@@ -47,7 +47,7 @@ def plan_route(body: RouteIn, request: Request, session: Session = Depends(get_s
     start, end = resolve(st, body.from_), resolve(st, body.to)
     if not start or not end:
         raise ApiError(404, "place_not_found", NOT_FOUND)
-    weather = st.weather.current()
+    weather = st.weather.current(start.lat, start.lng)
     if start.id == end.id or dist_m(start.lat, start.lng, end.lat, end.lng) < 5:
         return {"ok": False, "reason": "Start and destination are the same place.",
                 "suggestion": "Pick a different destination.", "fastest": None, "liftStatus": [], "weather": weather,

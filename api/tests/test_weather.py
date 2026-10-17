@@ -38,3 +38,17 @@ def test_override_and_failure():
     assert w.toggle_override()["raining"] is True
     assert w.current()["source"] == "Demo rain toggle"
     assert w.toggle_override()["raining"] is False
+
+
+def test_weather_cached_per_rounded_location():
+    calls = []
+
+    def get(url, params, timeout):
+        calls.append((params["latitude"], params["longitude"]))
+        return R({"current": {"precipitation": 0.0, "weather_code": 1}})
+    w = WeatherService(http_get=get)
+    w.current(-33.87, 151.21)
+    w.current(-33.871, 151.209)   # same 0.1 degree cell
+    w.current(-33.77, 151.11)     # different cell
+    w.current()                   # default campus point rounds into the same cell as the previous call
+    assert calls == [(-33.9, 151.2), (-33.8, 151.1)]
