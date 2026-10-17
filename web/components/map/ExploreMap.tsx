@@ -68,7 +68,7 @@ function Recenter({ fix, token }: { fix: UserFix | null; token: number }) {
     if (token === 0) return;
     const current = fixRef.current;
     const target = current ? L.latLng(current.lat, current.lng) : L.latLng(CAMPUS);
-    map.flyTo(target, Math.max(map.getZoom(), 16), { duration: 0.4 });
+    map.flyTo(target, Math.max(map.getZoom(), 18), { duration: 0.4 });
   }, [token, map]);
   return null;
 }
@@ -109,7 +109,11 @@ export default function ExploreMap({
       ...amenities.map((pin) => [pin.lat, pin.lng] as [number, number]),
     ];
     if (fix && near) pts.push([fix.lat, fix.lng]);
-    if (pts.length > 1) map.fitBounds(L.latLngBounds(pts), { padding: [56, 56], maxZoom: 16, animate: false });
+    if (pts.length > 1) {
+      const bounds = L.latLngBounds(pts);
+      map.fitBounds(bounds, { padding: [72, 72], maxZoom: 18, animate: false });
+      if (map.getZoom() < 18) map.setView(bounds.getCenter(), 18, { animate: false });
+    }
     fitted.current = { hazards: readyHazards, amenities: readyAmenities };
   }, [map, hazards, amenities, fix, near]);
 
@@ -119,7 +123,8 @@ export default function ExploreMap({
         <MapContainer
           key={mountKey}
           center={CAMPUS}
-          zoom={15}
+          zoom={18}
+          maxZoom={19}
           zoomControl={false}
           ref={mapRef}
           className="absolute inset-0 z-0"
@@ -182,7 +187,7 @@ export default function ExploreMap({
           </li>
         ))}
       </ul>
-      <div className="absolute top-3 right-3 z-[500] flex flex-col gap-2">
+      <div className="absolute top-[4.5rem] right-3 z-[500] flex flex-col gap-2 lg:top-3">
         <button type="button" aria-label="Centre on your location" onClick={() => setRecenter((n) => n + 1)}
           className="flex size-12 items-center justify-center rounded-full border border-line-strong bg-surface text-primary shadow-sm hover:bg-bg">
           <LocateFixed aria-hidden="true" className="size-5" strokeWidth={2.4} />

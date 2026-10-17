@@ -174,7 +174,7 @@ export function RouteClient() {
           slopes={features.spans}
           onPick={chooseRoute}
         />
-        <WeatherBanner weather={route?.weather} className="absolute top-3 right-3 z-[600] max-w-[340px]" />
+        <WeatherBanner weather={route?.weather} className="absolute top-16 right-3 z-[600] max-w-[340px] lg:top-3" />
         <div aria-live="polite" className="absolute top-3 left-3 z-[600] max-w-[280px] lg:top-auto lg:bottom-6 lg:max-w-[380px]">
           {live && (
             <div className="rounded-[14px] border border-line bg-surface p-4">
@@ -190,7 +190,7 @@ export function RouteClient() {
       </div>
 
       <aside aria-label="Route details" className={cn(
-        "absolute inset-x-3 bottom-20 z-[650] max-h-[58dvh] overflow-y-auto rounded-[22px] border border-line bg-surface px-4 py-3 shadow-lg",
+        "absolute inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[650] max-h-[58dvh] overflow-y-auto rounded-[22px] border border-line bg-surface px-4 py-3 shadow-lg",
         "lg:static lg:order-1 lg:bottom-auto lg:z-auto lg:h-full lg:max-h-full lg:max-w-[460px] lg:basis-[400px] lg:overflow-y-auto lg:rounded-none lg:border-0 lg:border-r lg:px-7 lg:py-6 lg:shadow-none",
         !searchOpen && "lg:hidden",
       )}>

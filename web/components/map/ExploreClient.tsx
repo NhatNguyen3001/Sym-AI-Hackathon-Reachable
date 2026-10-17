@@ -126,7 +126,7 @@ export function ExploreClient() {
         </form>
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-20 z-[600] flex flex-col gap-3 px-3 lg:bottom-4 lg:left-3 lg:max-w-md">
+      <div className="pointer-events-none absolute inset-x-0 bottom-3 z-[600] flex flex-col gap-3 px-3 pb-[env(safe-area-inset-bottom)] lg:bottom-4 lg:left-3 lg:max-w-md lg:pb-0">
         {selected && (
           <article className="pointer-events-auto rounded-[18px] bg-[#15201b] p-4 text-white shadow-lg">
             <p className="text-[14px] font-bold tracking-wide text-[#ffd7a8] uppercase">{HAZARD_LABEL[selected.kind]}</p>

@@ -132,19 +132,23 @@ export default function MapView({
     if (map && pts.length > 1) {
       const narrow = window.matchMedia("(max-width: 1023px)").matches;
       map.fitBounds(L.latLngBounds(pts), {
-        paddingTopLeft: [28, 64],
-        paddingBottomRight: [28, narrow ? 210 : 48],
-        animate: !reduced,
+        paddingTopLeft: [28, 72],
+        paddingBottomRight: [28, narrow ? 160 : 48],
+        maxZoom: 19,
+        animate: false,
       });
+      const closer = Math.min(19, map.getZoom() + 2);
+      if (closer > map.getZoom()) map.setZoom(closer, { animate: false });
     }
-  }, [map, acc, extras, reduced]);
+  }, [map, acc, extras]);
 
   return (
     <div role="region" aria-label="Route map" className="relative h-full min-h-[240px] w-full">
       {mountKey !== null && <MapContainer
         key={mountKey}
         center={CAMPUS}
-        zoom={17}
+        zoom={18}
+        maxZoom={19}
         zoomControl={false}
         zoomAnimation={!reduced}
         fadeAnimation={!reduced}
@@ -229,7 +233,7 @@ export default function MapView({
         </ul>
       </div>
 
-      <div className="absolute right-3 bottom-64 z-[500] flex flex-col gap-2 lg:bottom-6">
+      <div className="absolute right-3 bottom-44 z-[500] flex flex-col gap-2 lg:bottom-6">
         <button type="button" aria-label="Zoom in" onClick={() => map?.zoomIn()}
           className="flex size-12 items-center justify-center rounded-[12px] border border-line-strong bg-surface text-ink hover:bg-bg">
           <Plus aria-hidden="true" className="size-5" strokeWidth={2.4} />

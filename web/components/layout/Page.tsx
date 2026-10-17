@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { AppShell } from "./AppShell";
 
-/** Standard app page: sidebar or bottom bar, then a centred column. */
+/** Standard app page: sidebar on desktop, menu button on a phone, then a centred column. */
 export function AppPage({ children }: { children: ReactNode }) {
   return (
     <AppShell>
