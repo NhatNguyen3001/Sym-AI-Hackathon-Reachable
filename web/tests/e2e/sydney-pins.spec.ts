@@ -26,12 +26,25 @@ test("zoomed out, places become number bubbles", async ({ page }) => {
   expect(r.violations.map((v) => v.id)).toEqual([]);
 });
 
-test("a place pin plans a route there", async ({ page }) => {
+test("a place pin shows what it is, and plans a route only when asked", async ({ page }) => {
   await page.goto("/");
   const pin = page.getByRole("button", { name: /Accessible toilet at Macquarie Centre toilets \(OpenStreetMap\)/ });
   await expect(pin).toBeAttached({ timeout: 20_000 });
   await pin.focus();
   await page.keyboard.press("Enter");
+  const popup = page.getByRole("dialog", { name: "Macquarie Centre toilets" });
+  await expect(popup).toBeVisible();
+  await expect(popup.getByText("Accessible toilet")).toBeVisible();
+  await expect(popup.getByText(/OpenStreetMap/)).toBeVisible();
+  await expect(page).toHaveURL(/\/$/); // still on the map
+  const go = popup.getByRole("button", { name: "Go here" });
+  await expect(go).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(popup).toHaveCount(0);
+
+  await pin.focus();
+  await page.keyboard.press("Enter");
+  await page.getByRole("button", { name: "Go here" }).click();
   await expect(page).toHaveURL(/\/route\?.*to=place%3Aosm-n900001/);
 });
 

@@ -2,11 +2,11 @@
 import "leaflet/dist/leaflet.css";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
-import { Circle, MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import { Circle, MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import { LocateFixed, Minus, Plus } from "lucide-react";
 import { guardMap } from "./guardMap";
 import { useVisibleMount } from "./useVisibleMount";
-import { HAZARD_LABEL, type Hazard, type HazardKind } from "@/lib/hazards";
+import { distanceLabel, HAZARD_LABEL, type Hazard, type HazardKind } from "@/lib/hazards";
 import { opensOn } from "@/lib/start";
 import type { AmenityPin, MapPlacePin } from "@/lib/types";
 import { ClusterLayer, type ClusterItem } from "./ClusterLayer";
@@ -118,6 +118,44 @@ function ViewWatcher({ onView }: { onView?: (bounds: L.LatLngBounds, zoom: numbe
   return null;
 }
 
+interface OpenPlace {
+  id: string;
+  name: string;
+  label: string;
+  source?: string;
+  lat: number;
+  lng: number;
+  go: () => void;
+}
+
+/** What a place pin is, with a "Go here" button: tapping a pin never plans a route by itself. */
+function PlacePopup({ place, fix, onClose }: { place: OpenPlace; fix: UserFix | null; onClose: () => void }) {
+  const map = useMap();
+  const go = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const t = setTimeout(() => go.current?.focus(), 0);
+    return () => clearTimeout(t);
+  }, [place.id]);
+  const away = distanceLabel(fix, place.lat, place.lng);
+  return (
+    <Popup position={[place.lat, place.lng]} offset={[0, -16]} eventHandlers={{ remove: onClose }}>
+      {/* Leaflet only closes popups on Escape while the map itself has focus; here focus is on "Go here". */}
+      <div role="dialog" aria-label={place.name} className="min-w-[180px] text-[15px] text-ink"
+        onKeyDown={(e) => {
+          if (e.key === "Escape") map.closePopup();
+        }}>
+        <p className="text-[13px] font-bold tracking-wide text-muted uppercase">{place.label}</p>
+        {place.name !== place.label && <p className="text-[17px] leading-tight font-bold">{place.name}</p>}
+        <p className="mt-1">{[away, place.source].filter(Boolean).join(" · ")}</p>
+        <button ref={go} type="button" onClick={place.go}
+          className="mt-2 inline-flex min-h-11 items-center rounded-full bg-primary px-4 font-bold text-white hover:bg-primary-hover">
+          Go here
+        </button>
+      </div>
+    </Popup>
+  );
+}
+
 function placeTitle(p: MapPlacePin): string {
   return p.name === p.label || p.name.startsWith("Accessible ") ? `${p.label} (${p.source})` : `${p.label} at ${p.name} (${p.source})`;
 }
@@ -138,6 +176,7 @@ export default function ExploreMap({
 }) {
   const [map, setMap] = useState<L.Map | null>(null);
   const [recenter, setRecenter] = useState(0);
+  const [openPlace, setOpenPlace] = useState<OpenPlace | null>(null);
   const mountKey = useVisibleMount();
   const mapRef = useCallback((m: L.Map | null) => setMap(guardMap(m)), []);
 
@@ -172,9 +211,12 @@ export default function ExploreMap({
   // Every pin goes into one layer that groups them into number bubbles when zoomed out; your own dot stays out.
   const items: ClusterItem[] = useMemo(() => [
     ...places.map((p) => ({ id: p.id, lat: p.lat, lng: p.lng, icon: amenityIcon(p), title: placeTitle(p), z: 600,
-      onClick: () => onPlace?.(p) })),
+      onClick: () => setOpenPlace({ id: p.id, name: p.name, label: p.label, source: p.source, lat: p.lat, lng: p.lng,
+        go: () => onPlace?.(p) }) })),
     ...amenities.map((pin) => ({ id: pin.id, lat: pin.lat, lng: pin.lng, icon: amenityIcon(pin),
-      title: `${pin.label} at ${pin.name}`, z: 650, onClick: () => onAmenity?.(pin) })),
+      title: `${pin.label} at ${pin.name}`, z: 650,
+      onClick: () => setOpenPlace({ id: pin.id, name: pin.name, label: pin.label, lat: pin.lat, lng: pin.lng,
+        go: () => onAmenity?.(pin) }) })),
     ...hazards.map((h) => ({ id: `hazard:${h.id}`, lat: h.lat, lng: h.lng, icon: hazardIcon(h, h.id === selectedId),
       title: `${HAZARD_LABEL[h.kind]}: ${h.title}`, z: h.id === selectedId ? 700 : 400, onClick: () => onSelect(h.id) })),
   ], [places, amenities, hazards, selectedId, onPlace, onAmenity, onSelect]);
@@ -208,6 +250,7 @@ export default function ExploreMap({
               interactive={false} zIndexOffset={-1000} />
           )}
           <ClusterLayer items={items} />
+          {openPlace && <PlacePopup place={openPlace} fix={fix} onClose={() => setOpenPlace(null)} />}
           <ViewWatcher onView={onView} />
         </MapContainer>
       )}
