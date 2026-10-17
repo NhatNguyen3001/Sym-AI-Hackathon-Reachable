@@ -25,6 +25,8 @@ const python = process.platform === "win32" ? String.raw`.venv\Scripts\python.ex
 
 export default defineConfig({
   testDir: "tests/e2e",
+  // Measurements (@perf) only run on request: E2E_PERF=1 E2E_BASE_URL=http://localhost:3000 npx playwright test --grep @perf
+  grepInvert: process.env.E2E_PERF ? undefined : /@perf/,
   workers: 1,
   timeout: 60_000,
   use: { baseURL: `http://localhost:${WEB_PORT}` },
@@ -32,7 +34,7 @@ export default defineConfig({
     { name: "desktop", use: { viewport: { width: 1440, height: 900 } } },
     { name: "mobile", use: { viewport: { width: 390, height: 844 } } },
   ],
-  webServer: [
+  webServer: process.env.E2E_BASE_URL ? undefined : [
     {
       // Offline stand-in for Transport for NSW: lift alerts and a campus public transport trip.
       command: "node tests/e2e/tfnsw-mock.mjs",
