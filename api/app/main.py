@@ -13,6 +13,7 @@ from app.config import Settings
 from app.db import init_db, make_engine
 from app.errors import ApiError, api_error_handler
 from app.events import Broadcaster
+from app.replica import Replica
 from app.llm.client import get_client
 from app.routers import agents, demo, events, health, places, profile, reports, route, stations, updates, venue, weather
 from app.routing.graph import load_graph
@@ -52,8 +53,15 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
     async def lifespan(app: FastAPI):
         st = app.state
         st.settings = settings
-        st.engine = make_engine(settings.database_url, settings.turso_database_url, settings.turso_auth_token)
         st.db_kind = "turso" if settings.turso_database_url else "sqlite"
+        replica = None
+        if settings.turso_database_url:
+            replica = Replica(settings.turso_replica_path, settings.turso_database_url, settings.turso_auth_token)
+            replica.start()  # raises ReplicaUnavailable when Turso is down and there's no local copy yet
+        st.engine = make_engine(settings.database_url, replica=replica)
+        if replica:
+            replica.on_online = st.engine.dispose  # reopen pooled connections read-write once Turso is back
+        sync_task = asyncio.create_task(replica.run(settings.turso_sync_seconds)) if replica else None
         try:
             init_db(st.engine)
         except Exception:
@@ -84,8 +92,9 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
                       if st.tfnsw else None)
         task = asyncio.create_task(st.lift_poller.run()) if st.lift_poller and settings.lift_poll_seconds > 0 else None
         yield
-        if task:
-            task.cancel()
+        for t in (task, sync_task):
+            if t:
+                t.cancel()
 
     app = FastAPI(title="Reachable API", lifespan=lifespan)
     app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["*"], allow_headers=["*"],

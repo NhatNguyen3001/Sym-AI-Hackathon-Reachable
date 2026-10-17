@@ -14,3 +14,4 @@ api/e2e*.db
 .claude/
 .codegraph/
 docs/
+api/turso-replica.db*

@@ -2,8 +2,11 @@ from fastapi import Request
 from sqlmodel import SQLModel, Session, create_engine
 
 
-def make_engine(url: str, turso_url: str = "", turso_token: str = ""):
-    """Turso when TURSO_DATABASE_URL is set, else the local SQLite DATABASE_URL."""
+def make_engine(url: str, turso_url: str = "", turso_token: str = "", replica=None):
+    """Turso through its local replica when one is given, else Turso direct, else the local SQLite DATABASE_URL."""
+    if replica is not None:
+        import app.libsql_dialect  # noqa: F401  registers sqlite+libsql
+        return create_engine("sqlite+libsql://", pool_pre_ping=True, creator=replica.connect)
     if turso_url:
         import libsql
         import app.libsql_dialect  # noqa: F401  registers sqlite+libsql
