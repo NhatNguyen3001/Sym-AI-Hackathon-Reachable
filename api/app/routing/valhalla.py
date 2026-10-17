@@ -14,7 +14,8 @@ from app.routing.route import SUGGESTION
 from app.routing.steps import group_items
 
 NO_PATH_CODES = {170, 171, 442, 443, 154, 155, 156, 157}
-TOO_LONG = "This trip is too long to walk or roll. Transit routing is coming soon."
+TOO_LONG = ("This is too far to walk or roll. Take public transport for the long part; "
+            "we'll plan the trip to and from the stations soon.")
 SLOPE_REASON = "No step-free route within your slope limit."
 NO_ROUTE = "No step-free route right now."
 SLOPE_NOTE = "Slopes outside the Macquarie University campus are estimates. Check steep sections before you go."
@@ -218,6 +219,10 @@ class ValhallaRouter:
         if best is None:
             return self._no_route(NO_ROUTE)
         trip, a, b = best
+        # The straight-line check above can pass while the actual walk is longer (rivers, motorways, bridges),
+        # and Valhalla doesn't enforce max_distance for pedestrians, so check the walk we would offer.
+        if trip["trip"]["summary"]["length"] > self.max_leg_km:
+            return self._no_route(TOO_LONG)
 
         # 2. Edges this profile must not use (steps, escalators; too steep when slopes are enforced): exclude, reroute.
         excludes: list = []

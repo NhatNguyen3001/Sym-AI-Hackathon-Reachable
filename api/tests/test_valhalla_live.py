@@ -59,4 +59,10 @@ def test_outside_greater_sydney_is_422(live):
 
 def test_too_long_walk_is_ok_false(live):
     body = live.post("/route", json={"from": "coord:-33.8732,151.2066", "to": "coord:-33.7765,151.1160"}).json()
-    assert body["ok"] is False and "too long to walk or roll" in body["reason"]
+    assert body["ok"] is False and "too far to walk or roll" in body["reason"]
+
+
+def test_town_hall_to_chatswood_suggests_public_transport(live):
+    # 8.8 km straight line, about 11.5 km on foot: a train trip, not a walk.
+    body = live.post("/route", json={"from": "coord:-33.8732,151.2066", "to": "coord:-33.7969,151.1803"}).json()
+    assert body["ok"] is False and "public transport" in body["reason"]

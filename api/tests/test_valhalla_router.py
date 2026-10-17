@@ -86,7 +86,19 @@ def test_out_of_area_raises():
 def test_too_long_leg_is_ok_false():
     far = place(-33.70, 151.10)
     r = router(FakeClient([trip()], [trace()])).plan(START, far, P, Context())
-    assert r["ok"] is False and "too long to walk or roll" in r["reason"]
+    assert r["ok"] is False and r["reason"] == TOO_FAR
+    assert "public transport" in r["reason"]
+
+
+TOO_FAR = ("This is too far to walk or roll. Take public transport for the long part; "
+           "we'll plan the trip to and from the stations soon.")
+
+
+def test_walk_longer_than_cap_is_too_far_even_when_straight_line_is_short():
+    c = FakeClient([trip(length_km=11.5)], [trace()])
+    r = router(c).plan(START, END, P, Context())
+    assert r["ok"] is False and r["reason"] == TOO_FAR
+    assert c.trace_bodies == []  # no point checking stairs on a walk we won't offer
 
 
 def test_wheelchair_options_and_rain():
