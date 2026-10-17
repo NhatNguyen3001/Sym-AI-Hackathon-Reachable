@@ -1,0 +1,9 @@
+[
+  {"id": "mq-station", "name": "Macquarie University station", "kind": "station", "lat": -33.77735, "lng": 151.11825, "node": "mq-station"},
+  {"id": "library", "name": "Waranara Library", "kind": "venue", "lat": -33.775688, "lng": 151.113509},
+  {"id": "library-cafe", "name": "Library Café", "kind": "venue", "lat": -33.775877, "lng": 151.113573},
+  {"id": "globe-cafe", "name": "Globe Café", "kind": "venue", "lat": -33.775408, "lng": 151.115141},
+  {"id": "lincoln-building", "name": "Lincoln Building (16 Wally's Walk)", "kind": "venue", "lat": -33.774224, "lng": 151.113649},
+  {"id": "ainsworth-building", "name": "Ainsworth Building (1 Wally's Walk)", "kind": "venue", "lat": -33.774164, "lng": 151.118106},
+  {"id": "mortarboard-cafe", "name": "Mortarboard Cafe", "kind": "venue", "lat": -33.772053, "lng": 151.11663}
+]

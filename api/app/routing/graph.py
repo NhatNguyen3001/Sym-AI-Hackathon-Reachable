@@ -7,9 +7,15 @@ def edge_id(u, v, k) -> str:
     return f"{u}-{v}-{k}"
 
 
+def _node_id(s: str):
+    """OSM node ids are ints; added nodes (e.g. the station platform) keep string ids."""
+    return int(s) if s.isdigit() else s
+
+
 def load_graph(path) -> nx.MultiDiGraph:
-    return ox.load_graphml(path, edge_dtypes={"grade_abs": float, "length": float,
-                                              "slope_measured": lambda s: s == "True"})
+    return ox.load_graphml(path, node_dtypes={"osmid": _node_id},
+                           edge_dtypes={"grade_abs": float, "length": float,
+                                        "slope_measured": lambda s: s == "True"})
 
 
 def dist_m(lat1, lng1, lat2, lng2) -> float:

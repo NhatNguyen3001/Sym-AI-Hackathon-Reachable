@@ -1,0 +1,9 @@
+{
+  "station": {"id": "mq-station", "name": "Macquarie University station", "platform": {"lat": -33.77735, "lng": 151.11825}},
+  "exits": [
+    {"id": "north", "name": "North exit", "osmNode": 951237975, "via": "lift"},
+    {"id": "south", "name": "South exit", "osmNode": 951237986, "via": "lift"}
+  ],
+  "slopes": [],
+  "edges": []
+}

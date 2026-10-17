@@ -62,4 +62,4 @@ def test_step_grouping_labels():
     labels = [s["label"] for s in run()["steps"]]
     assert labels[0] == "Lift at north exit"
     assert "Flat footpath, 100 m" in labels
-    assert "Gentle slope, 2%, 100 m" in labels
+    assert "Gentle slope, up to 2%, 100 m" in labels
