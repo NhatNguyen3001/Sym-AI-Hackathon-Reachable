@@ -58,3 +58,16 @@ test("a late search result never changes a place you already picked", async ({ p
   await expect(to).toHaveValue("Waranara Library");
   await expect(page.getByRole("button", { name: "Show a step-free route" })).toBeEnabled();
 });
+
+test("picking a place after pressing Enter isn't undone when the search finishes", async ({ page }) => {
+  const release = await slowFullSearch(page);
+  await page.goto("/");
+  const to = page.getByRole("combobox", { name: "Where to?" });
+  await to.fill("caf");
+  await to.press("Enter");                                    // before the 250 ms debounce: Enter waits for the full search
+  await page.getByRole("option", { name: /Globe Caf/ }).click();
+  await expect(to).toHaveValue("Globe Café");
+  release();
+  await page.waitForTimeout(800);
+  await expect(to).toHaveValue("Globe Café");
+});

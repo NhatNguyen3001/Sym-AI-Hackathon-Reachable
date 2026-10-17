@@ -91,6 +91,8 @@ export function PlaceSearch({
   }
 
   function pick(p: Place) {
+    seq.current++;      // a pick wins: any search still running (even an Enter waiting on it) is ignored
+    setPending(false);
     rememberPlace(p);
     onChange(p);
     setText(p.name);
