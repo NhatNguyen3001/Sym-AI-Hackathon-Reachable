@@ -126,3 +126,14 @@ def test_poller_failure_keeps_last_state():
     feed = LiftFeed(enabled=True)
     summary = asyncio.run(LiftPoller(FakeClient(fail=True), LiftAlertSync(PL), feed, engine(), Broadcaster(), 0).run_once())
     assert "Couldn't reach Transport for NSW" in summary and feed.last_ok is None
+
+
+def test_poller_logs_only_when_something_changed():
+    from app.models import AgentRun
+    e = engine()
+    raw = [i for i in load("add_info_lifts")["infos"]["current"] if i["id"] == "ems-test-mq1"]
+    p = LiftPoller(FakeClient(raw), LiftAlertSync(PL), LiftFeed(enabled=True), e, Broadcaster(), 0)
+    asyncio.run(p.run_once())
+    asyncio.run(p.run_once())   # same alerts again
+    with Session(e) as s:
+        assert len(s.exec(select(AgentRun).where(AgentRun.agent == "updates")).all()) == 1

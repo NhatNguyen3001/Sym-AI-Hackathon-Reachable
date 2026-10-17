@@ -46,10 +46,10 @@ Leave `TFNSW_API_KEY` and `TURSO_DATABASE_URL` empty: you get walk/roll routes o
 
 Start it (leave this terminal running):
 ```bash
-.venv\Scripts\python -m uvicorn app.main:app --reload --port 8000     # Windows
-.venv/bin/python -m uvicorn app.main:app --reload --port 8000         # macOS / Linux
+.venv\Scripts\python -m uvicorn app.main:app --port 8000 --no-access-log     # Windows
+.venv/bin/python -m uvicorn app.main:app --port 8000 --no-access-log         # macOS / Linux
 ```
-Check: http://localhost:8000/health shows `{"ok":true}`.
+Check: http://127.0.0.1:8000/health shows `{"ok":true,...}`. The web app talks to the API at `127.0.0.1`, not `localhost`: on Windows `localhost` tries IPv6 first and adds about 0.2 s to every request.
 
 **2. Web** (second terminal, from the repo folder)
 ```bash
@@ -118,6 +118,10 @@ TURSO_AUTH_TOKEN=<token>
 
 On the first start the API creates the tables (`agentrun`, `barrier`, `placecache`, `report`, `venue`) and seeds the demo data. `/health` says which database is in use (`"db": "turso"` or `"sqlite"`). Clear `TURSO_DATABASE_URL` to go back to local SQLite. Live check (read only): `pytest -m turso`.
 
+**Local copy (embedded replica).** With Turso, the API keeps a local copy of the database in `api/turso-replica.db` (gitignored; `TURSO_REPLICA_PATH`). Reads come from the copy, so they never wait on the network; writes go straight to Turso and show up locally at once. The copy syncs every 15 s (`TURSO_SYNC_SECONDS`), at a moment when no request is running. If Turso can't be reached at start-up, the API starts from the last copy, read-only (reports say "Couldn't save your report right now. Please try again.") until Turso is back. With no copy yet it refuses to start and says why.
+
+Why the care about writes: the `libsql` driver holds Python's global lock during network calls, so every Turso round trip pauses the whole API (a write about 0.6 s, a sync 0.1-0.3 s). That's why searches write nothing, routes aren't logged, and the lift checker writes only when something changed.
+
 ## Sydney-wide routing (Valhalla)
 
 Trips anywhere in Greater Sydney are routed by a local [Valhalla](https://github.com/valhalla/valhalla) container; place search uses [Photon](https://photon.komoot.io). Campus trips always use the campus graph below.
@@ -164,3 +168,8 @@ Station exits and hand-measured slopes live in `api/data/overrides.json`; the el
 ## Deploy (not done yet)
 
 `api/Dockerfile` builds the API image. Set `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` and `TFNSW_API_KEY` as secrets on the host.
+
+- **Run the API as a long-running server with a writable disk** (AWS App Runner, Render, Fly.io, Railway and similar), not as serverless functions: it keeps the local Turso copy and runs the lift checker in the background. The disk doesn't have to survive restarts; the copy is rebuilt from Turso on start.
+- **Set `NEXT_PUBLIC_API_URL` to the API's public address before `npm run build`.** Next.js bakes it into the web app at build time (local development uses `http://127.0.0.1:8000`).
+- **Run one API instance for now.** Search results are kept in that server's memory until someone opens one (to avoid a Turso write per search), and live updates are sent from that server. A second instance behind a load balancer could answer a search but not the follow-up, and wouldn't share live updates.
+- **Known gap:** uploaded photos are saved in `api/uploads/` on the server's disk, so a host that wipes the disk loses them. Move them to object storage (for example S3 or R2) before a real launch.

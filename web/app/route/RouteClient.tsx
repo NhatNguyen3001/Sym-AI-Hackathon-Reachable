@@ -2,12 +2,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "cn";
-import { CircleCheck, PanelLeftClose, PanelLeftOpen, SlidersHorizontal, TriangleAlert } from "lucide-react";
+import { ChevronLeft, ChevronRight, CircleCheck, SlidersHorizontal, TriangleAlert } from "lucide-react";
 import { NeedsTicks } from "@/components/NeedsTicks";
 import { Button } from "@/components/ui/button";
 import { InfoBanner, SampleDataBanner, WarnBanner, WeatherBanner } from "@/components/Banners";
 import { PlaceInput } from "@/components/PlaceInput";
 import { LegTimeline } from "@/components/LegTimeline";
+import { RouteSkeleton } from "@/components/RouteSkeleton";
 import { RouteStep, VenueCheckRow } from "@/components/Rows";
 import { StatusBadge } from "@/components/StatusBadge";
 import { TripOptions } from "@/components/TripOptions";
@@ -17,7 +18,7 @@ import { useEvents } from "@/lib/events";
 import { addTrip, loadProfile, rememberPlace, saveProfile } from "@/lib/profile";
 import { profile as defaultProfile } from "@/lib/placeholder";
 import { routeFeatures } from "@/lib/routeFeatures";
-import { optionTimes, selectOption } from "@/lib/trip";
+import { optionTimes, selectOption, showsCards } from "@/lib/trip";
 import type { Place, Profile, RouteOption, RouteResult, VenueCheck } from "@/lib/types";
 
 interface LiveCard {
@@ -58,9 +59,9 @@ export function RouteClient() {
     setSheetOpen(true);
   }
 
-  const load = useCallback(async (p: Profile) => {
+  const load = useCallback(async (p: Profile, fresh = false) => {
     try {
-      const r = await getRoute(fromId, toId, p);
+      const r = await getRoute(fromId, toId, p, { fresh });
       setRoute(r.data);
       setPicked(null); // a reloaded route (live update, new filter) may have different alternatives
       if (!r.data.ok) showDetails(); // "no step-free route" must never hide in a closed panel
@@ -93,13 +94,15 @@ export function RouteClient() {
     setProfile(p);
     setPicked(null);
     setPickedOption(null);
+    setRoute(null);   // a new trip: show placeholders, not the previous trip
+    showDetails();    // open the panel straight away so there's something to see while the route loads
     load(p);
     findPlace(fromId).then(setFrom);
     findPlace(toId).then(setTo);
   }, [load, fromId, toId]);
 
   useEvents(["barrier_changed", "lift_changed", "weather_changed"], (event, data) => {
-    load(profile);
+    load(profile, true);   // re-plan after the change, not with a request that started before it
     if (event === "barrier_changed" && data.status === "confirmed") {
       setLive({
         title: String(data.title ?? "New barrier"),
@@ -122,9 +125,15 @@ export function RouteClient() {
     router.replace(`${pathname}?from=${fromId}&to=${toId}&option=${id}`, { scroll: false });
   }
 
+  const ends = useMemo(() => ({
+    from: from ? [from.lat, from.lng] as [number, number] : undefined,
+    to: to ? [to.lat, to.lng] as [number, number] : undefined,
+  }), [from, to]);
   const options = route?.ok ? route.options : undefined;
   const selected = selectOption(options, pickedOption ?? urlOption);
   const transit = selected?.mode === "transit" ? selected : undefined;
+  const cards = showsCards(options);   // with cards, the chosen card is the summary
+  const liftRows = selected?.liftStatus ?? route?.liftStatus ?? [];
   const explanation = transit && selected !== options?.[0] ? selected?.explanation : route?.explanation;
   const acc = route?.ok && !transit ? route.accessible ?? undefined : undefined;
   // Memoised so the map only refits when the route itself changes, not on every render.
@@ -179,25 +188,35 @@ export function RouteClient() {
   if (profile.destination.toilet && toilet?.status === "Not found") unmet.push("an accessible toilet");
   if (profile.destination.entrance && entrance?.status === "Not found") unmet.push("a level or ramped entrance");
 
-  function saveFilter() {
+  const [saving, setSaving] = useState(false);
+
+  async function saveFilter() {
     saveProfile(profile);
     setFiltersOpen(false);
     setSheetOpen(false);
-    load(profile);
+    setSaving(true);
+    try {
+      await load(profile);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
     <div className="relative flex h-full min-h-0 flex-1 flex-col lg:flex-row">
       <div className="relative min-h-0 flex-1 lg:order-2 lg:min-h-0">
+        {/* Round handle on the panel's edge (desktop), like the sidebar's. 44 px to tap, 28 px to see. */}
         <button type="button" aria-expanded={searchOpen}
-          aria-label={searchOpen ? "Hide search" : "Show search"}
+          aria-label={searchOpen ? "Hide route details" : "Show route details"}
           onClick={() => setSearchOpen((open) => !open)}
-          className="absolute top-3 left-3 z-[700] hidden size-12 items-center justify-center rounded-[12px] border border-line-strong bg-surface text-ink shadow-lg lg:inline-flex">
-          {searchOpen
-            ? <PanelLeftClose aria-hidden="true" className="size-5" strokeWidth={2.4} />
-            : <PanelLeftOpen aria-hidden="true" className="size-5" strokeWidth={2.4} />}
+          className="group absolute top-3 -left-[22px] z-[700] hidden size-11 items-center justify-center lg:inline-flex">
+          <span aria-hidden="true"
+            className="flex size-7 items-center justify-center rounded-full border border-line-strong bg-surface text-ink shadow-sm group-hover:bg-bg group-focus-visible:outline-2 group-focus-visible:outline-primary">
+            {searchOpen ? <ChevronLeft className="size-4" strokeWidth={2.6} /> : <ChevronRight className="size-4" strokeWidth={2.6} />}
+          </span>
         </button>
         <RouteMap
+          ends={ends}
           accessible={active}
           fastest={route?.ok && !transit ? route.fastest : null}
           alternatives={others}
@@ -288,7 +307,7 @@ export function RouteClient() {
           {route?.note && <InfoBanner>{route.note}. Sydney-wide routing is unavailable right now.</InfoBanner>}
           {route?.transitNote && <InfoBanner>{route.transitNote}</InfoBanner>}
           {error && <WarnBanner alert>{error}</WarnBanner>}
-          {route === null && !error && <p role="status" className="text-muted">Finding your route…</p>}
+          {route === null && !error && <RouteSkeleton from={from?.name} to={to?.name} />}
 
           {route && !route.ok && (
             <WarnBanner alert>
@@ -297,9 +316,9 @@ export function RouteClient() {
             </WarnBanner>
           )}
 
-          {options && <TripOptions options={options} selected={selected?.id} onSelect={chooseOption} />}
+          {options && <TripOptions options={options} selected={selected?.id} onSelect={chooseOption} status={route?.status} />}
 
-          {transit && (
+          {transit && !cards && (
             <section aria-labelledby="summary-h">
               <h2 id="summary-h" className="sr-only">Summary</h2>
               <div className="flex flex-wrap items-end justify-between gap-3">
@@ -314,7 +333,7 @@ export function RouteClient() {
             </section>
           )}
 
-          {active && (
+          {active && !cards && (
             <section aria-labelledby="summary-h">
               <h2 id="summary-h" className="sr-only">Summary</h2>
               <div className="flex flex-wrap items-end justify-between gap-3">
@@ -330,11 +349,11 @@ export function RouteClient() {
             </section>
           )}
 
-          {route && route.liftStatus.length > 0 && (
+          {route && liftRows.length > 0 && (
             <section aria-labelledby="lifts-h">
               <h2 id="lifts-h" className="mb-1 text-[13px] font-bold tracking-wide text-muted uppercase">Station lifts</h2>
               <ul>
-                {route.liftStatus.map((l) => (
+                {liftRows.map((l) => (
                   <li key={l.exit} className="flex items-start gap-3 border-b border-line py-2.5 last:border-b-0">
                     {l.status === "Working"
                       ? <CircleCheck aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />
@@ -384,8 +403,8 @@ export function RouteClient() {
             </section>
           )}
 
-          <Button type="button" size="lg" className="w-full" onClick={saveFilter}>
-            Save filter
+          <Button type="button" size="lg" className="w-full" onClick={saveFilter} disabled={saving}>
+            {saving ? "Saving…" : "Save filter"}
           </Button>
         </div>
       </aside>

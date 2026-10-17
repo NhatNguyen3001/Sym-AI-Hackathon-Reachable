@@ -43,6 +43,21 @@ function pointAt(coords: LngLat[], metres: number): [number, number] | null {
   return [last[1], last[0]];
 }
 
+/** The route between two distances along it, as [lat, lng]: both ends plus every corner in between. */
+function pathBetween(coords: LngLat[], from: number, to: number): [number, number][] {
+  const a = pointAt(coords, from);
+  const b = pointAt(coords, to);
+  if (!a || !b) return [];
+  const out: [number, number][] = [a];
+  let walked = 0;
+  for (let i = 1; i < coords.length; i++) {
+    walked += haversine(coords[i - 1][1], coords[i - 1][0], coords[i][1], coords[i][0]);
+    if (walked > from && walked < to) out.push([coords[i][1], coords[i][0]]);
+  }
+  out.push(b);
+  return out;
+}
+
 const shown = (status?: string) => status === "Confirmed" || status === "Likely";
 
 export function routeFeatures(
@@ -66,7 +81,7 @@ export function routeFeatures(
       const b = pointAt(coordinates, end * scale);
       if (!a || !b) return;
       const label = step.label.replace(/, \d+ m$/, "");
-      spans.push({ id: `slope-${index}`, positions: [a, b], label });
+      spans.push({ id: `slope-${index}`, positions: pathBetween(coordinates, start * scale, end * scale), label });
       marks.push({
         id: `slope-pin-${index}`,
         lat: (a[0] + b[0]) / 2,

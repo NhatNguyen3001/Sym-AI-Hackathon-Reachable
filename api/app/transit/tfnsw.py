@@ -33,7 +33,7 @@ class TfnswClient:
         return self._get("/v1/tp/trip", {
             "depArrMacro": "dep", "type_origin": "coord", "name_origin": f"{o_lng:.6f}:{o_lat:.6f}:EPSG:4326",
             "type_destination": "coord", "name_destination": f"{d_lng:.6f}:{d_lat:.6f}:EPSG:4326",
-            "calcNumberOfTrips": 5, "wheelchair": "on", "TfNSWTR": "true"})
+            "calcNumberOfTrips": 9, "wheelchair": "on", "TfNSWTR": "true"})
 
     def lift_alerts(self) -> list[dict]:
         raw = self._get("/v1/tp/add_info", {"filterPublicationStatus": "current"})

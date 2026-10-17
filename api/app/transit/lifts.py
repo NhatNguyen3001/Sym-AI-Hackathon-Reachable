@@ -124,8 +124,9 @@ class LiftPoller:
         here = sum(1 for a in alerts if self.sync.places.station_stop_id in a.stop_ids)
         summary = (f"Checked Transport for NSW: {len(alerts)} lift alert{'' if len(alerts) == 1 else 's'}, "
                    f"{here} at Macquarie University station.")
-        with Session(self.engine) as s:
-            log_run(s, "updates", summary)
+        if changes:  # every Turso write pauses the API, so only log when something changed
+            with Session(self.engine) as s:
+                log_run(s, "updates", summary)
         return summary
 
     async def run(self):

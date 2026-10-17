@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import time
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
@@ -10,9 +11,10 @@ from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session
 
 from app.config import Settings
-from app.db import init_db, make_engine
+from app.db import init_db, make_engine, make_read_engine
 from app.errors import ApiError, api_error_handler
 from app.events import Broadcaster
+from app.replica import Replica
 from app.llm.client import get_client
 from app.routers import agents, demo, events, health, places, profile, reports, route, stations, updates, venue, weather
 from app.routing.graph import load_graph
@@ -44,16 +46,32 @@ async def server_error_handler(_: Request, exc: Exception):
     return JSONResponse({"error": {"code": "server_error", "message": "Something went wrong on our side."}}, status_code=500)
 
 
+QUIET_AFTER_S = 1.0  # sync only when no request is running and none finished in the last second
+
+
+def _quiet(st) -> bool:
+    return st.requests_in_flight == 0 and time.monotonic() - st.last_request_end >= QUIET_AFTER_S
+
+
 def create_app(settings: Settings | None = None, graph=None, places=None, weather_service=None, router=None,
-               tfnsw=None) -> FastAPI:
+               tfnsw=None, replica=None) -> FastAPI:
     settings = settings or Settings()
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         st = app.state
         st.settings = settings
-        st.engine = make_engine(settings.database_url, settings.turso_database_url, settings.turso_auth_token)
-        st.db_kind = "turso" if settings.turso_database_url else "sqlite"
+        rep = replica
+        if rep is None and settings.turso_database_url:
+            rep = Replica(settings.turso_replica_path, settings.turso_database_url, settings.turso_auth_token)
+        st.replica = rep
+        st.db_kind = "turso" if rep else "sqlite"
+        if rep:
+            rep.start()  # raises ReplicaUnavailable when Turso is down and there's no local copy yet
+        st.engine = make_engine(settings.database_url, replica=rep)          # writes
+        st.read_engine = make_read_engine(rep) if rep else st.engine          # reads: the local copy
+        sync_task = (asyncio.create_task(rep.run(settings.turso_sync_seconds, quiet=lambda: _quiet(st)))
+                     if rep else None)
         try:
             init_db(st.engine)
         except Exception:
@@ -84,10 +102,23 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
                       if st.tfnsw else None)
         task = asyncio.create_task(st.lift_poller.run()) if st.lift_poller and settings.lift_poll_seconds > 0 else None
         yield
-        if task:
-            task.cancel()
+        for t in (task, sync_task):
+            if t:
+                t.cancel()
 
     app = FastAPI(title="Reachable API", lifespan=lifespan)
+    app.state.requests_in_flight, app.state.last_request_end = 0, 0.0
+
+    @app.middleware("http")
+    async def track_requests(request: Request, call_next):
+        if request.url.path == "/events":  # the live stream stays open; it isn't "busy"
+            return await call_next(request)
+        app.state.requests_in_flight += 1
+        try:
+            return await call_next(request)
+        finally:
+            app.state.requests_in_flight -= 1
+            app.state.last_request_end = time.monotonic()
     app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["*"], allow_headers=["*"],
                        expose_headers=["X-Search-Limited"])
     app.add_exception_handler(ApiError, api_error_handler)

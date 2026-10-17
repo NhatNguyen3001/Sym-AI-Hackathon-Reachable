@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { ApiError, getPlace, getPlaces, getRoute, getUpdates, labelPhoto, parseProfile, sendReport } from "@/lib/api";
+import { API_URL, ApiError, getPlace, getPlaces, getRoute, getUpdates, labelPhoto, parseProfile, searchPlaces, sendReport } from "@/lib/api";
 import { profile } from "@/lib/placeholder";
 
 afterEach(() => vi.unstubAllGlobals());
@@ -80,4 +80,42 @@ test("getPlace returns null for an unknown place and the place otherwise", async
   expect(await getPlace("osm:N404")).toBeNull();
   vi.stubGlobal("fetch", vi.fn().mockResolvedValue(json({ id: "osm:N1", name: "Town Hall", kind: "station", lat: 0, lng: 0 })));
   expect(await getPlace("osm:N1")).toMatchObject({ name: "Town Hall" });
+});
+
+test("the API URL defaults to 127.0.0.1 (localhost is ~0.2 s slower per request on Windows)", () => {
+  expect(API_URL).toBe("http://127.0.0.1:8000");
+});
+
+test("identical place lookups at the same time share one request", async () => {
+  const f = vi.fn().mockImplementation(() => Promise.resolve(json({ id: "library", name: "Waranara Library" })));
+  vi.stubGlobal("fetch", f);
+  const [a, b] = await Promise.all([getPlace("library"), getPlace("library")]);
+  expect(a?.id).toBe("library");
+  expect(b?.id).toBe("library");
+  expect(f).toHaveBeenCalledTimes(1);
+});
+
+test("search shows known places first, then the full results", async () => {
+  const f = vi.fn().mockImplementation((url: string) =>
+    Promise.resolve(json(url.includes("photon=0") ? [{ id: "library" }] : [{ id: "library" }, { id: "osm:N1" }])));
+  vi.stubGlobal("fetch", f);
+  const updates: { ids: string[]; pending: boolean }[] = [];
+  const done = await searchPlaces("lib", (r) => updates.push({ ids: r.data.map((p) => p.id), pending: r.pending }));
+  expect(updates).toEqual([{ ids: ["library"], pending: true }, { ids: ["library", "osm:N1"], pending: false }]);
+  expect(done.data.map((p) => p.id)).toEqual(["library", "osm:N1"]);
+});
+
+test("a place found once isn't fetched again", async () => {
+  const f = vi.fn().mockImplementation(() => Promise.resolve(json({ id: "globe-cafe", name: "Globe Café" })));
+  vi.stubGlobal("fetch", f);
+  await getPlace("globe-cafe");
+  await getPlace("globe-cafe");
+  expect(f).toHaveBeenCalledTimes(1);
+});
+
+test("a fresh route request after a live change doesn't reuse one already on its way", async () => {
+  const f = vi.fn().mockImplementation(() => Promise.resolve(json({ ok: true, liftStatus: [], explanation: "", weather: {} })));
+  vi.stubGlobal("fetch", f);
+  await Promise.all([getRoute("osm:N1", "library", profile), getRoute("osm:N1", "library", profile, { fresh: true })]);
+  expect(f).toHaveBeenCalledTimes(2);
 });

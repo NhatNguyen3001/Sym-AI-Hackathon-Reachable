@@ -28,3 +28,24 @@ export function rideDetail(leg: RideLeg): string {
 /** The option with this id, or the best one. */
 export const selectOption = (options: TripOption[] | undefined, id: string | null) =>
   options?.find((o) => o.id === id) ?? options?.[0];
+
+export interface WayGroup {
+  wayId: string;
+  options: TripOption[];
+}
+
+/** One group per way, in the API's order (best way first; departures in leaving order). */
+export function groupWays(options: TripOption[]): WayGroup[] {
+  const groups: WayGroup[] = [];
+  for (const o of options) {
+    const wayId = o.wayId ?? o.id;
+    const g = groups.find((x) => x.wayId === wayId);
+    if (g) g.options.push(o);
+    else groups.push({ wayId, options: [o] });
+  }
+  return groups;
+}
+
+/** Cards are worth showing when there's a choice: more than one way, or more than one departure. */
+export const showsCards = (options: TripOption[] | undefined) =>
+  !!options && (groupWays(options).length > 1 || options.length > 1);

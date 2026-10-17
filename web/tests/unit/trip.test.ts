@@ -38,3 +38,12 @@ test("select falls back to the first option", () => {
   expect(selectOption([walk, transit], "nope")?.id).toBe("walk");
   expect(selectOption(undefined, "x")).toBeUndefined();
 });
+
+test("options group into ways, keeping the API's order", async () => {
+  const { groupWays } = await import("@/lib/trip");
+  const t = (id: string, wayId: string): TripOption => ({ ...transit, id, wayId });
+  const groups = groupWays([{ ...walk, wayId: "walk" }, t("transit-0", "way-a"), t("transit-1", "way-a"), t("transit-2", "way-a")]);
+  expect(groups.map((g) => [g.wayId, g.options.map((o) => o.id)])).toEqual([
+    ["walk", ["walk"]], ["way-a", ["transit-0", "transit-1", "transit-2"]],
+  ]);
+});

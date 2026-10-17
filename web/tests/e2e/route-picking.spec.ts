@@ -1,4 +1,5 @@
 import { expect, request, test } from "@playwright/test";
+import { openDetails } from "./helpers";
 import type { Page } from "@playwright/test";
 
 const API = "http://localhost:8100";
@@ -31,7 +32,7 @@ test("picking an alternative switches the directions; a live update goes back to
     const { recommended, alts } = await alternatives();
     expect(alts.length).toBeGreaterThan(0);
     await page.goto("/route?from=mq-station&to=library");
-    await page.getByRole("button", { name: "Show search" }).click();
+    await openDetails(page);
     const summary = page.getByRole("region", { name: "Summary" }).or(page.locator("section[aria-labelledby=summary-h]"));
     await expect(summary.getByText(`${recommended} min`, { exact: true })).toBeVisible({ timeout: 15_000 });
 
@@ -51,7 +52,7 @@ test("the map keeps your zoom when the page re-renders", async ({ page }) => {
   const { alts } = await alternatives();
   await page.goto("/route?from=mq-station&to=library");
   await expect(page.locator(".leaflet-tile").first()).toBeAttached({ timeout: 15_000 });
-  await page.getByRole("button", { name: "Show search" }).click();   // open the panel first: it resizes the map
+  await openDetails(page);   // the panel is open before zooming: opening it resizes the map
   await page.locator(`.leaflet-marker-icon[title="${alts[0].summary}"]`).click();  // picking one used to refit on every render
   await page.waitForTimeout(500);
   const map = page.getByRole("region", { name: "Route map" });

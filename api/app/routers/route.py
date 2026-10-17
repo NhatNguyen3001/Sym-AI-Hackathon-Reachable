@@ -1,10 +1,10 @@
 from functools import partial
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Request
 from pydantic import BaseModel, ConfigDict, Field
 from sqlmodel import Session
 
-from app.agents import ago, log_run
+from app.agents import ago
 from app.db import get_session
 from app.errors import ApiError
 from app.llm.explain import explain_route, explain_transit, template_transit
@@ -51,7 +51,7 @@ def leg_walk(st, start, end, profile, ctx) -> dict:
 
 def walk_option(r: dict, end) -> dict:
     acc = r["accessible"]
-    return {"id": "walk", "mode": "walk", "minutes": acc["minutes"], "summary": f"Walk or roll {acc['minutes']} min",
+    return {"id": "walk", "wayId": "walk", "mode": "walk", "minutes": acc["minutes"], "summary": f"Walk or roll {acc['minutes']} min",
             "stepFree": acc["stepFree"], "interchanges": 0, "warnings": [], "liftAlerts": [], "stations": [],
             "legs": [{"kind": "walk", **acc, "steps": r["steps"], "source": "reachable", "to": end.name}],
             "unsure": sum(1 for s in r["steps"] if s["confidence"] == "Not sure")}
@@ -93,7 +93,7 @@ def _status(steps: list[dict], estimated: bool) -> str:
 
 
 @router.post("/route")
-def plan_route(body: RouteIn, request: Request, session: Session = Depends(get_session)):
+def plan_route(body: RouteIn, request: Request, tasks: BackgroundTasks, session: Session = Depends(get_session)):
     st = request.app.state
     start, end = st.resolver.get(body.from_), st.resolver.get(body.to)
     if not start or not end:
@@ -121,7 +121,9 @@ def plan_route(body: RouteIn, request: Request, session: Session = Depends(get_s
         r, note = st.campus.plan(start, end, body.profile, ctx), CAMPUS_NOTE
     lifts = [row for p in (start, end) if st.places.get(p.id) and p.kind == "station"
              for row in lift_rows(session, st.places, p.id, st.lift_feed)]
-    log_run(session, "route", f"Planned {start.name} to {end.name}.")
+    for p in (start, end):
+        if st.resolver.claim_save(p):
+            tasks.add_task(st.resolver.save_quietly, [p])
     extra = {"note": note} if note else {}
 
     # Public transport options (cycle 3), for trips longer than TRANSIT_MIN_KM.
@@ -134,10 +136,16 @@ def plan_route(body: RouteIn, request: Request, session: Session = Depends(get_s
     for o in transit:
         o["explanation"] = template_transit(o)
     options = rank(([walk_option(r, end)] if r["ok"] else []) + transit)
+    # Each option carries the lift rows of the stations it uses; the page shows the chosen one's (spec §10.5).
+    for o in options:
+        if o["mode"] == "walk":
+            o["liftStatus"] = lifts
+        else:
+            known = {row["exit"] for row in lifts}
+            o["liftStatus"] = lifts + [row for row in _station_rows(session, st, o) if row["exit"] not in known]
     top = options[0] if options else None
-    if top and top["mode"] == "transit":
-        known = {row["exit"] for row in lifts}
-        lifts += [row for row in _station_rows(session, st, top) if row["exit"] not in known]
+    if top:
+        lifts = top["liftStatus"]
 
     if not r["ok"] and not options:
         if st.transit and far and "transitNote" not in extra and r["reason"] == TOO_LONG:

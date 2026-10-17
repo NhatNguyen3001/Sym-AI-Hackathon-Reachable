@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     # Turso (libsql). When the URL is set the API uses Turso instead of DATABASE_URL.
     turso_database_url: str = ""
     turso_auth_token: str = ""
+    # Local copy of Turso (embedded replica): reads are local, writes go to Turso, synced every few seconds.
+    turso_replica_path: Path = API_DIR / "turso-replica.db"
+    turso_sync_seconds: int = 15
     anthropic_api_key: str = ""
     cors_origins: list[str] = ["http://localhost:3000"]
     speed_mps: float = 1.0

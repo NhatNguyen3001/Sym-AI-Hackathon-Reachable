@@ -123,3 +123,50 @@ def test_interchange_rides_and_both_stations():
     o = p.plan(mq, end, DEFAULT_PROFILE, Context(), [], walk_ok())[0]
     assert [l["label"] for l in o["legs"] if l["kind"] == "ride"] == ["Metro M1", "Train T4"]
     assert o["interchanges"] == 1 and o["legs"][0]["kind"] != "walk"   # starts at the station: no walk out and back
+
+
+def test_same_way_shares_way_id():
+    opts = plan(planner(Client(RAW)))
+    assert len(opts) == 3 and len({o["wayId"] for o in opts}) == 1 and opts[0]["wayId"].startswith("way-")
+
+
+def test_different_platform_or_step_free_is_a_different_way():
+    raw = copy.deepcopy(RAW)
+    raw["journeys"][1]["legs"][1]["origin"]["properties"]["platformName"] = "Platform 1"
+    opts = plan(planner(Client(raw)))
+    assert opts[0]["wayId"] != opts[1]["wayId"] and opts[0]["wayId"] == opts[2]["wayId"]
+    unsure = plan(planner(Client(RAW)), walk=walk_ok())
+    stepped = TransitPlanner(Client(RAW), now=lambda: FIRST_DEP - timedelta(minutes=30))
+
+    def walk_steps(a, b, profile, ctx):
+        r = walk_ok()(a, b, profile, ctx)
+        r["accessible"] = {**r["accessible"], "stepFree": False}
+        return r
+    assert stepped.plan(START, END, DEFAULT_PROFILE, Context(), [], walk_steps)[0]["wayId"] != unsure[0]["wayId"]
+
+
+def test_departures_keep_their_own_alerts():
+    later = parse_journeys(RAW)[1].legs[1]
+    alert = [{"alertId": "a", "stopId": "200066", "text": "Gadigal Station Lift 4 to Platform 1 is not available", "url": None}]
+    opts = plan(planner(Client(RAW)), alerts=alert)
+    assert all(o["liftAlerts"] for o in opts)          # same stop for every departure: all carry it
+    assert later.origin.stop_id == "200066"
+
+
+def test_bus_stops_have_no_lift_stations():
+    from tests.test_route_transit import campus_trip
+    lib = Place(id="library", name="Waranara Library", kind="venue", lat=-33.775688, lng=151.113509)
+    mort = Place(id="mortarboard-cafe", name="Mortarboard Cafe", kind="venue", lat=-33.772053, lng=151.11663)
+    o = TransitPlanner(Client(campus_trip())).plan(lib, mort, DEFAULT_PROFILE, Context(), [], walk_ok())[0]
+    assert o["stations"] == []
+
+
+def test_trip_asks_for_nine_journeys():
+    import httpx
+    from app.transit.tfnsw import TfnswClient
+    seen = {}
+    def h(req):
+        seen.update(req.url.params)
+        return httpx.Response(200, json={"journeys": []})
+    TfnswClient("https://t.test", "k", http=httpx.Client(transport=httpx.MockTransport(h))).trip(0, 0, 1, 1)
+    assert seen["calcNumberOfTrips"] == "9"

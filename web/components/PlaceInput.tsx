@@ -3,7 +3,7 @@
 import { useId, useRef, useState } from "react";
 import { MapPin } from "lucide-react";
 import { cn } from "cn";
-import { getPlaces } from "@/lib/api";
+import { searchPlaces } from "@/lib/api";
 import type { Place } from "@/lib/types";
 
 export function PlaceInput({
@@ -24,6 +24,7 @@ export function PlaceInput({
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
   const [limited, setLimited] = useState(false);
+  const [pending, setPending] = useState(false);
   const seq = useRef(0);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // When the parent changes the picked place (e.g. from the URL), show its name.
@@ -42,13 +43,19 @@ export function PlaceInput({
   /** Runs a search now. Returns its results, or null if a newer search started meanwhile. */
   async function runSearch(query: string): Promise<Place[] | null> {
     const n = ++seq.current;
-    const { data, limited: lim } = await getPlaces(query);
+    let first = true;
+    // Known places show at once; address results replace them when the full search answers.
+    const done = await searchPlaces(query, (r) => {
+      if (n !== seq.current) return;  // a newer search (or a pick) has taken over
+      optionsFor.current = query;
+      setOptions(r.data);
+      setLimited(r.limited && query.trim().length >= 2);
+      setPending(r.pending);
+      if (first) setActive(r.data.length ? 0 : -1);
+      first = false;
+    });
     if (n !== seq.current) return null;
-    optionsFor.current = query;
-    setOptions(data);
-    setLimited(lim && query.trim().length >= 2);
-    setActive(data.length ? 0 : -1);
-    return data;
+    return done.data;
   }
 
   /** Waits for a pause in typing (250 ms). Any search already in flight is discarded straight away. */
@@ -57,6 +64,7 @@ export function PlaceInput({
     timer.current = null;
     seq.current++;
     optionsFor.current = null;
+    setPending(false);
     const query = normalise(q);
     if (immediate) void runSearch(query);
     else timer.current = setTimeout(() => { timer.current = null; void runSearch(query); }, 250);
@@ -76,6 +84,8 @@ export function PlaceInput({
   }
 
   function pick(p: Place) {
+    seq.current++;      // a pick wins: any search still running (even an Enter waiting on it) is ignored
+    setPending(false);
     onChange(p);
     setText(p.name);
     setOpen(false);
@@ -163,6 +173,9 @@ export function PlaceInput({
           </li>
         ))}
       </ul>
+      <p role="status" className={cn("mt-1 text-[14px] text-muted", !(open && pending) && "sr-only")}>
+        {open && pending ? "Searching…" : ""}
+      </p>
       <p role="status" className={cn("mt-1 text-[14px] text-warn-strong", !(open && limited) && "sr-only")}>
         {open && limited ? "Search is limited right now. Only some places are shown." : ""}
       </p>

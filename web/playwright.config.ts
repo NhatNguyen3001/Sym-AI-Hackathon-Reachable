@@ -25,6 +25,8 @@ const python = process.platform === "win32" ? String.raw`.venv\Scripts\python.ex
 
 export default defineConfig({
   testDir: "tests/e2e",
+  // Measurements (@perf) only run on request: E2E_PERF=1 E2E_BASE_URL=http://localhost:3000 npx playwright test --grep @perf
+  grepInvert: process.env.E2E_PERF ? undefined : /@perf/,
   workers: 1,
   timeout: 60_000,
   use: { baseURL: `http://localhost:${WEB_PORT}` },
@@ -32,7 +34,7 @@ export default defineConfig({
     { name: "desktop", use: { viewport: { width: 1440, height: 900 } } },
     { name: "mobile", use: { viewport: { width: 390, height: 844 } } },
   ],
-  webServer: [
+  webServer: process.env.E2E_BASE_URL ? undefined : [
     {
       // Offline stand-in for Transport for NSW: lift alerts and a campus public transport trip.
       command: "node tests/e2e/tfnsw-mock.mjs",
@@ -64,7 +66,7 @@ export default defineConfig({
     {
       command: `npm run build && npx next start -p ${WEB_PORT}`,
       url: `http://localhost:${WEB_PORT}`,
-      env: { NEXT_PUBLIC_API_URL: `http://localhost:${API_PORT}` },
+      env: { NEXT_PUBLIC_API_URL: `http://127.0.0.1:${API_PORT}` },
       reuseExistingServer: false,
       timeout: 300_000,
     },

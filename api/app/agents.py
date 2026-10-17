@@ -31,7 +31,7 @@ def ago(dt) -> str:
     return "Today" if hours < 48 else f"{hours // 24} days ago"
 
 
-def agent_cards(session: Session) -> list[dict]:
+def agent_cards(session: Session, feed=None) -> list[dict]:
     pending = session.exec(select(func.count()).select_from(Report).where(Report.status == "pending")).one()
     cards = []
     for key, name, desc in CARDS:
@@ -43,7 +43,8 @@ def agent_cards(session: Session) -> list[dict]:
             status, tone = "Running", "primary"
         else:
             status, tone = "Idle", "muted"
-        if key == "updates" and last:
-            desc = f"{desc} Last check {ago(last.started_at)}."
+        checked = feed.last_ok if feed is not None and feed.last_ok else (last.started_at if last else None)
+        if key == "updates" and checked:
+            desc = f"{desc} Last check {ago(checked)}."
         cards.append({"name": name, "status": status, "tone": tone, "desc": desc})
     return cards

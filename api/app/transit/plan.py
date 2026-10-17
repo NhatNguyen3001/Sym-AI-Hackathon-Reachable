@@ -1,5 +1,6 @@
 """Public transport options: TfNSW rides and in-station paths, with our own accessible walks to and from
 the stations (spec section 5). The walk router is passed in so campus trips keep using the campus graph."""
+import hashlib
 import math
 from datetime import timedelta
 
@@ -13,6 +14,7 @@ AT_STATION_M = 300    # a station place this close to the boarding stop is the b
 CACHE_S = 60
 MODE_LABEL = {"train": "Train", "metro": "Metro", "lightrail": "Light rail", "bus": "Bus", "coach": "Coach", "ferry": "Ferry"}
 NO_STAIRS = {"stairs", "escalator"}
+LIFT_MODES = {"train", "metro", "lightrail"}  # stops served by these can have lifts; bus stops can't
 PATH_LABEL = {"level": "Level path", "ramp": "Ramp", "escalator": "Escalator", "stairs": "Stairs"}
 
 
@@ -187,16 +189,22 @@ class TransitPlanner:
                     for a in lift_alerts]
         stations, seen = [], set()
         for r in rides:
+            if r.mode not in LIFT_MODES:
+                continue
             for s in (r.origin, r.dest):
                 if s.stop_id not in seen:
                     seen.add(s.stop_id)
                     stations.append({"stopId": s.stop_id, "name": s.name})
         walks = [l for l in legs if l["kind"] == "walk"]
+        step_free = all(l["stepFree"] for l in walks)
+        # Departures share a card only when they're the same in everything that matters for safety (spec §10.2).
+        way_key = tuple((r.line, r.origin.stop_id, r.origin.platform, r.dest.stop_id, r.dest.platform) for r in rides)
+        way_id = "way-" + hashlib.sha1(repr((way_key, step_free)).encode()).hexdigest()[:8]
         summary = " · ".join(f"Walk {l['minutes']} min" if l["kind"] == "walk" else l["label"]
                              for l in legs if l["kind"] in ("walk", "ride"))
         return {"id": f"transit-{n}", "mode": "transit", "minutes": _mins((arrive - leave).total_seconds()),
                 "leaveAt": leave.isoformat(), "arriveAt": arrive.isoformat(), "summary": summary,
-                "stepFree": all(l["stepFree"] for l in walks), "interchanges": j.interchanges, "warnings": warnings,
+                "wayId": way_id, "stepFree": step_free, "interchanges": j.interchanges, "warnings": warnings,
                 "liftAlerts": lift_alerts, "legs": legs, "stations": stations,
                 "unsure": sum(1 for l in walks for s in l["steps"] if s["confidence"] == "Not sure")}
 
