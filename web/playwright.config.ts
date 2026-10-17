@@ -59,6 +59,11 @@ export default defineConfig({
         ROUTER: process.env.E2E_VALHALLA ? "valhalla" : "campus",
         PHOTON_URL: process.env.E2E_VALHALLA ? "https://photon.komoot.io" : "",
         CORS_ORIGINS: `["http://localhost:${WEB_PORT}"]`,
+        // Map agent: fixed places + roadwork, a fake run (no Overpass/Live Traffic/Claude), a test-only owner key.
+        SEED_MAP_PLACES: "true",
+        MAP_AGENT_FAKE: "true",
+        ADMIN_KEY: "e2e-owner",
+        OSM_SNAPSHOT_PATH: "",
       },
       reuseExistingServer: false,
       timeout: 120_000,

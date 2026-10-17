@@ -203,6 +203,8 @@ export interface UpdateItem {
   tone: "warn" | "primary";
   lat?: number | null;
   lng?: number | null;
+  /** Claude's plain sentence for a Live Traffic NSW roadwork. */
+  detail?: string;
 }
 
 export interface AgentCardData {
@@ -234,4 +236,30 @@ export interface Trip {
 export interface Fetched<T> {
   data: T;
   sample: boolean;
+}
+
+/** What the map agent last did (GET /agents/map/status). */
+export interface MapStatus {
+  lastRun: string | null;
+  running: boolean;
+  places: number;
+  roadworks: number;
+  checked: number;
+  /** Parts of the last run that failed: "osm", "roadworks", "claude". */
+  failed: string[];
+  /** Set while the map shows the saved OpenStreetMap copy (no run yet). */
+  snapshot: { takenOn: string } | null;
+  paused: boolean;
+}
+
+/** An accessible place from OpenStreetMap (GET /map/places). */
+export interface MapPlacePin {
+  id: string;
+  placeId: string;
+  name: string;
+  kind: "toilet" | "parking" | "entrance" | "venue";
+  label: string;
+  lat: number;
+  lng: number;
+  source: string;
 }

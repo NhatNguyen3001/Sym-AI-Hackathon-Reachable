@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { API_URL } from "./api";
 
-export type ServerEvent = "barrier_changed" | "lift_changed" | "weather_changed" | "report_created" | "agent_run";
+export type ServerEvent = "barrier_changed" | "lift_changed" | "weather_changed" | "report_created" | "agent_run" | "map_updated";
 
 export function useEvents(events: ServerEvent[], handler: (event: ServerEvent, data: Record<string, unknown>) => void) {
   const handlerRef = useRef(handler);

@@ -1,6 +1,6 @@
 "use client";
 import "leaflet/dist/leaflet.css";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import { Circle, MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import { LocateFixed, Minus, Plus } from "lucide-react";
@@ -8,7 +8,8 @@ import { guardMap } from "./guardMap";
 import { useVisibleMount } from "./useVisibleMount";
 import { HAZARD_LABEL, type Hazard, type HazardKind } from "@/lib/hazards";
 import { insideSydney } from "@/lib/start";
-import type { AmenityPin } from "@/lib/types";
+import type { AmenityPin, MapPlacePin } from "@/lib/types";
+import { ClusterLayer, type ClusterItem } from "./ClusterLayer";
 import type { UserFix } from "@/lib/useUserLocation";
 
 const CAMPUS: [number, number] = [-33.7755, 151.1155];
@@ -37,13 +38,16 @@ function hazardIcon(h: Hazard, selected: boolean) {
   });
 }
 
-const AMENITY_STYLE: Record<AmenityPin["kind"], { colour: string; svg: string; legend: string }> = {
+type PinKind = AmenityPin["kind"] | MapPlacePin["kind"];
+
+const AMENITY_STYLE: Record<PinKind, { colour: string; svg: string; legend: string }> = {
   entrance: { colour: "#1D4FA8", legend: "Level entrance", svg: '<path d="M5 21V4h10l4 4v13"/><path d="M15 4v4h4"/><path d="M10 21v-6"/>' },
   toilet: { colour: "#0F766E", legend: "Accessible toilet", svg: '<circle cx="12" cy="5" r="1.6"/><path d="M12 8v5M9 21l3-8 3 8M8 12h8"/>' },
   parking: { colour: "#4338CA", legend: "Accessible parking", svg: '<path d="M7 21V3h7a5 5 0 0 1 0 10H7"/>' },
+  venue: { colour: "#6D28D9", legend: "Wheelchair-accessible place", svg: '<circle cx="10" cy="5" r="1.6"/><path d="M10 8v6h5l2 5M10 11h5"/><path d="M14 18.5a5 5 0 1 1-6-6.5"/>' },
 };
 
-function amenityIcon(pin: AmenityPin) {
+function amenityIcon(pin: { kind: PinKind }) {
   const { colour, svg } = AMENITY_STYLE[pin.kind];
   return L.divIcon({
     className: "",
@@ -96,8 +100,30 @@ function ViewReport() {
   return null;
 }
 
+/** Tells the page which part of Sydney is in view, so it can load the places there. */
+function ViewWatcher({ onView }: { onView?: (bounds: L.LatLngBounds, zoom: number) => void }) {
+  const map = useMap();
+  const cb = useRef(onView);
+  useEffect(() => {
+    cb.current = onView;
+  }, [onView]);
+  useEffect(() => {
+    const tell = () => cb.current?.(map.getBounds(), map.getZoom());
+    tell();
+    map.on("moveend", tell);
+    return () => {
+      map.off("moveend", tell);
+    };
+  }, [map]);
+  return null;
+}
+
+function placeTitle(p: MapPlacePin): string {
+  return p.name === p.label || p.name.startsWith("Accessible ") ? `${p.label} (${p.source})` : `${p.label} at ${p.name} (${p.source})`;
+}
+
 export default function ExploreMap({
-  hazards, selectedId, onSelect, fix, amenities = [], onAmenity,
+  hazards, selectedId, onSelect, fix, amenities = [], onAmenity, places = [], onPlace, onView,
 }: {
   hazards: Hazard[];
   selectedId: string | null;
@@ -105,6 +131,10 @@ export default function ExploreMap({
   fix: UserFix | null;
   amenities?: AmenityPin[];
   onAmenity?: (pin: AmenityPin) => void;
+  /** Accessible places from OpenStreetMap, across Sydney. */
+  places?: MapPlacePin[];
+  onPlace?: (pin: MapPlacePin) => void;
+  onView?: (bounds: L.LatLngBounds, zoom: number) => void;
 }) {
   const [map, setMap] = useState<L.Map | null>(null);
   const [recenter, setRecenter] = useState(0);
@@ -139,6 +169,16 @@ export default function ExploreMap({
     if (!moved.current) map.setView([fix.lat, fix.lng], Math.max(map.getZoom(), 17), { animate: false });
   }, [map, fix]);
 
+  // Every pin goes into one layer that groups them into number bubbles when zoomed out; your own dot stays out.
+  const items: ClusterItem[] = useMemo(() => [
+    ...places.map((p) => ({ id: p.id, lat: p.lat, lng: p.lng, icon: amenityIcon(p), title: placeTitle(p), z: 600,
+      onClick: () => onPlace?.(p) })),
+    ...amenities.map((pin) => ({ id: pin.id, lat: pin.lat, lng: pin.lng, icon: amenityIcon(pin),
+      title: `${pin.label} at ${pin.name}`, z: 650, onClick: () => onAmenity?.(pin) })),
+    ...hazards.map((h) => ({ id: `hazard:${h.id}`, lat: h.lat, lng: h.lng, icon: hazardIcon(h, h.id === selectedId),
+      title: `${HAZARD_LABEL[h.kind]}: ${h.title}`, z: h.id === selectedId ? 700 : 400, onClick: () => onSelect(h.id) })),
+  ], [places, amenities, hazards, selectedId, onPlace, onAmenity, onSelect]);
+
   return (
     <div role="region" aria-label="Live map" className="absolute inset-0">
       {mountKey !== null && (
@@ -163,30 +203,12 @@ export default function ExploreMap({
               pathOptions={{ color: "#1d4fa8", weight: 1, fillColor: "#1d4fa8", fillOpacity: 0.12 }} />
           )}
           {fix && (
-            <Marker position={[fix.lat, fix.lng]} icon={userIcon} alt="Your location" title="Your location" keyboard={false} zIndexOffset={800} />
+            // Not tappable and drawn under the pins, so a pin right where you stand can still be tapped.
+            <Marker position={[fix.lat, fix.lng]} icon={userIcon} alt="Your location" title="Your location" keyboard={false}
+              interactive={false} zIndexOffset={-1000} />
           )}
-          {amenities.map((pin) => (
-            <Marker
-              key={pin.id}
-              position={[pin.lat, pin.lng]}
-              icon={amenityIcon(pin)}
-              title={`${pin.label} at ${pin.name}`}
-              alt={`${pin.label} at ${pin.name}`}
-              eventHandlers={{ click: () => onAmenity?.(pin) }}
-              zIndexOffset={650}
-            />
-          ))}
-          {hazards.map((h) => (
-            <Marker
-              key={h.id}
-              position={[h.lat, h.lng]}
-              icon={hazardIcon(h, h.id === selectedId)}
-              title={`${HAZARD_LABEL[h.kind]}: ${h.title}`}
-              alt={`${HAZARD_LABEL[h.kind]}: ${h.title}`}
-              eventHandlers={{ click: () => onSelect(h.id) }}
-              zIndexOffset={h.id === selectedId ? 700 : 400}
-            />
-          ))}
+          <ClusterLayer items={items} />
+          <ViewWatcher onView={onView} />
         </MapContainer>
       )}
       <ul className="absolute top-3 left-[4.5rem] z-[500] flex max-w-[calc(100%-5.25rem)] flex-wrap gap-1.5 lg:top-auto lg:bottom-4 lg:left-3 lg:max-w-[calc(100%-4.5rem)]">
@@ -196,8 +218,8 @@ export default function ExploreMap({
             You
           </li>
         )}
-        {(Object.keys(AMENITY_STYLE) as AmenityPin["kind"][])
-          .filter((kind) => amenities.some((pin) => pin.kind === kind))
+        {(Object.keys(AMENITY_STYLE) as PinKind[])
+          .filter((kind) => amenities.some((pin) => pin.kind === kind) || places.some((p) => p.kind === kind))
           .map((kind) => (
             <li key={kind} className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[13px] font-bold">
               <span aria-hidden="true" className="size-2.5 rounded-full" style={{ background: AMENITY_STYLE[kind].colour }} />

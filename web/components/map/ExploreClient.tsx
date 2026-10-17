@@ -1,6 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type L from "leaflet";
 import { useRouter } from "next/navigation";
 import { cn } from "cn";
 import { SlidersHorizontal, ThumbsUp } from "lucide-react";
@@ -8,13 +9,15 @@ import { NeedsTicks } from "@/components/NeedsTicks";
 import { PlaceSearch } from "@/components/PlaceSearch";
 import { Button } from "@/components/ui/button";
 import { WeatherBanner } from "@/components/Banners";
-import { getAmenities, getUpdates, getWeather } from "@/lib/api";
+import { MapFreshness } from "@/components/MapFreshness";
+import { getAmenities, getMapPlaces, getUpdates, getWeather } from "@/lib/api";
+import { useMapStatus } from "@/lib/useMapStatus";
 import { startPlaceId } from "@/lib/start";
 import { distanceLabel, HAZARD_LABEL, hazardsFromUpdates, type Hazard } from "@/lib/hazards";
 import { loadProfile, saveProfile } from "@/lib/profile";
 import { profile as defaultProfile } from "@/lib/placeholder";
 import { useUserLocation } from "@/lib/useUserLocation";
-import type { AmenityPin, Place, Profile, Weather } from "@/lib/types";
+import type { AmenityPin, MapPlacePin, Place, Profile, Weather } from "@/lib/types";
 
 const ExploreMap = dynamic(() => import("./ExploreMap"), {
   ssr: false,
@@ -37,6 +40,30 @@ export function ExploreClient() {
   const [expanded, setExpanded] = useState(true);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const drag = useRef({ y: 0, moved: false });
+  const [placeMap, setPlaceMap] = useState<Map<string, MapPlacePin>>(new Map());
+  const places = useMemo(() => [...placeMap.values()], [placeMap]);
+  const [mapStatus] = useMapStatus();
+  const viewTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Load the OpenStreetMap places in view (plus a margin) after the map stops moving. Far out, the bubbles
+  // show what's already loaded.
+  const onView = useCallback((bounds: L.LatLngBounds, zoom: number) => {
+    if (viewTimer.current) clearTimeout(viewTimer.current);
+    if (zoom < 11) return;
+    viewTimer.current = setTimeout(async () => {
+      const b = bounds.pad(0.2);
+      const r = await getMapPlaces([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()]);
+      if (!r.data.length) return;
+      setPlaceMap((old) => {
+        const next = new Map(old);
+        for (const p of r.data) next.set(p.id, p);
+        return next.size === old.size ? old : next;
+      });
+    }, 300);
+  }, []);
+  useEffect(() => () => {
+    if (viewTimer.current) clearTimeout(viewTimer.current);
+  }, []);
 
   useEffect(() => {
     let current = true;
@@ -68,7 +95,7 @@ export function ExploreClient() {
     setExpanded(false);
   }
 
-  function goToAmenity(pin: AmenityPin) {
+  function goToAmenity(pin: { placeId: string }) {
     saveProfile(profile);
     const from = startPlaceId(fix);
     router.push(`/route?from=${encodeURIComponent(from)}&to=${encodeURIComponent(pin.placeId)}`);
@@ -94,11 +121,14 @@ export function ExploreClient() {
       <h1 className="sr-only">Around you</h1>
       <p role="status" className="sr-only">{locationText}</p>
       <ExploreMap hazards={visible} selectedId={selected?.id ?? null} onSelect={setSelectedId} fix={fix}
-        amenities={to ? [] : amenities} onAmenity={goToAmenity} />
+        amenities={to ? [] : amenities} onAmenity={goToAmenity}
+        places={to ? [] : places} onPlace={goToAmenity} onView={onView} />
 
       <div className="pointer-events-none absolute top-3 right-3 left-[4.5rem] z-[550] lg:top-3 lg:right-20 lg:left-auto lg:max-w-sm">
         <div className="pointer-events-auto">
           <WeatherBanner weather={weather} />
+          <MapFreshness status={mapStatus}
+            className="mt-2 ml-auto w-fit rounded-full border border-line bg-surface px-3 py-1 text-ink shadow-sm" />
         </div>
       </div>
 
@@ -141,6 +171,7 @@ export function ExploreClient() {
                 Close
               </button>
             </div>
+            {selected.detail && <p className="mt-2 text-[17px]">{selected.detail}</p>}
             <p className="mt-2 text-[14px] text-[#d5ddd8]">{selected.time} · {selected.source}</p>
             <div className="mt-3 flex flex-wrap gap-2">
               <button type="button"
