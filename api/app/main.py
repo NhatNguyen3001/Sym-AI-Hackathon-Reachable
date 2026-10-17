@@ -16,7 +16,7 @@ from app.errors import ApiError, api_error_handler
 from app.events import Broadcaster
 from app.replica import Replica
 from app.llm.client import get_client
-from app.routers import agents, demo, events, health, mapdata, places, profile, reports, route, stations, updates, venue, weather
+from app.routers import agents, demo, events, health, mapdata, places, reports, route, stations, updates, venue, weather
 from app.routing.graph import load_graph
 from app.routing.places import Places
 from app.routing.router import CampusRouter, get_router
@@ -33,7 +33,7 @@ from app.transit.tfnsw import TfnswClient
 from app.weather import WeatherService
 
 log = logging.getLogger("reachable")
-ROUTERS = [m.router for m in (health, places, profile, route, venue, reports, updates, agents, mapdata, weather, stations,
+ROUTERS = [m.router for m in (health, places, route, venue, reports, updates, agents, mapdata, weather, stations,
                                events, demo)]
 
 

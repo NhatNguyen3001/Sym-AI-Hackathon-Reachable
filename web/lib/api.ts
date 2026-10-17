@@ -121,7 +121,6 @@ export const getAgents = () => read<AgentCardData[]>("/agents/status", sample.ag
 
 export const getWeather = () => read<Weather>("/weather", sample.weather);
 
-export const parseProfile = (text: string) => request<Profile>("/profile/parse", jsonBody({ text }));
 
 export function labelPhoto(file: File) {
   const form = new FormData();
