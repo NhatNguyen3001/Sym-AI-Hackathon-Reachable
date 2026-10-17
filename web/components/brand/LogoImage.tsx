@@ -6,6 +6,7 @@ export function LogoImage({ className = "h-auto w-[168px]" }: { className?: stri
   const { theme } = useTheme();
   const dark = theme === "dark";
   return (
+    // eslint-disable-next-line @next/next/no-img-element -- two small static logos swapped by theme on the client
     <img
       src={dark ? "/brand/reachable-dark.png" : "/brand/reachable-light.png"}
       alt="Reachable. Reach anywhere."

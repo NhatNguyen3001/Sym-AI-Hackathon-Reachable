@@ -48,6 +48,7 @@ export function ExploreClient() {
     getAmenities().then((r) => {
       if (current) setAmenities(r.data);
     });
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- browser-only state is only readable after mount (no hydration mismatch)
     setProfile(loadProfile());
     return () => {
       current = false;

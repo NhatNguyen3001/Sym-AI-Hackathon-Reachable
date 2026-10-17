@@ -52,11 +52,18 @@ export function RouteClient() {
   // Way to get there (walk or a public transport trip). Applies at once; the URL catches up for Back and sharing.
   const [pickedOption, setPickedOption] = useState<string | null>(null);
 
+  /** Open the details (desktop side panel, phone sheet) so a problem with the trip is seen. */
+  function showDetails() {
+    setSearchOpen(true);
+    setSheetOpen(true);
+  }
+
   const load = useCallback(async (p: Profile) => {
     try {
       const r = await getRoute(fromId, toId, p);
       setRoute(r.data);
       setPicked(null); // a reloaded route (live update, new filter) may have different alternatives
+      if (!r.data.ok) showDetails(); // "no step-free route" must never hide in a closed panel
       setSample(r.sample);
       setError(null);
       const minutes = r.data.options?.[0]?.minutes ?? r.data.accessible?.minutes;
@@ -68,6 +75,7 @@ export function RouteClient() {
       }
     } catch (e) {
       setRoute(null);
+      showDetails();
       setError(e instanceof ApiError && e.code === "place_not_found"
         ? "We couldn't find that place. Pick one from the list."
         : e instanceof ApiError && e.status > 0 ? e.message : "We couldn't plan this route. Please try again.");

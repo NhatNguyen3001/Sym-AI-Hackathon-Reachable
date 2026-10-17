@@ -99,6 +99,7 @@ export function AppShell({ children, map = false }: { children: ReactNode; map?:
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- browser-only state is only readable after mount (no hydration mismatch)
     setCollapsed(readStored("reachable-sidebar") === "closed");
   }, []);
   function toggleSidebar() {

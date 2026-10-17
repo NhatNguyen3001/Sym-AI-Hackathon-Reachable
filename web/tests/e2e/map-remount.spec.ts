@@ -1,4 +1,12 @@
 import { expect, test } from "@playwright/test";
+import type { Page } from "@playwright/test";
+
+/** Live updates is in the sidebar on desktop and behind the menu button on phones. */
+async function openLiveUpdates(page: Page) {
+  const menu = page.getByRole("button", { name: "Open menu" });
+  if (await menu.isVisible()) await menu.click();
+  await page.getByRole("link", { name: "Live updates" }).filter({ visible: true }).first().click();
+}
 
 // Regression: Next keeps visited pages mounted but hidden (React Activity). Coming back to /route re-ran
 // react-leaflet's effects on a map its cleanup had already destroyed: "Map container is being reused by
@@ -9,7 +17,7 @@ test("the route map survives navigating away and back", async ({ page }) => {
   await page.goto("/route?from=mq-station&to=library");
   await expect(page.locator(".leaflet-container")).toBeVisible();
 
-  await page.getByRole("link", { name: "Live updates" }).first().click();
+  await openLiveUpdates(page);
   await page.waitForURL("**/live");
   await page.goBack();
   await page.waitForURL("**/route**");
@@ -28,7 +36,7 @@ test("the report pin picker survives being closed and reopened", async ({ page }
   await page.goto("/report");
   await page.getByRole("button", { name: "Change location" }).click();
   await expect(page.locator(".leaflet-container")).toBeVisible();
-  await page.getByRole("link", { name: "Live updates" }).first().click();
+  await openLiveUpdates(page);
   await page.waitForURL("**/live");
   await page.goBack();
   await page.waitForURL("**/report");

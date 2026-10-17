@@ -22,6 +22,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const next = readTheme();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- browser-only state is only readable after mount (no hydration mismatch)
     setTheme(next);
     document.documentElement.classList.toggle("dark", next === "dark");
   }, []);

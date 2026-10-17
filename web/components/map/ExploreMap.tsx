@@ -63,7 +63,9 @@ const userIcon = L.divIcon({
 function Recenter({ fix, token }: { fix: UserFix | null; token: number }) {
   const map = useMap();
   const fixRef = useRef(fix);
-  fixRef.current = fix;
+  useEffect(() => {
+    fixRef.current = fix;
+  }, [fix]);
   useEffect(() => {
     if (token === 0) return;
     const current = fixRef.current;

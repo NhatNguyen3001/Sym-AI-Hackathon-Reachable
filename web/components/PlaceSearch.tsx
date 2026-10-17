@@ -34,10 +34,6 @@ export function PlaceSearch({
   }
 
   useEffect(() => {
-    if (open) setHistory(loadPlaces());
-  }, [open]);
-
-  useEffect(() => {
     if (!open) return;
     function onPointerDown(event: PointerEvent) {
       if (!rootRef.current?.contains(event.target as Node)) {
@@ -80,6 +76,12 @@ export function PlaceSearch({
     else timer.current = setTimeout(() => { timer.current = null; void runSearch(query); }, 250);
   }
 
+  /** Open the list with the latest recent places. */
+  function openList() {
+    setHistory(loadPlaces());
+    setOpen(true);
+  }
+
   function pick(p: Place) {
     rememberPlace(p);
     onChange(p);
@@ -107,7 +109,7 @@ export function PlaceSearch({
   function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      if (!open) setOpen(true);
+      if (!open) openList();
       setActive((a) => Math.min(rows.length - 1, a + 1));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
@@ -151,13 +153,13 @@ export function PlaceSearch({
           onChange={(e) => {
             setText(e.target.value);
             if (value) onChange(null);
-            setOpen(true);
+            openList();
             setOptions([]);
             setActive(-1);
             search(e.target.value);
           }}
           onFocus={() => {
-            setOpen(true);
+            openList();
             setActive(0);
           }}
           onBlur={(e) => {

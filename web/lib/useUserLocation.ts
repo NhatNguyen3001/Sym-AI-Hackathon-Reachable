@@ -15,6 +15,7 @@ export function useUserLocation() {
 
   useEffect(() => {
     if (!("geolocation" in navigator)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- browser-only state is only readable after mount (no hydration mismatch)
       setStatus("unsupported");
       return;
     }
