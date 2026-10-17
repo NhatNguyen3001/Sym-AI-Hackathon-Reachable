@@ -29,9 +29,12 @@ def nearest_node(G, lat: float, lng: float):
 
 
 def nearest_edge(G, lat: float, lng: float) -> tuple[str, float]:
-    """Nearest edge by midpoint distance. Returns (edge_id, metres)."""
+    """Nearest real footpath edge by midpoint distance. Returns (edge_id, metres).
+    Virtual station edges (lifts, platform links) are skipped: barriers on them are lift outages, not reports."""
     best, best_d = None, math.inf
-    for u, v, k in G.edges(keys=True):
+    for u, v, k, d in G.edges(keys=True, data=True):
+        if d.get("kind"):
+            continue
         mu, mv = G.nodes[u], G.nodes[v]
         d = dist_m(lat, lng, (mu["y"] + mv["y"]) / 2, (mu["x"] + mv["x"]) / 2)
         if d < best_d:

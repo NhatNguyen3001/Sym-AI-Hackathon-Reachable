@@ -42,3 +42,10 @@ def test_places_resolve_nodes_and_exits():
     assert PL.get("mq-station").exits == ["north", "south"]
     assert PL.get("nope") is None
     assert [e["exitId"] for e in PL.station_exits("mq-station")] == ["north", "south"]
+
+
+def test_nearest_edge_never_snaps_to_virtual_station_edges():
+    from app.routing.graph import nearest_edge
+    a, b = G.nodes["mq-station"], G.nodes[951237975]
+    edge, _ = nearest_edge(G, (a["y"] + b["y"]) / 2, (a["x"] + b["x"]) / 2)  # midpoint of the north lift edge
+    assert "mq-station" not in edge

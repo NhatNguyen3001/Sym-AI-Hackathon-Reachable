@@ -13,14 +13,14 @@ from app.db import init_db, make_engine
 from app.errors import ApiError, api_error_handler
 from app.events import Broadcaster
 from app.llm.client import get_client
-from app.routers import agents, demo, events, health, places, profile, route, stations, updates, venue, weather
+from app.routers import agents, demo, events, health, places, profile, reports, route, stations, updates, venue, weather
 from app.routing.graph import load_graph
 from app.routing.places import Places
 from app.seed import seed
 from app.weather import WeatherService
 
 log = logging.getLogger("reachable")
-ROUTERS = [m.router for m in (health, places, profile, route, venue, updates, agents, weather, stations, events, demo)]
+ROUTERS = [m.router for m in (health, places, profile, route, venue, reports, updates, agents, weather, stations, events, demo)]
 
 
 async def validation_handler(_: Request, exc: RequestValidationError):
@@ -49,6 +49,7 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
         st.weather = weather_service or WeatherService()
         st.broadcaster = Broadcaster()
         st.llm = get_client(settings.anthropic_api_key)
+        st.photo_labels = {}
         if settings.seed:
             with Session(st.engine) as s:
                 seed(s, st.graph, st.places)
