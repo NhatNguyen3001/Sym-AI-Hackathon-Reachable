@@ -22,6 +22,7 @@ const TURN_WARN_M = 30;
 /** Queued, so a turn said right after a new step doesn't cut it off. */
 function speak(text: string) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  window.speechSynthesis.resume(); // Chrome can leave speech paused (e.g. after the tab was hidden)
   const u = new SpeechSynthesisUtterance(text);
   u.lang = "en-AU";
   window.speechSynthesis.speak(u);
@@ -69,6 +70,7 @@ export function NavigationPanel({
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- the voice setting is only readable after mount
     setVoice(readStored(VOICE_KEY) !== "off");
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel(); // a fresh start, not a queue left from before
     const id = setInterval(() => setNow(Date.now()), 15000);
     return () => clearInterval(id);
   }, []);
@@ -107,6 +109,7 @@ export function NavigationPanel({
     setVoice(next);
     writeStored(VOICE_KEY, next ? "on" : "off");
     if (!next && "speechSynthesis" in window) window.speechSynthesis.cancel();
+    if (next && stepText) speak(stepText); // say where you are, so you hear the voice is back
   }
 
   const left = p ? p.remainingM : nav.total;
