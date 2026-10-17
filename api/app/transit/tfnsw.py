@@ -28,6 +28,20 @@ class TfnswClient:
         except ValueError as e:
             raise TransitUnavailable("TfNSW sent invalid JSON") from e
 
+    def live_hazards(self, kind: str) -> list[dict]:
+        """Open Live Traffic NSW notices of one kind (roadwork, incident, majorevent) as GeoJSON features."""
+        url = f"{self.base}/v1/live/hazards/{kind}/open"
+        try:
+            r = self.http.get(url, params=None, headers=self.headers)
+        except httpx.HTTPError as e:
+            raise TransitUnavailable(type(e).__name__) from e
+        if r.status_code >= 300:
+            raise TransitUnavailable(f"Live Traffic HTTP {r.status_code}")
+        try:
+            return r.json().get("features") or []
+        except ValueError as e:
+            raise TransitUnavailable("Live Traffic sent invalid JSON") from e
+
     def trip(self, o_lat: float, o_lng: float, d_lat: float, d_lng: float) -> dict:
         """Wheelchair-accessible journeys leaving now."""
         return self._get("/v1/tp/trip", {
