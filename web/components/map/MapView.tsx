@@ -106,6 +106,7 @@ export default function MapView({
   onPick?: (which: "active" | number) => void;
 }) {
   const [map, setMap] = useState<L.Map | null>(null);
+  const [legendOpen, setLegendOpen] = useState(false);
   const mountKey = useVisibleMount();
   const mapRef = useCallback((m: L.Map | null) => setMap(guardMap(m)), []);
   const reduced = useReducedMotion();
@@ -210,27 +211,36 @@ export default function MapView({
         )}
       </MapContainer>}
 
-      <div className="pointer-events-none absolute top-3 left-[4.5rem] z-[500] rounded-[14px] border border-line bg-surface px-3.5 py-2.5 text-[14px] lg:top-16 lg:left-3">
-        <p className="sr-only">Map legend</p>
-        <ul className="space-y-1">
-          <li className="flex items-center gap-2"><span aria-hidden="true" className="h-1.5 w-7 rounded bg-primary" />Your route</li>
-          {extras.length > 0 && (
-            <li className="flex items-center gap-2">
-              <span aria-hidden="true" className="w-7 border-t-[3px] border-dashed" style={{ borderColor: ALT[0] }} />Other routes
-            </li>
-          )}
-          {slopes.length > 0 && (
-            <li className="flex items-center gap-2"><span aria-hidden="true" className="h-1.5 w-7 rounded" style={{ background: SLOPE }} />Gentle slope</li>
-          )}
-          {marks.some((m) => m.kind === "toilet") && (
-            <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-full" style={{ background: TOILET }} />Accessible toilet</li>
-          )}
-          {marks.some((m) => m.kind === "entrance") && (
-            <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-full" style={{ background: PRIMARY }} />Level entrance</li>
-          )}
-          <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-[4px] bg-warn" />Barrier</li>
-          {fix && <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-full border-2 border-white bg-primary" />You</li>}
-        </ul>
+      <div className="absolute top-3 left-[4.5rem] z-[500] lg:top-16 lg:left-3">
+        <button type="button" aria-expanded={legendOpen} aria-controls="route-legend" aria-label="Map legend"
+          onClick={() => setLegendOpen((open) => !open)}
+          className="inline-flex size-12 items-center justify-center rounded-[12px] border-2 border-ink bg-surface text-[22px] font-bold text-ink shadow-sm">
+          ?
+        </button>
+        {legendOpen && (
+          <div id="route-legend" className="mt-2 w-max max-w-[220px] rounded-[14px] border border-line bg-surface px-3.5 py-2.5 text-[14px] shadow-lg">
+            <p className="sr-only">Map legend</p>
+            <ul className="space-y-1">
+              <li className="flex items-center gap-2"><span aria-hidden="true" className="h-1.5 w-7 rounded bg-primary" />Your route</li>
+              {extras.length > 0 && (
+                <li className="flex items-center gap-2">
+                  <span aria-hidden="true" className="w-7 border-t-[3px] border-dashed" style={{ borderColor: ALT[0] }} />Other routes
+                </li>
+              )}
+              {slopes.length > 0 && (
+                <li className="flex items-center gap-2"><span aria-hidden="true" className="h-1.5 w-7 rounded" style={{ background: SLOPE }} />Gentle slope</li>
+              )}
+              {marks.some((m) => m.kind === "toilet") && (
+                <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-full" style={{ background: TOILET }} />Accessible toilet</li>
+              )}
+              {marks.some((m) => m.kind === "entrance") && (
+                <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-full" style={{ background: PRIMARY }} />Level entrance</li>
+              )}
+              <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-[4px] bg-warn" />Barrier</li>
+              {fix && <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-full border-2 border-white bg-primary" />You</li>}
+            </ul>
+          </div>
+        )}
       </div>
 
       <div className="absolute right-3 bottom-44 z-[500] flex flex-col gap-2 lg:bottom-6">
