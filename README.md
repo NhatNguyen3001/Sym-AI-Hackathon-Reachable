@@ -3,28 +3,72 @@
 *From the stop to the door.* An accessible door-to-door trip planner for Macquarie University, built for the Sym AI Open 2026.
 
 - `api/` — FastAPI: real campus routing (OpenStreetMap footpaths, slope, stairs, station lifts, barriers, rain), Claude for needs parsing, route explanations and photo labels, live updates over Server-Sent Events.
-- `web/` — Next.js + Tailwind + shadcn/ui + react-leaflet: the six pages in `.claude/docs/reachable-web-ui-spec.md`.
-- Design docs: `.claude/docs/`, spec and plan: `docs/superpowers/`.
+- `web/` — Next.js + Tailwind + shadcn/ui + react-leaflet: the six pages (`/`, `/plan`, `/route`, `/report`, `/live`, `/needs`).
+- The UI spec, design mockups, specs and plans are kept outside the repo (`.claude/`, `docs/` are gitignored); ask the team for them.
 
-## Run it locally
+## Quick start: campus only, no Docker
 
-Prerequisites: Python 3.11, Node 20+.
+Everything for the Macquarie University campus runs with just Python and Node. No Docker, no API keys.
+
+**You need:** [Git](https://git-scm.com/), [Python 3.11+](https://www.python.org/downloads/) (tick "Add Python to PATH" on Windows), [Node.js 20+](https://nodejs.org/).
 
 ```bash
-# API (http://localhost:8000)
+git clone https://github.com/NhatNguyen3001/Sym-AI-Hackathon-Reachable.git
+cd Sym-AI-Hackathon-Reachable
+```
+
+**1. API** (first terminal, from the repo folder)
+
+Windows (PowerShell):
+```powershell
 cd api
 python -m venv .venv
-.venv/Scripts/pip install -r requirements-dev.txt     # macOS/Linux: .venv/bin/pip
-cp .env.example .env                                   # add ANTHROPIC_API_KEY (optional)
-.venv/Scripts/python -m uvicorn app.main:app --reload
+.venv\Scripts\python -m pip install -r requirements-dev.txt
+copy .env.example .env
+```
+macOS / Linux:
+```bash
+cd api
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
+cp .env.example .env
+```
 
-# Web (http://localhost:3000)
+Open `api/.env` and change these two lines so everything stays on campus:
+```
+ROUTER=campus
+PHOTON_URL=
+```
+(`ROUTER=campus` uses the built-in campus map instead of Sydney-wide Valhalla; an empty `PHOTON_URL` limits search to campus places.)
+
+Start it (leave this terminal running):
+```bash
+.venv\Scripts\python -m uvicorn app.main:app --reload --port 8000     # Windows
+.venv/bin/python -m uvicorn app.main:app --reload --port 8000         # macOS / Linux
+```
+Check: http://localhost:8000/health shows `{"ok":true}`.
+
+**2. Web** (second terminal, from the repo folder)
+```bash
 cd web
 npm install
+copy .env.example .env.local     # Windows   (macOS / Linux: cp .env.example .env.local)
 npm run dev
 ```
 
-Without `ANTHROPIC_API_KEY` everything still works: needs parsing and route explanations fall back to rules, and photo reports ask the user to pick the barrier type.
+**3. Open** http://localhost:3000, or go straight to the demo trip: http://localhost:3000/route?from=mq-station&to=library
+
+Without `ANTHROPIC_API_KEY` everything still works: needs parsing and route explanations fall back to rules, and photo reports ask the user to pick the barrier type. To try Claude, put a key in `api/.env` and restart the API.
+
+**Working on the UI:** pages are in `web/app/<page>/`, shared pieces in `web/components/`, colours and fonts in `web/app/globals.css` (design tokens: use these, don't add new colours). The page reloads as you save. Before pushing UI changes, run the checks (the browser tests also check accessibility with axe):
+```bash
+cd web
+npm test && npm run lint && npx tsc --noEmit
+npx playwright install chromium   # first time only
+npm run e2e                        # starts its own API and web server on ports 8100/3100
+```
+
+**Fresh demo data:** stop the API and delete `api/reachable.db`; it is recreated and re-seeded on the next start.
 
 ## Demo controls
 
