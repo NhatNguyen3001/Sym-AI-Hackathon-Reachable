@@ -11,13 +11,16 @@ import {
 import { InfoBanner, SampleDataBanner, WarnBanner, WeatherBanner } from "@/components/Banners";
 import { NeedsChips } from "@/components/NeedsChips";
 import { PlaceInput } from "@/components/PlaceInput";
+import { LegTimeline } from "@/components/LegTimeline";
 import { RouteStep, VenueCheckRow } from "@/components/Rows";
 import { StatusBadge } from "@/components/StatusBadge";
+import { TripOptions } from "@/components/TripOptions";
 import { RouteMap } from "@/components/map/RouteMap";
 import { ApiError, getPlace, getRoute, getVenueCheck } from "@/lib/api";
 import { useEvents } from "@/lib/events";
 import { addTrip, loadProfile } from "@/lib/profile";
 import { profile as defaultProfile } from "@/lib/placeholder";
+import { optionTimes, selectOption } from "@/lib/trip";
 import type { Place, Profile, RouteResult, VenueCheck } from "@/lib/types";
 
 interface LiveCard {
@@ -34,6 +37,7 @@ export function RouteClient() {
   const pathname = usePathname();
   const fromId = params.get("from") ?? "mq-station";
   const toId = params.get("to") ?? "library";
+  const optionId = params.get("option");
 
   const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [from, setFrom] = useState<Place | null>(null);
@@ -53,9 +57,10 @@ export function RouteClient() {
       setRoute(r.data);
       setSample(r.sample);
       setError(null);
-      if (r.data.ok && r.data.accessible && !r.sample) {
+      const minutes = r.data.options?.[0]?.minutes ?? r.data.accessible?.minutes;
+      if (r.data.ok && minutes && !r.sample) {
         const [f, t] = await Promise.all([findPlace(fromId), findPlace(toId)]);
-        addTrip({ fromId, from: f?.name ?? fromId, toId, to: t?.name ?? toId, minutes: r.data.accessible.minutes });
+        addTrip({ fromId, from: f?.name ?? fromId, toId, to: t?.name ?? toId, minutes });
       }
     } catch (e) {
       setRoute(null);
@@ -89,7 +94,7 @@ export function RouteClient() {
         text: `Reported with a photo just now. ${String(data.summary ?? "")} Your route now goes around it.`.replace(/\s+/g, " "),
       });
     } else if (event === "lift_changed") {
-      setAnnounce(`Lift status changed: ${data.exitId} exit lift is ${String(data.status).toLowerCase()}. Your route has been updated.`);
+      setAnnounce(`Lift status changed at ${String(data.station ?? "a station")}: ${String(data.status).toLowerCase()}. Your route has been updated.`);
     } else if (event === "weather_changed") {
       setAnnounce("Weather changed. Your route has been updated.");
     }
@@ -99,7 +104,15 @@ export function RouteClient() {
     if (nextFrom && nextTo) router.replace(`${pathname}?from=${nextFrom.id}&to=${nextTo.id}`);
   }
 
-  const acc = route?.ok ? route.accessible : undefined;
+  function choose(id: string) {
+    router.replace(`${pathname}?from=${fromId}&to=${toId}&option=${id}`, { scroll: false });
+  }
+
+  const options = route?.ok ? route.options : undefined;
+  const selected = selectOption(options, optionId);
+  const transit = selected?.mode === "transit" ? selected : undefined;
+  const acc = route?.ok && !transit ? route.accessible ?? undefined : undefined;
+  const explanation = transit && selected !== options?.[0] ? selected?.explanation : route?.explanation;
   const toilet = venue?.checks.find((c) => c.field === "Accessible toilet");
   const entrance = venue?.checks.find((c) => c.field === "Level entrance");
   const unmet: string[] = [];
@@ -119,6 +132,7 @@ export function RouteClient() {
         <div className="mt-5 space-y-4 border-t border-line pt-5">
           <SampleDataBanner show={sample} />
           {route?.note && <InfoBanner>{route.note}. Sydney-wide routing is unavailable right now.</InfoBanner>}
+          {route?.transitNote && <InfoBanner>{route.transitNote}</InfoBanner>}
           {error && <WarnBanner alert>{error}</WarnBanner>}
           {route === null && !error && <p role="status" className="text-muted">Finding your route…</p>}
 
@@ -127,6 +141,23 @@ export function RouteClient() {
               <p className="font-bold text-warn-strong">{route.reason}</p>
               <p>{route.suggestion}</p>
             </WarnBanner>
+          )}
+
+          {options && <TripOptions options={options} selected={selected?.id} onSelect={choose} />}
+
+          {transit && (
+            <section aria-labelledby="summary-h">
+              <h2 id="summary-h" className="sr-only">Summary</h2>
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <p className="text-[32px] leading-none font-bold">{transit.minutes} min</p>
+                  <p className="mt-1 text-[15px] text-muted">
+                    {optionTimes(transit)} · {transit.stepFree ? "step-free" : "has steps"}
+                  </p>
+                </div>
+                {route?.status && <StatusBadge label={route.status} />}
+              </div>
+            </section>
           )}
 
           {acc && (
@@ -150,7 +181,7 @@ export function RouteClient() {
               <h2 id="lifts-h" className="mb-1 text-[13px] font-bold tracking-wide text-muted uppercase">Station lifts</h2>
               <ul>
                 {route.liftStatus.map((l) => (
-                  <li key={l.exitId} className="flex items-start gap-3 border-b border-line py-2.5 last:border-b-0">
+                  <li key={l.exit} className="flex items-start gap-3 border-b border-line py-2.5 last:border-b-0">
                     {l.status === "Working"
                       ? <CircleCheck aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />
                       : <TriangleAlert aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-warn" />}
@@ -158,7 +189,7 @@ export function RouteClient() {
                       <p className="text-[16px]">{l.exit}: {l.status}</p>
                       <p className="text-[14px] text-muted">{l.source}, updated {l.updated}</p>
                     </div>
-                    <StatusBadge label={l.status === "Working" ? "Confirmed" : "Out of service"} />
+                    <StatusBadge label={l.status === "Working" ? "Confirmed" : l.status} />
                   </li>
                 ))}
               </ul>
@@ -167,11 +198,18 @@ export function RouteClient() {
 
           {route?.ok && route.slopeNote && <WarnBanner>{route.slopeNote}</WarnBanner>}
 
-          {route?.ok && route.explanation && (
-            <p className="rounded-[14px] bg-bg px-4 py-3 text-[16px]">{route.explanation}</p>
+          {route?.ok && explanation && (
+            <p className="rounded-[14px] bg-bg px-4 py-3 text-[16px]">{explanation}</p>
           )}
 
-          {route?.ok && route.steps && (
+          {transit && (
+            <section aria-labelledby="steps-h">
+              <h2 id="steps-h" className="text-[13px] font-bold tracking-wide text-muted uppercase">Step by step</h2>
+              <LegTimeline legs={transit.legs} />
+            </section>
+          )}
+
+          {!transit && route?.ok && route.steps && route.steps.length > 0 && (
             <section aria-labelledby="steps-h">
               <h2 id="steps-h" className="text-[13px] font-bold tracking-wide text-muted uppercase">Step by step</h2>
               <ol>{route.steps.map((s, i) => <RouteStep key={i} step={s} />)}</ol>
@@ -246,7 +284,8 @@ export function RouteClient() {
       </aside>
 
       <div className="relative min-h-[560px] flex-1 lg:sticky lg:top-0 lg:h-screen">
-        <RouteMap accessible={acc} fastest={route?.ok ? route.fastest : null} barriers={route?.barriers ?? []} />
+        <RouteMap accessible={acc} fastest={route?.ok && !transit ? route.fastest : null} barriers={route?.barriers ?? []}
+          legs={transit?.legs} />
         <WeatherBanner weather={route?.weather} className="absolute top-3 right-3 z-[600] max-w-[340px]" />
         <div aria-live="polite" className="absolute bottom-6 left-3 z-[600] max-w-[380px]">
           {live && (

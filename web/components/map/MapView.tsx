@@ -7,10 +7,11 @@ import { CircleMarker, MapContainer, Marker, Polyline, TileLayer } from "react-l
 import { Minus, Plus } from "lucide-react";
 import { guardMap } from "./guardMap";
 import { useVisibleMount } from "./useVisibleMount";
-import type { MapBarrier, RouteOut } from "@/lib/types";
+import type { Leg, MapBarrier, RouteOut } from "@/lib/types";
 
 const PRIMARY = "#1D4FA8";
 const FASTEST = "#6B746F";
+const RIDE = "#15201B"; // ink token: public transport legs
 const WARN = "#A84A00";
 const CAMPUS: [number, number] = [-33.7765, 151.116];
 
@@ -31,7 +32,9 @@ function barrierIcon(b: MapBarrier) {
   });
 }
 
-const toLatLng = (r?: RouteOut | null) => (r ? r.geometry.coordinates.map(([lng, lat]) => [lat, lng] as [number, number]) : []);
+type LatLng = [number, number];
+const toLatLng = (r?: { geometry: RouteOut["geometry"] } | null) =>
+  (r ? r.geometry.coordinates.map(([lng, lat]) => [lat, lng] as LatLng) : []);
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -46,11 +49,13 @@ function useReducedMotion() {
 }
 
 export default function MapView({
-  accessible, fastest, barriers = [],
+  accessible, fastest, barriers = [], legs,
 }: {
   accessible?: RouteOut | null;
   fastest?: RouteOut | null;
   barriers?: MapBarrier[];
+  /** A public transport trip: walks drawn solid, rides dashed, stations as rings. */
+  legs?: Leg[];
 }) {
   const [map, setMap] = useState<L.Map | null>(null);
   const mountKey = useVisibleMount();
@@ -59,6 +64,20 @@ export default function MapView({
   const acc = useMemo(() => toLatLng(accessible), [accessible]);
   const fast = useMemo(() => toLatLng(fastest), [fastest]);
   const sameAsFastest = acc.length === fast.length && acc.every((p, i) => p[0] === fast[i][0] && p[1] === fast[i][1]);
+  const trip = useMemo(() => {
+    const walks: LatLng[][] = [];
+    const rides: LatLng[][] = [];
+    const stops: LatLng[] = [];
+    for (const l of legs ?? []) {
+      if (l.kind === "walk") walks.push(toLatLng(l));
+      if (l.kind === "ride") {
+        rides.push(toLatLng(l));
+        stops.push([l.from.lat, l.from.lng], [l.to.lat, l.to.lng]);
+      }
+    }
+    return { walks: walks.filter((w) => w.length > 1), rides: rides.filter((r) => r.length > 1), stops };
+  }, [legs]);
+  const hasTrip = trip.rides.length > 0;
 
   // Leaflet measures its container once; tell it when the container changes size.
   useEffect(() => {
@@ -70,9 +89,9 @@ export default function MapView({
   }, [map]);
 
   useEffect(() => {
-    const pts = [...acc, ...fast];
+    const pts = [...acc, ...fast, ...trip.walks.flat(), ...trip.rides.flat()];
     if (map && pts.length > 1) map.fitBounds(L.latLngBounds(pts), { padding: [48, 48], animate: !reduced });
-  }, [map, acc, fast, reduced]);
+  }, [map, acc, fast, trip, reduced]);
 
   return (
     <div role="region" aria-label="Route map" className="relative h-full min-h-[560px] w-full">
@@ -101,6 +120,15 @@ export default function MapView({
             <CircleMarker center={acc[acc.length - 1]} radius={10} pathOptions={{ color: PRIMARY, weight: 2, fillColor: PRIMARY, fillOpacity: 1 }} />
           </>
         )}
+        {trip.rides.map((r, i) => (
+          <Polyline key={`ride-${i}`} positions={r} pathOptions={{ color: RIDE, weight: 6, dashArray: "2 10", opacity: 0.9 }} />
+        ))}
+        {trip.walks.map((w, i) => (
+          <Polyline key={`walk-${i}`} positions={w} pathOptions={{ color: PRIMARY, weight: 8, opacity: 1 }} />
+        ))}
+        {trip.stops.map((pt, i) => (
+          <CircleMarker key={`stop-${i}`} center={pt} radius={7} pathOptions={{ color: RIDE, weight: 3, fillColor: "#fff", fillOpacity: 1 }} />
+        ))}
         {barriers.map((b) => (
           <Marker key={b.id} position={[b.lat, b.lng]} icon={barrierIcon(b)} title={b.title} alt={b.title} keyboard={false} />
         ))}
@@ -109,7 +137,14 @@ export default function MapView({
       <div className="pointer-events-none absolute top-3 left-3 z-[500] rounded-[14px] border border-line bg-surface px-3.5 py-2.5 text-[14px]">
         <p className="sr-only">Map legend</p>
         <ul className="space-y-1">
-          <li className="flex items-center gap-2"><span aria-hidden="true" className="h-1.5 w-7 rounded bg-primary" />Your route</li>
+          <li className="flex items-center gap-2">
+            <span aria-hidden="true" className="h-1.5 w-7 rounded bg-primary" />{hasTrip ? "Your walk or roll" : "Your route"}
+          </li>
+          {hasTrip && (
+            <li className="flex items-center gap-2">
+              <span aria-hidden="true" className="w-7 border-t-[3px] border-dotted border-ink" />Public transport
+            </li>
+          )}
           {!sameAsFastest && fast.length > 1 && (
             <li className="flex items-center gap-2">
               <span aria-hidden="true" className="w-7 border-t-[3px] border-dashed border-fastest" />Fastest route
