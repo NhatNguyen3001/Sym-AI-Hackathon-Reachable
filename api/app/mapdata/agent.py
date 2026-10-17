@@ -2,7 +2,7 @@
 (Live Traffic NSW, judged by Claude), then saves everything in one write (spec section 4)."""
 import asyncio
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from sqlmodel import Session, delete, func, select
 
@@ -84,6 +84,10 @@ class MapAgent:
     def _save(self, g: dict) -> str:
         t = now()
         with Session(self.engine) as s:
+            last = s.exec(select(AgentRun.started_at).where(AgentRun.agent == AGENT)
+                          .order_by(AgentRun.started_at.desc())).first()
+            if last is not None and t <= aware(last):  # Windows' clock ticks every 15.6 ms: keep runs in order
+                t = aware(last) + timedelta(microseconds=1)
             new = [(key, p) for key, rows in g["places"].items() for p in rows]
             for key in g["places"]:
                 s.exec(delete(MapPlace).where(MapPlace.tile == key))
