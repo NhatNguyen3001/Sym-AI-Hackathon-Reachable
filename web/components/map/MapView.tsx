@@ -162,15 +162,14 @@ export default function MapView({
     const line = [...acc, ...extras.flatMap((alt) => toLatLng(alt)), ...trip.walks.flat(), ...trip.rides.flat()];
     const pts = line.length > 1 ? line : pins.map(([pt]) => pt as LatLng);
     if (map && pts.length > 1) {
+      // The whole trip in view. On phones the route sheet covers up to 58% of the screen from the bottom.
       const narrow = window.matchMedia("(max-width: 1023px)").matches;
       map.fitBounds(L.latLngBounds(pts), {
         paddingTopLeft: [28, 72],
-        paddingBottomRight: [28, narrow ? 160 : 48],
+        paddingBottomRight: [28, narrow ? Math.round(window.innerHeight * 0.58) + 16 : 48],
         maxZoom: 19,
         animate: false,
       });
-      const closer = Math.min(19, map.getZoom() + 2);
-      if (closer > map.getZoom()) map.setZoom(closer, { animate: false });
     }
   }, [map, acc, extras, trip, pins]);
 
@@ -234,7 +233,7 @@ export default function MapView({
         {marks.map((mark) => (
           <Marker key={mark.id} position={[mark.lat, mark.lng]} icon={placeIcon(mark)} alt={mark.label} title={mark.label} keyboard={false} zIndexOffset={700} />
         ))}
-        {acc.length === 0 && !hasTrip && pins.map(([pt, kind]) => (
+        {acc.length === 0 && pins.map(([pt, kind]) => (
           <CircleMarker key={kind} center={pt} radius={kind === "route-start" ? 9 : 10} className={kind}
             pathOptions={kind === "route-start"
               ? { color: PRIMARY, weight: 4, fillColor: "#fff", fillOpacity: 1 }
