@@ -44,6 +44,8 @@ class Places:
                 p.node = nearest_node(G, p.lat, p.lng)
             if p.id == self.station_id:
                 p.exits = [e["id"] for e in self.exits]
+                p.exit_points = [{"id": e["id"], "name": e["name"], "lat": G.nodes[e["osmNode"]]["y"],
+                                  "lng": G.nodes[e["osmNode"]]["x"], "via": e["via"]} for e in self.exits]
             self._places.append(p)
         self._by_id = {p.id: p for p in self._places}
 

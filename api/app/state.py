@@ -18,7 +18,9 @@ def build_context(session: Session, raining: bool) -> Context:
         if b.type == "lift_outage":
             if b.status == "confirmed" and b.exit_id:
                 ctx.lift_out_exits.add(b.exit_id)
-        elif b.edge_id:
+        else:
+            ctx.barrier_points.append((b.lat, b.lng, b.status))
+        if b.type != "lift_outage" and b.edge_id:
             u, v, k = b.edge_id.rsplit("-", 2)
             for eid in (b.edge_id, f"{v}-{u}-{k}"):  # a blocked footpath is blocked both ways
                 if ctx.barriers.get(eid) != "confirmed":

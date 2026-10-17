@@ -16,6 +16,7 @@ from app.llm.client import get_client
 from app.routers import agents, demo, events, health, places, profile, reports, route, stations, updates, venue, weather
 from app.routing.graph import load_graph
 from app.routing.places import Places
+from app.routing.router import CampusRouter, get_router
 from app.seed import seed
 from app.weather import WeatherService
 
@@ -35,7 +36,7 @@ async def server_error_handler(_: Request, exc: Exception):
     return JSONResponse({"error": {"code": "server_error", "message": "Something went wrong on our side."}}, status_code=500)
 
 
-def create_app(settings: Settings | None = None, graph=None, places=None, weather_service=None) -> FastAPI:
+def create_app(settings: Settings | None = None, graph=None, places=None, weather_service=None, router=None) -> FastAPI:
     settings = settings or Settings()
 
     @asynccontextmanager
@@ -47,6 +48,8 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
         st.graph = graph if graph is not None else load_graph(settings.graph_path)
         st.places = places or Places(settings.places_path, settings.overrides_path, st.graph)
         st.weather = weather_service or WeatherService()
+        st.campus = CampusRouter(st.graph, settings.speed_mps, st.places.exit_names)
+        st.router = router or get_router(settings, st.graph, st.places)
         st.broadcaster = Broadcaster()
         st.llm = get_client(settings.anthropic_api_key)
         st.photo_labels = {}

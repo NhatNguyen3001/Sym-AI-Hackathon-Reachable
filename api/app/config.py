@@ -15,3 +15,10 @@ class Settings(BaseSettings):
     overrides_path: Path = API_DIR / "data" / "overrides.json"
     uploads_dir: Path = API_DIR / "uploads"
     seed: bool = True
+    # Sydney-wide routing and search (cycle 2)
+    router: str = "valhalla"  # "valhalla" or "campus"
+    valhalla_url: str = "http://localhost:8002"
+    photon_url: str = "https://photon.komoot.io"  # empty string disables Photon
+    overpass_url: str = "https://overpass-api.de/api/interpreter"
+    coverage_bbox: str = "149.97,-34.33,151.63,-32.99"  # west,south,east,north
+    max_leg_km: float = 10

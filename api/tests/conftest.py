@@ -18,7 +18,8 @@ class _Dry:
 
 @pytest.fixture
 def settings(tmp_path):
-    return Settings(database_url=f"sqlite:///{tmp_path / 't.db'}", anthropic_api_key="", uploads_dir=tmp_path / "uploads")
+    return Settings(database_url=f"sqlite:///{tmp_path / 't.db'}", anthropic_api_key="", uploads_dir=tmp_path / "uploads",
+                    router="campus", photon_url="")
 
 
 @pytest.fixture
