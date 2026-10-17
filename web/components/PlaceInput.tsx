@@ -7,7 +7,7 @@ import { searchPlaces } from "@/lib/api";
 import type { Place } from "@/lib/types";
 
 export function PlaceInput({
-  label, value, onChange, placeholder, hint, menuPlacement = "down",
+  label, value, onChange, placeholder, hint, menuPlacement = "down", compact = false,
 }: {
   label: string;
   value: Place | null;
@@ -15,6 +15,8 @@ export function PlaceInput({
   placeholder?: string;
   hint?: string;
   menuPlacement?: "up" | "down";
+  /** Smaller label and box, for the collapsed route sheet on a phone. */
+  compact?: boolean;
 }) {
   const id = useId();
   const listId = `${id}-list`;
@@ -111,7 +113,7 @@ export function PlaceInput({
 
   return (
     <div className="relative">
-      <label htmlFor={id} className="mb-1.5 block text-[16px] font-bold">{label}</label>
+      <label htmlFor={id} className={cn("block font-bold", compact ? "mb-1 text-[14px]" : "mb-1.5 text-[16px]")}>{label}</label>
       <input
         id={id}
         type="text"
@@ -139,7 +141,7 @@ export function PlaceInput({
         }}
         onBlur={() => setTimeout(() => setOpen(false), 120)}
         onKeyDown={onKeyDown}
-        className="h-12 w-full rounded-[12px] border border-line-strong bg-surface px-3.5 text-[17px] text-ink"
+        className={cn("w-full rounded-[12px] border border-line-strong bg-surface px-3.5 text-[17px] text-ink", compact ? "h-11" : "h-12")}
       />
       {hint && <p id={hintId} className="mt-1 text-[14px] text-muted">{hint}</p>}
       <ul

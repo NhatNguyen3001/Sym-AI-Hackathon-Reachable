@@ -3,6 +3,7 @@
 import "leaflet/dist/leaflet.css";
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import L from "leaflet";
+import { cn } from "cn";
 import { Circle, CircleMarker, MapContainer, Marker, Polyline, TileLayer } from "react-leaflet";
 import { Minus, Plus } from "lucide-react";
 import { guardMap } from "./guardMap";
@@ -115,7 +116,7 @@ function sameLine(a?: RouteOut | null, b?: RouteOut | null) {
 
 export default function MapView({
   accessible, fastest, alternatives = [], barriers = [], routeLabel = "", marks = [], slopes = [], onPick, legs, ends,
-  lifts = [], selectedLift = null, onLift,
+  lifts = [], selectedLift = null, onLift, follow = null, walked = [], previewPoint = null,
 }: {
   accessible?: RouteOut | null;
   fastest?: RouteOut | null;
@@ -133,6 +134,12 @@ export default function MapView({
   lifts?: LiftRow[];
   selectedLift?: string | null;
   onLift?: (key: string) => void;
+  /** While guiding: keep this point in the middle of the map. */
+  follow?: LatLng | null;
+  /** While guiding: the part of the route already behind you, drawn grey. */
+  walked?: LatLng[];
+  /** While previewing the walk: where the preview has got to. */
+  previewPoint?: LatLng | null;
 }) {
   const [map, setMap] = useState<L.Map | null>(null);
   const [legendOpen, setLegendOpen] = useState(false);
@@ -195,6 +202,12 @@ export default function MapView({
     }
   }, [map, acc, extras, trip, pins]);
 
+  const guiding = follow !== null;
+  useEffect(() => {
+    if (!map || !follow) return;
+    map.setView(follow, Math.max(map.getZoom(), 18), { animate: !reduced });
+  }, [map, follow, reduced]);
+
   return (
     <div role="region" aria-label="Route map" className="relative h-full min-h-[240px] w-full">
       {mountKey !== null && <MapContainer
@@ -249,7 +262,14 @@ export default function MapView({
         {slopes.map((span) => (
           <Polyline key={span.id} positions={span.positions} pathOptions={{ color: SLOPE, weight: 8, opacity: 1 }} />
         ))}
-        {routeLabel && acc.length > 1 && (
+        {walked.length > 1 && (
+          <Polyline positions={walked} interactive={false} pathOptions={{ color: "#8A938E", weight: 9, opacity: 1 }} />
+        )}
+        {previewPoint && (
+          <CircleMarker center={previewPoint} radius={11} interactive={false}
+            pathOptions={{ color: "#fff", weight: 4, fillColor: PRIMARY, fillOpacity: 1 }} />
+        )}
+        {routeLabel && !guiding && acc.length > 1 && (
           <Marker position={acc[Math.floor(acc.length / 2)]} icon={labelIcon(routeLabel)} alt={routeLabel} title={routeLabel} keyboard={false} zIndexOffset={600} />
         )}
         {marks.map((mark) => (
@@ -287,7 +307,7 @@ export default function MapView({
         )}
       </MapContainer>}
 
-      <div className="absolute top-3 left-[4.5rem] z-[500] lg:top-16 lg:left-3">
+      <div className={cn("absolute top-3 left-[4.5rem] z-[500] lg:top-16 lg:left-3", guiding && "hidden")}>
         <button type="button" aria-expanded={legendOpen} aria-controls="route-legend" aria-label="Map legend"
           onClick={() => setLegendOpen((open) => !open)}
           className="inline-flex size-12 items-center justify-center rounded-[12px] border-2 border-ink bg-surface text-[22px] font-bold text-ink shadow-sm">
@@ -334,7 +354,7 @@ export default function MapView({
         )}
       </div>
 
-      <div className="absolute right-3 bottom-44 z-[500] flex flex-col gap-2 lg:bottom-6">
+      <div className="absolute right-3 bottom-72 z-[500] flex flex-col gap-2 lg:bottom-6">
         <button type="button" aria-label="Zoom in" onClick={() => map?.zoomIn()}
           className="flex size-12 items-center justify-center rounded-[12px] border border-line-strong bg-surface text-ink hover:bg-bg">
           <Plus aria-hidden="true" className="size-5" strokeWidth={2.4} />

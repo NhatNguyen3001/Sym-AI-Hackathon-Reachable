@@ -41,7 +41,9 @@ test("picking an alternative switches the directions; a live update goes back to
     await expect(page.getByRole("button", { name: "Start" }).first()).toBeVisible();
 
     await tfnsw.post("/_mock/lifts", { data: { osmIds: [] } }); // a real lift change: the route reloads
-    await expect(page.getByRole("button", { name: "Start" })).toHaveCount(0, { timeout: 10_000 });
+    await page.waitForTimeout(2500);                              // the API polls the lift feed every second
+    const after = await alternatives();
+    await expect(summary.getByText(`${after.recommended} min`, { exact: true })).toBeVisible({ timeout: 10_000 });
   } finally {
     await tfnsw.post("/_mock/lifts", { data: { osmIds: [LIFT2] } });
     await tfnsw.dispose();

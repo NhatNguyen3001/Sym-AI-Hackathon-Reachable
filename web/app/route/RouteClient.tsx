@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { InfoBanner, SampleDataBanner, WarnBanner, WeatherBanner } from "@/components/Banners";
 import { PlaceInput } from "@/components/PlaceInput";
 import { LegTimeline } from "@/components/LegTimeline";
+import { NavigationPanel } from "@/components/NavigationPanel";
 import { RouteSkeleton } from "@/components/RouteSkeleton";
 import { RouteStep } from "@/components/Rows";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -17,7 +18,10 @@ import { ApiError, getPlace, getRoute, getVenueCheck } from "@/lib/api";
 import { useEvents } from "@/lib/events";
 import { addTrip, loadProfile, rememberPlace, saveProfile } from "@/lib/profile";
 import { profile as defaultProfile } from "@/lib/placeholder";
+import { navFromLegs, navFromWalk } from "@/lib/navigation";
 import { routeFeatures } from "@/lib/routeFeatures";
+import { useGuidance } from "@/lib/useGuidance";
+import { useUserLocation } from "@/lib/useUserLocation";
 import { optionTimes, selectOption, showsCards } from "@/lib/trip";
 import type { LiftRow, Place, Profile, RouteOption, RouteResult, VenueCheck } from "@/lib/types";
 
@@ -29,6 +33,7 @@ interface LiveCard {
 
 const findPlace = (id: string) => getPlace(id);
 const liftKey = (l: LiftRow) => l.exitId ?? l.exit;
+const NO_ROUTES: RouteOption[] = [];
 
 export function RouteClient() {
   const params = useSearchParams();
@@ -56,6 +61,9 @@ export function RouteClient() {
   const [pickedOption, setPickedOption] = useState<string | null>(null);
   const [liftOpen, setLiftOpen] = useState<string | null>(null);
   const [liftAnswers, setLiftAnswers] = useState<Record<string, "working" | "broken">>({});
+  const [navigating, setNavigating] = useState(false);
+  const [previewing, setPreviewing] = useState(false);
+  const { fix: userFix, status: locationStatus } = useUserLocation();
 
   /** Open the details (desktop side panel, phone sheet) so a problem with the trip is seen. */
   function showDetails() {
@@ -157,6 +165,34 @@ export function RouteClient() {
     () => routeFeatures(active?.geometry.coordinates, activeSteps, venue, to),
     [active, activeSteps, venue, to],
   );
+  const navRoute = useMemo(() => {
+    if (transit) return navFromLegs(transit.legs);
+    return active ? navFromWalk(active.geometry.coordinates, activeSteps) : null;
+  }, [transit, active, activeSteps]);
+  const guide = useGuidance(navRoute, navigating, userFix, previewing);
+  // The recommended way counts as chosen: Start is there as soon as a route is.
+  const canStart = !!route?.ok && !!navRoute;
+
+  function startNav() {
+    setNavigating(true);
+    setPreviewing(false);
+    setSheetOpen(false);
+    setSearchOpen(false);
+    setLiftOpen(null);
+  }
+
+  function endNav() {
+    setNavigating(false);
+    setPreviewing(false);
+    setSearchOpen(true);
+  }
+
+  function replanFromHere() {
+    if (!userFix) return;
+    const here = `coord:here:${userFix.lat.toFixed(5)},${userFix.lng.toFixed(5)}`;
+    router.replace(`${pathname}?from=${encodeURIComponent(here)}&to=${encodeURIComponent(toId)}`);
+  }
+
   const routeLabel = chosen
     ? chosen.summary
     : route?.ok && /fastest route/i.test(route.explanation)
@@ -216,7 +252,8 @@ export function RouteClient() {
         <button type="button" aria-expanded={searchOpen}
           aria-label={searchOpen ? "Hide route details" : "Show route details"}
           onClick={() => setSearchOpen((open) => !open)}
-          className="group absolute top-3 -left-[22px] z-[700] hidden size-11 items-center justify-center lg:inline-flex">
+          className={cn("group absolute top-3 -left-[22px] z-[700] hidden size-11 items-center justify-center",
+            !navigating && "lg:inline-flex")}>
           <span aria-hidden="true"
             className="flex size-7 items-center justify-center rounded-full border border-line-strong bg-surface text-ink shadow-sm group-hover:bg-bg group-focus-visible:outline-2 group-focus-visible:outline-primary">
             {searchOpen ? <ChevronLeft className="size-4" strokeWidth={2.6} /> : <ChevronRight className="size-4" strokeWidth={2.6} />}
@@ -225,8 +262,8 @@ export function RouteClient() {
         <RouteMap
           ends={ends}
           accessible={active}
-          fastest={route?.ok && !transit ? route.fastest : null}
-          alternatives={others}
+          fastest={route?.ok && !transit && !navigating ? route.fastest : null}
+          alternatives={navigating ? NO_ROUTES : others}
           barriers={route?.barriers ?? []}
           routeLabel={routeLabel}
           marks={features.marks}
@@ -236,8 +273,17 @@ export function RouteClient() {
           lifts={liftRows}
           selectedLift={liftOpen}
           onLift={(key) => setLiftOpen(key)}
+          follow={navigating && !guide.farFromRoute ? guide.position : null}
+          walked={guide.walked}
+          previewPoint={navigating && previewing ? guide.position : null}
         />
-        {lift && (
+        {navigating && navRoute && (
+          <NavigationPanel nav={navRoute} guide={guide} destination={to?.name ?? "your destination"}
+            minutes={transit?.minutes ?? active?.minutes ?? 0} arriveAt={transit?.arriveAt}
+            locationStatus={locationStatus} previewing={previewing} onPreview={setPreviewing}
+            onReplan={replanFromHere} onEnd={endNav} />
+        )}
+        {lift && !navigating && (
           <article aria-labelledby="lift-h"
             className="absolute inset-x-3 top-[4.5rem] z-[700] rounded-[18px] bg-[#15201b] p-4 text-white shadow-lg lg:right-3 lg:left-auto lg:w-[360px]">
             <p className="text-[14px] font-bold tracking-wide text-[#ffd7a8] uppercase">Station lift</p>
@@ -291,55 +337,35 @@ export function RouteClient() {
       </div>
 
       <aside aria-label="Route details" className={cn(
-        "absolute inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[650] max-h-[58dvh] overflow-y-auto rounded-[22px] border border-line bg-surface px-4 py-3 shadow-lg",
+        "absolute inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[650] overflow-y-auto rounded-[22px] border border-line bg-surface px-4 py-3 shadow-lg",
+        sheetOpen && "max-h-[58dvh]",
         "lg:static lg:order-1 lg:bottom-auto lg:z-auto lg:h-full lg:max-h-full lg:max-w-[460px] lg:basis-[400px] lg:overflow-y-auto lg:rounded-none lg:border-0 lg:border-r lg:px-7 lg:py-6 lg:shadow-none",
         !searchOpen && "lg:hidden",
+        navigating && "hidden",
       )}>
         <h1 className="sr-only">Route and destination</h1>
         <button type="button" aria-expanded={sheetOpen}
           aria-label={sheetOpen ? "Hide route details" : "Show route details"}
           onClick={() => setSheetOpen((open) => !open)}
-          className="mx-auto mb-2 flex h-8 w-16 items-center justify-center rounded-full lg:hidden">
+          className="mx-auto mb-1 flex h-8 w-16 items-center justify-center rounded-full lg:hidden">
           <span aria-hidden="true" className="h-1.5 w-10 rounded-full bg-line-strong" />
         </button>
-        {!sheetOpen && (
-          <div className="lg:hidden">
-            <p className="text-[16px] font-bold">{from?.name ?? "From"} to {to?.name ?? "To"}</p>
-            {transit ? (
-              <p className="text-[15px] text-muted">
-                {transit.minutes} min · {transit.summary}
-              </p>
-            ) : active && (
-              <p className="text-[15px] text-muted">
-                {active.minutes} min · {active.stepFree ? "step-free" : "has steps"} · max slope {active.maxSlope}%
-              </p>
-            )}
-            <div className="mt-2 flex items-center gap-2">
-              <button type="button" aria-label="Filter" onClick={() => { setSheetOpen(true); setFiltersOpen(true); }}
-                className="inline-flex size-11 items-center justify-center rounded-full border border-line-strong text-ink">
-                <SlidersHorizontal aria-hidden="true" className="size-5" strokeWidth={2.4} />
-              </button>
-              {picked !== null && (
-                <button type="button"
-                  className="inline-flex min-h-11 items-center rounded-full bg-primary px-5 text-[15px] font-bold text-white">
-                  Start
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-        <div className={cn("space-y-4", !sheetOpen && "max-lg:hidden")}>
-          <PlaceInput label="From" value={from} onChange={(p) => { setFrom(p); go(p, to); }} />
-          <PlaceInput label="To" value={to} onChange={(p) => { setTo(p); go(from, p); }} />
+        {/* Collapsed on a phone, the sheet keeps just From, To, the filter and Start (about a third of the screen).
+            Typing in a box opens it, so the suggestions have room. */}
+        <div className={cn("space-y-4", !sheetOpen && "max-lg:space-y-2")}
+          onFocusCapture={() => setSheetOpen(true)}
+          onPointerDownCapture={(e) => { if ((e.target as HTMLElement).tagName === "INPUT") setSheetOpen(true); }}>
+          <PlaceInput label="From" compact={!sheetOpen} value={from} onChange={(p) => { setFrom(p); go(p, to); }} />
+          <PlaceInput label="To" compact={!sheetOpen} value={to} onChange={(p) => { setTo(p); go(from, p); }} />
           <div className="flex items-center gap-2">
             <button type="button" aria-expanded={filtersOpen} aria-label={filtersOpen ? "Hide filter" : "Filter"}
-              onClick={() => setFiltersOpen((open) => !open)}
+              onClick={() => { setSheetOpen(true); setFiltersOpen((open) => !open); }}
               className={cn("inline-flex size-11 items-center justify-center rounded-full border",
                 filtersOpen ? "border-primary bg-primary text-white" : "border-line-strong bg-surface text-ink")}>
               <SlidersHorizontal aria-hidden="true" className="size-5" strokeWidth={2.4} />
             </button>
-            {picked !== null && (
-              <button type="button"
+            {canStart && (
+              <button type="button" onClick={startNav}
                 className="inline-flex min-h-11 items-center rounded-full bg-primary px-5 text-[15px] font-bold text-white">
                 Start
               </button>
@@ -373,11 +399,8 @@ export function RouteClient() {
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <p className="text-[32px] leading-none font-bold">{transit.minutes} min</p>
-                  <p className="mt-1 text-[15px] text-muted">
-                    {optionTimes(transit)} · {transit.stepFree ? "step-free" : "has steps"}
-                  </p>
+                  <p className="mt-1 text-[15px] text-muted">{optionTimes(transit)}</p>
                 </div>
-                {route?.status && <StatusBadge label={route.status} />}
               </div>
             </section>
           )}
@@ -388,12 +411,8 @@ export function RouteClient() {
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <p className="text-[32px] leading-none font-bold">{active.minutes} min</p>
-                  <p className="mt-1 text-[15px] text-muted">
-                    {active.distanceM} m · {active.stepFree ? "step-free" : "has steps"} ·{" "}
-                    {active.slopeEstimated ? "slopes estimated" : `max slope ${active.maxSlope}%`}
-                  </p>
+                  <p className="mt-1 text-[15px] text-muted">{active.distanceM} m</p>
                 </div>
-                {route?.status && !chosen && <StatusBadge label={route.status} />}
               </div>
             </section>
           )}
