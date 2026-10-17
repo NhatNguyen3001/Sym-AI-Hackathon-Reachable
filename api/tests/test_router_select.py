@@ -28,10 +28,10 @@ def make_client(settings):
     return make
 
 
-def test_valhalla_down_on_campus_falls_back_with_note(make_client):
+def test_valhalla_down_campus_trip_still_works(make_client):
     with make_client(FakeRouter(exc=RoutingUnavailable("down"))) as c:
         r = c.post("/route", json={"from": "mq-station", "to": "library"}).json()
-    assert r["ok"] is True and r["note"] == "Using the offline campus map" and r["exitUsed"] == "north"
+    assert r["ok"] is True and r["exitUsed"] == "north"
 
 
 def test_valhalla_down_off_campus_503(make_client):
@@ -77,3 +77,19 @@ def test_same_start_and_end(client):
 def test_bad_coord_is_404(client):
     r = client.post("/route", json={"from": "coord:abc", "to": "library"})
     assert r.status_code == 404 and r.json()["error"]["code"] == "place_not_found"
+
+
+def test_campus_trips_use_campus_router_even_when_valhalla_is_up(make_client):
+    fake = FakeRouter(result={"ok": False, "reason": "should not be used", "suggestion": ""})
+    with make_client(fake) as c:
+        r = c.post("/route", json={"from": "mq-station", "to": "library"}).json()
+    assert fake.calls == [] and r["ok"] is True and r["exitUsed"] == "north" and "note" not in r
+
+
+def test_slope_note_passed_through(make_client):
+    result = {"ok": True, "accessible": {"geometry": {"type": "LineString", "coordinates": [[151.2066, -33.8732], [151.2129, -33.8661]]},
+                                         "distanceM": 900, "minutes": 15, "maxSlope": 2, "stepFree": True, "slopeEstimated": True},
+              "fastest": None, "minutesLonger": 0, "steps": [], "exitUsed": None, "slopeNote": "Slopes are estimates."}
+    with make_client(FakeRouter(result=result)) as c:
+        r = c.post("/route", json={"from": "coord:-33.8732,151.2066", "to": "coord:-33.8661,151.2129"}).json()
+    assert r["slopeNote"] == "Slopes are estimates." and r["accessible"]["slopeEstimated"] is True

@@ -1,0 +1,157 @@
+{
+ "trip": {
+  "locations": [
+   {
+    "type": "break",
+    "lat": -33.8173,
+    "lon": 151.0045,
+    "original_index": 0
+   },
+   {
+    "type": "break",
+    "lat": -33.8174,
+    "lon": 151.0026,
+    "side_of_street": "right",
+    "original_index": 1
+   }
+  ],
+  "legs": [
+   {
+    "maneuvers": [
+     {
+      "type": 1,
+      "instruction": "Walk northwest on the walkway.",
+      "verbal_succinct_transition_instruction": "Walk northwest.",
+      "verbal_pre_transition_instruction": "Walk northwest on the walkway.",
+      "verbal_post_transition_instruction": "Continue for 100 meters.",
+      "bearing_after": 302,
+      "time": 67.058,
+      "length": 0.095,
+      "cost": 67.058,
+      "begin_shape_index": 0,
+      "end_shape_index": 6,
+      "travel_mode": "pedestrian",
+      "travel_type": "foot"
+     },
+     {
+      "type": 15,
+      "instruction": "Turn left onto the crosswalk.",
+      "verbal_transition_alert_instruction": "Turn left onto the crosswalk.",
+      "verbal_succinct_transition_instruction": "Turn left.",
+      "verbal_pre_transition_instruction": "Turn left onto the crosswalk.",
+      "verbal_post_transition_instruction": "Continue for 60 meters.",
+      "bearing_before": 290,
+      "bearing_after": 170,
+      "time": 47.294,
+      "length": 0.064,
+      "cost": 47.294,
+      "begin_shape_index": 6,
+      "end_shape_index": 13,
+      "travel_mode": "pedestrian",
+      "travel_type": "foot"
+     },
+     {
+      "type": 15,
+      "instruction": "Turn left onto the walkway.",
+      "verbal_transition_alert_instruction": "Turn left onto the walkway.",
+      "verbal_succinct_transition_instruction": "Turn left.",
+      "verbal_pre_transition_instruction": "Turn left onto the walkway.",
+      "verbal_post_transition_instruction": "Continue for less than 10 meters.",
+      "bearing_before": 172,
+      "bearing_after": 76,
+      "time": 4.941,
+      "length": 0.007,
+      "cost": 4.941,
+      "begin_shape_index": 13,
+      "end_shape_index": 15,
+      "rough": true,
+      "travel_mode": "pedestrian",
+      "travel_type": "foot"
+     },
+     {
+      "type": 41,
+      "instruction": "Take the escalator to Level 4.",
+      "bearing_before": 79,
+      "bearing_after": 350,
+      "time": 13.411,
+      "length": 0.019,
+      "cost": 13.411,
+      "begin_shape_index": 15,
+      "end_shape_index": 16,
+      "travel_mode": "pedestrian",
+      "travel_type": "foot"
+     },
+     {
+      "type": 15,
+      "instruction": "Turn left onto the walkway.",
+      "verbal_transition_alert_instruction": "Turn left onto the walkway.",
+      "verbal_succinct_transition_instruction": "Turn left.",
+      "verbal_pre_transition_instruction": "Turn left onto the walkway.",
+      "verbal_post_transition_instruction": "Continue for 80 meters.",
+      "bearing_before": 350,
+      "bearing_after": 259,
+      "time": 71.797,
+      "length": 0.081,
+      "cost": 80.237,
+      "begin_shape_index": 16,
+      "end_shape_index": 20,
+      "rough": true,
+      "travel_mode": "pedestrian",
+      "travel_type": "foot"
+     },
+     {
+      "type": 5,
+      "instruction": "Your destination is on the right.",
+      "verbal_transition_alert_instruction": "Your destination will be on the right.",
+      "verbal_pre_transition_instruction": "Your destination is on the right.",
+      "bearing_before": 219,
+      "time": 0.0,
+      "length": 0.0,
+      "cost": 0.0,
+      "begin_shape_index": 20,
+      "end_shape_index": 20,
+      "travel_mode": "pedestrian",
+      "travel_type": "foot"
+     }
+    ],
+    "summary": {
+     "level_changes": [
+      [
+       16,
+       4.0
+      ]
+     ],
+     "has_time_restrictions": false,
+     "has_toll": false,
+     "has_highway": false,
+     "has_ferry": false,
+     "min_lat": -33.817622,
+     "min_lon": 151.00293,
+     "max_lat": -33.816905,
+     "max_lon": 151.004467,
+     "time": 204.503,
+     "length": 0.266,
+     "cost": 212.943
+    },
+    "shape": "hl`o_Aerq__HyDbJ_DtGyBzGkDhKqA~FeAnFhBUjB]zDm@dBd@fFDlBYbHq@Gg@OcBmIdANdBn@dJnAxN~NrN"
+   }
+  ],
+  "summary": {
+   "has_time_restrictions": false,
+   "has_toll": false,
+   "has_highway": false,
+   "has_ferry": false,
+   "min_lat": -33.817622,
+   "min_lon": 151.00293,
+   "max_lat": -33.816905,
+   "max_lon": 151.004467,
+   "time": 204.503,
+   "length": 0.266,
+   "cost": 212.943
+  },
+  "status_message": "Found route between points",
+  "status": 0,
+  "units": "kilometers",
+  "language": "en-US"
+ }
+}

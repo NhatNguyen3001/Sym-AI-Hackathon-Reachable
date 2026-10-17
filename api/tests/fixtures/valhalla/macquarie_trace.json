@@ -1,0 +1,211 @@
+{
+ "units": "kilometers",
+ "shape": "p_rl_A{nof_Hn@}@j@w@hAtAh@t@oOlUsS`YcK~OcAbBsBhDqAvBj@f@SbCi@nBc@jAy@vAiLpL_G`SG|Ee@xBG|OwC~C@|CHpBDl@X`ARlAR~DAtd@M~A[bCS|B\\`ATV`@b@\\f@Hl@?zGBjPgOPwBAyBLcBXuB`A_ChHCzB?x@pExB?bA",
+ "edges": [
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 1,
+   "begin_shape_index": 0,
+   "length": 0.004
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 2,
+   "begin_shape_index": 1,
+   "length": 0.004
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 3,
+   "begin_shape_index": 2,
+   "length": 0.006
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 4,
+   "begin_shape_index": 3,
+   "length": 0.003
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 7,
+   "weighted_grade": 5.0,
+   "surface": "paved_smooth",
+   "use": "footway",
+   "end_shape_index": 6,
+   "begin_shape_index": 4,
+   "length": 0.098
+  },
+  {
+   "max_downward_grade": -5,
+   "max_upward_grade": 0,
+   "weighted_grade": -5.0,
+   "surface": "paved_smooth",
+   "use": "footway",
+   "end_shape_index": 7,
+   "begin_shape_index": 6,
+   "length": 0.032
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "compacted",
+   "use": "footway",
+   "end_shape_index": 8,
+   "begin_shape_index": 7,
+   "length": 0.006
+  },
+  {
+   "max_downward_grade": -4,
+   "max_upward_grade": 0,
+   "weighted_grade": -3.333,
+   "surface": "paved",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 10,
+   "begin_shape_index": 8,
+   "length": 0.017
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "footway",
+   "end_shape_index": 12,
+   "begin_shape_index": 10,
+   "length": 0.009
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "compacted",
+   "use": "footway",
+   "end_shape_index": 13,
+   "begin_shape_index": 12,
+   "length": 0.006
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "compacted",
+   "use": "footway",
+   "end_shape_index": 14,
+   "begin_shape_index": 13,
+   "length": 0.004
+  },
+  {
+   "max_downward_grade": -1,
+   "max_upward_grade": 11,
+   "weighted_grade": 6.666,
+   "surface": "paved_smooth",
+   "use": "footway",
+   "end_shape_index": 17,
+   "begin_shape_index": 14,
+   "length": 0.069
+  },
+  {
+   "max_downward_grade": -1,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "footway",
+   "end_shape_index": 21,
+   "begin_shape_index": 17,
+   "length": 0.053
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "compacted",
+   "use": "footway",
+   "end_shape_index": 22,
+   "begin_shape_index": 21,
+   "length": 0.007
+  },
+  {
+   "max_downward_grade": -4,
+   "max_upward_grade": 0,
+   "weighted_grade": -1.666,
+   "surface": "compacted",
+   "use": "footway",
+   "end_shape_index": 31,
+   "begin_shape_index": 22,
+   "length": 0.096
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 4,
+   "weighted_grade": 3.333,
+   "surface": "compacted",
+   "use": "footway",
+   "end_shape_index": 37,
+   "begin_shape_index": 31,
+   "length": 0.025
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 5,
+   "weighted_grade": 5.0,
+   "surface": "paved_smooth",
+   "use": "footway",
+   "end_shape_index": 38,
+   "begin_shape_index": 37,
+   "length": 0.026
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 2,
+   "weighted_grade": 1.666,
+   "surface": "compacted",
+   "use": "footway",
+   "end_shape_index": 43,
+   "begin_shape_index": 38,
+   "length": 0.055
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 8,
+   "weighted_grade": 8.333,
+   "surface": "compacted",
+   "use": "footway",
+   "end_shape_index": 45,
+   "begin_shape_index": 43,
+   "length": 0.021
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 11,
+   "weighted_grade": 8.333,
+   "surface": "compacted",
+   "use": "footway",
+   "end_shape_index": 48,
+   "begin_shape_index": 45,
+   "length": 0.018,
+   "target_percent_along": 0.289,
+   "names": [
+    "First Walk"
+   ]
+  }
+ ],
+ "alternate_paths": []
+}

@@ -185,3 +185,13 @@ def test_venue_check_for_cached_place(client):
 def test_photon_client_raises_on_error():
     with pytest.raises(SearchUnavailable):
         photon_with(status=502).search("x", BBOX)
+
+
+def test_place_by_id_endpoint(client):
+    client.app.state.resolver.photon = photon_with([TOWN_HALL])
+    client.get("/places", params={"q": "town hall"})
+    assert client.get("/places/osm:N1763901273").json()["name"] == "Town Hall"
+    assert client.get("/places/library").json()["id"] == "library"
+    assert client.get("/places/coord:here:-33.87,151.21").json()["name"] == "Your location"
+    r = client.get("/places/osm:N404")
+    assert r.status_code == 404 and r.json()["error"]["code"] == "place_not_found"

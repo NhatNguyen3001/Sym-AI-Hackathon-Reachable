@@ -1,0 +1,822 @@
+{
+ "units": "kilometers",
+ "shape": "vrmr_Awt|k_HA?s@GcEW]t@]t@UPi@XWb@Q`AQ~DQ|Ag@j@wAf@TnAHd@?x@]lIMbDMxCmCKk@CQlLe@FgBTuAPSBUZ_@D@RN~B}c@tBgGXuw@rDcAFeETa@iD]_Dm@mPWcHAyAwCRoAHe_A~E{y@fEq@DqBDw@BY@s@Eu[~AsUrAMyCKqCyCP?SAs@gAqx@?GCyACgB?c@qKk@B_@B{@FyAjAwXtCaq@eEUDy@Bi@DeABq@Ds@v@sQxAw\\bAwTTcGuAIyGg@yMu@oTmAq_@yBXs@H_CFkB@_@SQi@GyBYqBWWEfAoHvAqTB[UaAVmEZgF\\mAzIysA\\sEb@eG_UmCsGeHm@oE",
+ "edges": [
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "compacted",
+   "use": "footway",
+   "end_shape_index": 1,
+   "begin_shape_index": 0,
+   "length": 0.0,
+   "source_percent_along": 0.923
+  },
+  {
+   "max_downward_grade": -3,
+   "max_upward_grade": 0,
+   "weighted_grade": -3.333,
+   "surface": "compacted",
+   "use": "footway",
+   "end_shape_index": 3,
+   "begin_shape_index": 1,
+   "length": 0.014
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 4,
+   "begin_shape_index": 3,
+   "length": 0.003
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 6,
+   "begin_shape_index": 4,
+   "length": 0.005
+  },
+  {
+   "max_downward_grade": -11,
+   "max_upward_grade": 0,
+   "weighted_grade": -10.0,
+   "surface": "compacted",
+   "use": "footway",
+   "end_shape_index": 13,
+   "begin_shape_index": 6,
+   "length": 0.03
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 4,
+   "weighted_grade": 3.333,
+   "surface": "paved_smooth",
+   "use": "parking_aisle",
+   "end_shape_index": 17,
+   "begin_shape_index": 13,
+   "length": 0.024
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "parking_aisle",
+   "end_shape_index": 18,
+   "begin_shape_index": 17,
+   "length": 0.008
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "parking_aisle",
+   "end_shape_index": 19,
+   "begin_shape_index": 18,
+   "length": 0.007
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "service_road",
+   "end_shape_index": 20,
+   "begin_shape_index": 19,
+   "length": 0.008
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "service_road",
+   "end_shape_index": 21,
+   "begin_shape_index": 20,
+   "length": 0.003
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 3,
+   "weighted_grade": 1.666,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 22,
+   "begin_shape_index": 21,
+   "length": 0.02
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "footway",
+   "end_shape_index": 23,
+   "begin_shape_index": 22,
+   "length": 0.002
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 24,
+   "begin_shape_index": 23,
+   "length": 0.006
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 25,
+   "begin_shape_index": 24,
+   "length": 0.005
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "footway",
+   "end_shape_index": 26,
+   "begin_shape_index": 25,
+   "length": 0.001
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 28,
+   "begin_shape_index": 26,
+   "length": 0.004
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 29,
+   "begin_shape_index": 28,
+   "length": 0.001
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 30,
+   "begin_shape_index": 29,
+   "length": 0.006
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 6,
+   "weighted_grade": 3.333,
+   "surface": "paved_smooth",
+   "use": "road",
+   "end_shape_index": 31,
+   "begin_shape_index": 30,
+   "length": 0.065,
+   "names": [
+    "Clarence Street"
+   ]
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 5,
+   "weighted_grade": 5.0,
+   "surface": "paved_smooth",
+   "use": "road",
+   "end_shape_index": 32,
+   "begin_shape_index": 31,
+   "length": 0.015,
+   "names": [
+    "Clarence Street"
+   ]
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 12,
+   "weighted_grade": 8.333,
+   "surface": "paved_smooth",
+   "use": "road",
+   "end_shape_index": 34,
+   "begin_shape_index": 32,
+   "length": 0.105,
+   "names": [
+    "Clarence Street"
+   ]
+  },
+  {
+   "max_downward_grade": -3,
+   "max_upward_grade": 0,
+   "weighted_grade": -3.333,
+   "surface": "paved_smooth",
+   "use": "road",
+   "end_shape_index": 35,
+   "begin_shape_index": 34,
+   "length": 0.011,
+   "names": [
+    "Clarence Street"
+   ]
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "road",
+   "end_shape_index": 36,
+   "begin_shape_index": 35,
+   "length": 0.008,
+   "names": [
+    "Market Street"
+   ]
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 8,
+   "weighted_grade": 8.333,
+   "surface": "paved_smooth",
+   "use": "road",
+   "end_shape_index": 38,
+   "begin_shape_index": 36,
+   "length": 0.032,
+   "names": [
+    "Market Street"
+   ]
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 7,
+   "weighted_grade": 6.666,
+   "surface": "paved_smooth",
+   "use": "road",
+   "end_shape_index": 40,
+   "begin_shape_index": 38,
+   "length": 0.018,
+   "names": [
+    "Market Street"
+   ]
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 41,
+   "begin_shape_index": 40,
+   "length": 0.009
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "footway",
+   "end_shape_index": 42,
+   "begin_shape_index": 41,
+   "length": 0.004
+  },
+  {
+   "max_downward_grade": -6,
+   "max_upward_grade": 7,
+   "weighted_grade": 1.666,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 44,
+   "begin_shape_index": 42,
+   "length": 0.22
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 45,
+   "begin_shape_index": 44,
+   "length": 0.003
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 46,
+   "begin_shape_index": 45,
+   "length": 0.006
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 47,
+   "begin_shape_index": 46,
+   "length": 0.003
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 48,
+   "begin_shape_index": 47,
+   "length": 0.001
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 49,
+   "begin_shape_index": 48,
+   "length": 0.003
+  },
+  {
+   "max_downward_grade": -12,
+   "max_upward_grade": 0,
+   "weighted_grade": -5.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 51,
+   "begin_shape_index": 49,
+   "length": 0.092
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 52,
+   "begin_shape_index": 51,
+   "length": 0.007
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 53,
+   "begin_shape_index": 52,
+   "length": 0.007
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 54,
+   "begin_shape_index": 53,
+   "length": 0.009
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "footway",
+   "end_shape_index": 55,
+   "begin_shape_index": 54,
+   "length": 0.001,
+   "names": [
+    "Barrack Street"
+   ]
+  },
+  {
+   "max_downward_grade": -10,
+   "max_upward_grade": 2,
+   "weighted_grade": -1.666,
+   "surface": "paved_smooth",
+   "use": "footway",
+   "end_shape_index": 58,
+   "begin_shape_index": 55,
+   "length": 0.088,
+   "names": [
+    "Barrack Street"
+   ]
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "footway",
+   "end_shape_index": 59,
+   "begin_shape_index": 58,
+   "length": 0.004,
+   "names": [
+    "Barrack Street"
+   ]
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "footway",
+   "end_shape_index": 61,
+   "begin_shape_index": 59,
+   "length": 0.006,
+   "names": [
+    "Barrack Street"
+   ]
+  },
+  {
+   "max_downward_grade": -2,
+   "max_upward_grade": 0,
+   "weighted_grade": -1.666,
+   "surface": "paved_smooth",
+   "use": "emergency_access",
+   "end_shape_index": 62,
+   "begin_shape_index": 61,
+   "length": 0.022,
+   "names": [
+    "George Street"
+   ]
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 65,
+   "begin_shape_index": 62,
+   "length": 0.008,
+   "names": [
+    "Martin Place"
+   ]
+  },
+  {
+   "max_downward_grade": -6,
+   "max_upward_grade": 0,
+   "weighted_grade": -5.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 66,
+   "begin_shape_index": 65,
+   "length": 0.038,
+   "names": [
+    "Martin Place"
+   ]
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 28,
+   "weighted_grade": 11.666,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 67,
+   "begin_shape_index": 66,
+   "length": 0.075,
+   "names": [
+    "Martin Place"
+   ]
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 2,
+   "weighted_grade": 1.666,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 68,
+   "begin_shape_index": 67,
+   "length": 0.011
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 69,
+   "begin_shape_index": 68,
+   "length": 0.003
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 70,
+   "begin_shape_index": 69,
+   "length": 0.002
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 71,
+   "begin_shape_index": 70,
+   "length": 0.003
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 72,
+   "begin_shape_index": 71,
+   "length": 0.002
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 73,
+   "begin_shape_index": 72,
+   "length": 0.002
+  },
+  {
+   "max_downward_grade": -3,
+   "max_upward_grade": 0,
+   "weighted_grade": -1.666,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 75,
+   "begin_shape_index": 73,
+   "length": 0.072,
+   "names": [
+    "Martin Place"
+   ]
+  },
+  {
+   "max_downward_grade": -1,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 77,
+   "begin_shape_index": 75,
+   "length": 0.044,
+   "names": [
+    "Martin Place"
+   ]
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 3,
+   "weighted_grade": 1.666,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 80,
+   "begin_shape_index": 77,
+   "length": 0.047,
+   "names": [
+    "Castlereagh Street"
+   ]
+  },
+  {
+   "max_downward_grade": -1,
+   "max_upward_grade": 3,
+   "weighted_grade": 1.666,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 82,
+   "begin_shape_index": 80,
+   "length": 0.097,
+   "names": [
+    "Castlereagh Street"
+   ]
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 83,
+   "begin_shape_index": 82,
+   "length": 0.003
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 84,
+   "begin_shape_index": 83,
+   "length": 0.006
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 85,
+   "begin_shape_index": 84,
+   "length": 0.005
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 86,
+   "begin_shape_index": 85,
+   "length": 0.002
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 87,
+   "begin_shape_index": 86,
+   "length": 0.001
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 88,
+   "begin_shape_index": 87,
+   "length": 0.002
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 89,
+   "begin_shape_index": 88,
+   "length": 0.007
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 90,
+   "begin_shape_index": 89,
+   "length": 0.006
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 91,
+   "begin_shape_index": 90,
+   "length": 0.001
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 5,
+   "weighted_grade": 5.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 93,
+   "begin_shape_index": 91,
+   "length": 0.047,
+   "names": [
+    "Hunter Street"
+   ]
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 94,
+   "begin_shape_index": 93,
+   "length": 0.001,
+   "names": [
+    "Hunter Street"
+   ]
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 95,
+   "begin_shape_index": 94,
+   "length": 0.003
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 2,
+   "weighted_grade": 1.666,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 96,
+   "begin_shape_index": 95,
+   "length": 0.01
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 3,
+   "weighted_grade": 1.666,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 97,
+   "begin_shape_index": 96,
+   "length": 0.011
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 0,
+   "weighted_grade": 0.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 98,
+   "begin_shape_index": 97,
+   "length": 0.004
+  },
+  {
+   "max_downward_grade": -28,
+   "max_upward_grade": 9,
+   "weighted_grade": 5.0,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 99,
+   "begin_shape_index": 98,
+   "length": 0.127
+  },
+  {
+   "max_downward_grade": 0,
+   "max_upward_grade": 1,
+   "weighted_grade": 0.0,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 100,
+   "begin_shape_index": 99,
+   "length": 0.01
+  },
+  {
+   "max_downward_grade": -3,
+   "max_upward_grade": 0,
+   "weighted_grade": -1.666,
+   "surface": "paved_smooth",
+   "use": "pedestrian_crossing",
+   "end_shape_index": 101,
+   "begin_shape_index": 100,
+   "length": 0.012
+  },
+  {
+   "max_downward_grade": -15,
+   "max_upward_grade": 1,
+   "weighted_grade": -3.333,
+   "surface": "paved",
+   "use": "footway",
+   "end_shape_index": 103,
+   "begin_shape_index": 101,
+   "length": 0.06
+  },
+  {
+   "max_downward_grade": -36,
+   "max_upward_grade": 0,
+   "weighted_grade": -10.0,
+   "surface": "paved",
+   "use": "cycleway",
+   "end_shape_index": 104,
+   "begin_shape_index": 103,
+   "length": 0.009,
+   "target_percent_along": 0.198
+  }
+ ],
+ "alternate_paths": []
+}

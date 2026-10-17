@@ -166,3 +166,14 @@ Router selection in `/route`: `ROUTER=campus` → campus router. `ROUTER=valhall
 **Web:** vitest for the sample-route rule and search behaviour; Playwright suite stays green with `ROUTER=campus`, Photon disabled; one Playwright test skipped unless Valhalla is up: search "Town Hall", pick it, route to "State Library", see a route summary.
 
 **Done when:** all always-on suites pass; with Docker up, the live tests and the Docker-only Playwright test pass; and a manual trip (Central station → Sydney Town Hall) works on the real map.
+
+---
+
+## 8. Amendment (2026-10-17, during execution): slope outside campus is advisory
+
+Recorded Valhalla data showed its elevation is unusable for a hard slope rule at footpath scale (integer-metre heights from a 30 m surface model: flat Parramatta reads 8-13% even over 80 m windows; CBD edges read up to 36%). With the user's agreement:
+
+- **Campus first.** When both places are inside the campus graph, the campus router plans the trip (measured slopes, hard limit, lifts, edge barriers), whether or not Valhalla is up.
+- **Elsewhere, slope is advisory.** `ValhallaRouter(enforce_slope=False)` (default): no slope reroute loop; `use_hills` still steers to flatter paths. Route summaries carry `slopeEstimated: true`; steps don't claim percentages ("Footpath, N m", confidence Likely); the response adds the note "Slopes outside the Macquarie University campus are estimates. Check steep sections before you go." `enforce_slope=True` keeps the §3 step 4 behaviour for when better elevation exists.
+- **Forbidden edges.** For profiles avoiding stairs, any `steps` or `escalator` edge on the route is excluded and the route re-planned (same 4-round loop, same "no step-free route" result if it can't be avoided).
+- **Better elevation** (NSW LiDAR bare-earth DEM, our own grade computation) becomes its own future sub-project.

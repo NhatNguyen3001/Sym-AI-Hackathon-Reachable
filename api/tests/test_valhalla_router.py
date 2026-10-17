@@ -69,8 +69,9 @@ START = place(-33.8732, 151.2066, pid="start")
 END = place(-33.8702, 151.2066, pid="end")
 
 
-def router(client):
-    return ValhallaRouter(client, BBOX, max_leg_km=10, speed_mps=1.0, exit_names={"north": "north exit", "south": "south exit"})
+def router(client, enforce_slope=False):
+    return ValhallaRouter(client, BBOX, max_leg_km=10, speed_mps=1.0,
+                          exit_names={"north": "north exit", "south": "south exit"}, enforce_slope=enforce_slope)
 
 
 def accessible_bodies(c):
@@ -146,7 +147,7 @@ def test_confirmed_barrier_sent_as_exclusion():
 def test_steep_edge_triggers_reroute_with_exclusion():
     steep = trace(edges=[edge(0, 1, up=8), edge(1, 2)])
     c = FakeClient([trip(), trip(time_s=360)], [steep, trace()])
-    r = router(c).plan(START, END, P, Context())
+    r = router(c, enforce_slope=True).plan(START, END, P, Context())
     acc = accessible_bodies(c)
     assert r["ok"] is True and len(acc) == 2
     assert len(acc[0].get("exclude_polygons", [])) == 0 and len(acc[1]["exclude_polygons"]) == 1
@@ -155,7 +156,7 @@ def test_steep_edge_triggers_reroute_with_exclusion():
 def test_gives_up_after_four_rounds():
     steep = trace(edges=[edge(0, 1, up=8), edge(1, 2)])
     c = FakeClient([trip()], [steep])
-    r = router(c).plan(START, END, P, Context())
+    r = router(c, enforce_slope=True).plan(START, END, P, Context())
     assert r["ok"] is False and "slope limit" in r["reason"]
     assert len(accessible_bodies(c)) == 5  # first try + 4 reroutes
 
@@ -188,11 +189,43 @@ def test_steps_and_confidence_mapping():
     pts = [(-33.8732, 151.2066), (-33.8727, 151.2066), (-33.8722, 151.2066), (-33.8712, 151.2066), (-33.8702, 151.2066)]
     edges = [edge(0, 1, 0.055, "footway", 0, 0), edge(1, 2, 0.008, "pedestrian_crossing", 0, 0),
              edge(2, 3, 0.11, "sidewalk", 3, 1), edge(3, 4, 0.11, "footway", 4, 2)]
-    r = router(FakeClient([trip(pts)], [trace(pts, edges)])).plan(START, END, P, Context())
+    r = router(FakeClient([trip(pts)], [trace(pts, edges)]), enforce_slope=True).plan(START, END, P, Context())
     steps = [(s["label"], s["confidence"]) for s in r["steps"]]
     assert steps == [("Flat footpath, 55 m", "Confirmed"), ("Kerb ramp at crossing", "Likely"),
                      ("Gentle slope, up to 4%, 220 m", "Measured")]
-    assert r["accessible"]["maxSlope"] == 4
+    assert r["accessible"]["maxSlope"] == 4 and r["accessible"]["slopeEstimated"] is False
+
+
+def test_advisory_steps_do_not_claim_slopes():
+    pts = [(-33.8732, 151.2066), (-33.8727, 151.2066), (-33.8722, 151.2066), (-33.8712, 151.2066), (-33.8702, 151.2066)]
+    edges = [edge(0, 1, 0.055, "footway", 0, 0), edge(1, 2, 0.008, "pedestrian_crossing", 0, 0),
+             edge(2, 3, 0.11, "sidewalk", 9, 1), edge(3, 4, 0.11, "footway", 30, 2)]
+    r = router(FakeClient([trip(pts)], [trace(pts, edges)])).plan(START, END, P, Context())
+    assert [(s["label"], s["confidence"]) for s in r["steps"]] == [
+        ("Footpath, 55 m", "Likely"), ("Kerb ramp at crossing", "Likely"), ("Footpath, 220 m", "Likely")]
+    assert r["accessible"]["slopeEstimated"] is True
+    assert r["slopeNote"] == "Slopes outside the Macquarie University campus are estimates. Check steep sections before you go."
+
+
+def test_advisory_mode_does_not_reroute_on_steep():
+    steep = trace(edges=[edge(0, 1, up=30), edge(1, 2)])
+    c = FakeClient([trip()], [steep])
+    r = router(c).plan(START, END, P, Context())
+    assert r["ok"] is True and len(accessible_bodies(c)) == 1
+
+
+def test_escalator_triggers_reroute_for_avoid_stairs():
+    esc = trace(edges=[edge(0, 1, use="escalator"), edge(1, 2)])
+    c = FakeClient([trip(), trip(time_s=400)], [esc, trace()])
+    r = router(c).plan(START, END, P, Context())
+    acc = accessible_bodies(c)
+    assert r["ok"] is True and len(acc) == 2 and len(acc[1]["exclude_polygons"]) == 1
+
+
+def test_unavoidable_steps_is_ok_false():
+    stairs = trace(edges=[edge(0, 1, use="steps"), edge(1, 2)])
+    r = router(FakeClient([trip()], [stairs])).plan(START, END, P, Context())
+    assert r["ok"] is False and r["reason"] == "No step-free route right now."
 
 
 def test_steps_edge_marks_not_step_free():
@@ -247,3 +280,17 @@ def test_recorded_town_hall_fixture_maps_to_route_shape():
     assert r["ok"] is True
     assert len(r["accessible"]["geometry"]["coordinates"]) >= 2 and r["accessible"]["distanceM"] > 300
     assert isinstance(r["accessible"]["stepFree"], bool) and r["steps"]
+
+
+def test_trace_falls_back_to_map_snap():
+    c = FakeClient([trip()], [NoPath("443"), trace()])
+    r = router(c).plan(START, END, P, Context())
+    assert r["ok"] is True
+    assert [b["shape_match"] for b in c.trace_bodies[:2]] == ["edge_walk", "map_snap"]
+
+
+def test_trace_failure_still_returns_route_with_unsure_step():
+    c = FakeClient([trip()], [NoPath("443")])
+    r = router(c).plan(START, END, P, Context())
+    assert r["ok"] is True and r["accessible"]["distanceM"] == 330
+    assert r["steps"] == [{"icon": "alert", "label": "Footpath, 330 m", "confidence": "Not sure", "lengthM": 330}]

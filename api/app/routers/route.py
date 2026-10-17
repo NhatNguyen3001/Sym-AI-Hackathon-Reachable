@@ -47,7 +47,11 @@ def plan_route(body: RouteIn, request: Request, session: Session = Depends(get_s
         st.resolver.ensure_exits(p)
     note = None
     try:
-        r = st.router.plan(start, end, body.profile, ctx)
+        # Campus trips use the campus graph: measured slopes and a hard slope limit (spec section 8).
+        if st.campus.covers(start) and st.campus.covers(end):
+            r = st.campus.plan(start, end, body.profile, ctx)
+        else:
+            r = st.router.plan(start, end, body.profile, ctx)
     except OutOfArea:
         raise ApiError(422, "out_of_area", "We only cover Greater Sydney for now.")
     except RoutingUnavailable:

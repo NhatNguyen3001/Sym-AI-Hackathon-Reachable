@@ -1,8 +1,8 @@
 from app.routing.cost import is_steps, tag_set
 from app.routing.graph import edge_id
 
-ICONS = {"flat": "check", "slope": "slope", "steps": "alert", "lift": "lift", "crossing": "crossing"}
-MERGEABLE = {"flat", "slope", "steps", "crossing"}
+ICONS = {"flat": "check", "slope": "slope", "steps": "alert", "lift": "lift", "crossing": "crossing", "path": "check"}
+MERGEABLE = {"flat", "slope", "steps", "crossing", "path"}
 TINY_M = 10  # flat/slope runs shorter than this fold into their neighbours
 
 
@@ -64,6 +64,7 @@ def group_items(items: list[dict], exit_names: dict[str, str] | None = None) -> 
             "steps": f"Steps, {m} m",
             "lift": f"Lift at {exit_name}",
             "crossing": "Kerb ramp at crossing",
+            "path": f"Footpath, {m} m",
         }[g["kind"]]
         if g["unsure"]:
             conf = "Not sure"

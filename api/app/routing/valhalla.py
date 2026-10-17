@@ -16,11 +16,14 @@ from app.routing.steps import group_items
 NO_PATH_CODES = {170, 171, 442, 443, 154, 155, 156, 157}
 TOO_LONG = "This trip is too long to walk or roll. Transit routing is coming soon."
 SLOPE_REASON = "No step-free route within your slope limit."
+NO_ROUTE = "No step-free route right now."
+SLOPE_NOTE = "Slopes outside the Macquarie University campus are estimates. Check steep sections before you go."
+STAIR_USES = {"steps", "escalator"}
 MAX_SLOPE_ROUNDS = 4
 NEAR_BARRIER_M = 15
 DETOUR_MAX_RATIO = 1.5
 TRACE_FILTERS = ["edge.length", "edge.use", "edge.surface", "edge.max_upward_grade", "edge.max_downward_grade",
-                 "edge.begin_shape_index", "edge.end_shape_index", "edge.names", "shape"]
+                 "edge.begin_shape_index", "edge.end_shape_index", "edge.names", "edge.weighted_grade", "shape"]
 
 
 class RoutingUnavailable(Exception):
@@ -68,21 +71,27 @@ def _grade(e: dict) -> float:
     return max(abs(e.get("max_upward_grade") or 0), abs(e.get("max_downward_grade") or 0))
 
 
-def _kind(e: dict) -> str:
+def _kind(e: dict, slopes_known: bool) -> str:
     use = e.get("use") or ""
-    if use == "steps":
+    if use in STAIR_USES:
         return "steps"
     if use == "elevator":
         return "lift"
     if use == "pedestrian_crossing":
         return "crossing"
+    if not slopes_known:
+        return "path"
     return "slope" if _grade(e) >= 2 else "flat"
 
 
 class ValhallaRouter:
-    def __init__(self, client, bbox, max_leg_km: float, speed_mps: float, exit_names: dict[str, str] | None = None):
+    def __init__(self, client, bbox, max_leg_km: float, speed_mps: float, exit_names: dict[str, str] | None = None,
+                 enforce_slope: bool = False):
         self.client, self.bbox, self.max_leg_km, self.speed = client, bbox, max_leg_km, speed_mps
         self.exit_names = exit_names or {}
+        # Valhalla elevation is too coarse to trust at footpath scale (spec section 8), so by default slopes only
+        # steer the route (use_hills) and are reported as estimates. Turn this on once elevation is reliable.
+        self.enforce_slope = enforce_slope
 
     # --- request building -------------------------------------------------------------------------------------
 
@@ -105,9 +114,16 @@ class ValhallaRouter:
                 "costing": "pedestrian", "costing_options": {"pedestrian": {"type": "foot"}}, "units": "kilometers"}
 
     def _trace(self, trip: dict) -> dict:
+        """Per-edge details for a route. edge_walk is exact but sometimes fails to match; map_snap then works.
+        If both fail we still have the route, just without edge details (shape only, no edges)."""
         shape = trip["trip"]["legs"][0]["shape"]
-        return self.client.trace({"encoded_polyline": shape, "shape_match": "edge_walk", "costing": "pedestrian",
-                                  "filters": {"attributes": TRACE_FILTERS, "action": "include"}})
+        for match in ("edge_walk", "map_snap"):
+            try:
+                return self.client.trace({"encoded_polyline": shape, "shape_match": match, "costing": "pedestrian",
+                                          "filters": {"attributes": TRACE_FILTERS, "action": "include"}})
+            except NoPath:
+                continue
+        return {"shape": shape, "edges": [], "unmatched": True, "length_m": trip["trip"]["summary"]["length"] * 1000}
 
     # --- helpers ----------------------------------------------------------------------------------------------
 
@@ -127,16 +143,20 @@ class ValhallaRouter:
         usable = [e for e in exits if not (e.get("via") == "lift" and e["id"] in ctx.lift_out_exits)]
         return [{"lat": e["lat"], "lng": e["lng"], "exit": e} for e in usable], not usable
 
-    def _steep_excludes(self, tr: dict, max_slope: int) -> list:
+    def _forbidden_excludes(self, tr: dict, profile) -> tuple[list, bool]:
+        """Exclusion squares for edges this profile must not use, and whether any of them were too steep."""
         coords = decode_polyline6(tr.get("shape", "")) if tr.get("shape") else []
-        out = []
+        out, steep_found = [], False
         for e in tr.get("edges", []):
-            if _grade(e) > max_slope and coords:
+            steep = self.enforce_slope and _grade(e) > profile.max_slope
+            stairs = profile.avoid.stairs and e.get("use") in STAIR_USES
+            steep_found = steep_found or steep
+            if (steep or stairs) and coords:
                 i, j = e["begin_shape_index"], e["end_shape_index"]
                 mid = (i + j) // 2
                 a, b = coords[mid], coords[min(mid + 1, len(coords) - 1)]
                 out.append(square_around((a[0] + b[0]) / 2, (a[1] + b[1]) / 2))
-        return out
+        return out, steep_found
 
     def _no_route(self, reason: str, fastest=None) -> dict:
         return {"ok": False, "reason": reason, "suggestion": SUGGESTION, "fastest": fastest}
@@ -147,17 +167,21 @@ class ValhallaRouter:
         return {"geometry": {"type": "LineString", "coordinates": [[lng, lat] for lat, lng in coords]},
                 "distanceM": round(dist), "minutes": max(1, math.ceil(dist / self.speed / 60)),
                 "maxSlope": round(max((_grade(e) for e in edges), default=0)),
-                "stepFree": not any(e.get("use") == "steps" for e in edges)}
+                "stepFree": not any(e.get("use") in STAIR_USES for e in edges),
+                "slopeEstimated": not self.enforce_slope}
 
     def _steps(self, tr: dict, near_points: list[tuple[float, float]], start_exit, end_exit) -> list[dict]:
         coords = decode_polyline6(tr["shape"]) if tr.get("shape") else []
         items = []
         for e in tr.get("edges", []):
-            kind = _kind(e)
+            kind = _kind(e, self.enforce_slope)
             seg = coords[e["begin_shape_index"]:e["end_shape_index"] + 1] if coords else []
             unsure = bool(seg) and any(point_line_distance_m(lat, lng, seg) <= NEAR_BARRIER_M for lat, lng in near_points)
             items.append({"kind": kind, "slope": round(_grade(e)), "length": (e.get("length") or 0) * 1000,
-                          "unsure": unsure, "measured": kind == "slope", "likely": kind == "crossing", "exit": None})
+                          "unsure": unsure, "measured": kind == "slope", "likely": kind in ("crossing", "path"), "exit": None})
+        if tr.get("unmatched"):  # no edge details: say so rather than guess
+            items = [{"kind": "path", "slope": 0, "length": tr["length_m"], "unsure": True, "measured": False,
+                      "likely": False, "exit": None}]
         steps = group_items(items)
         lift = {"icon": "lift", "confidence": "Confirmed", "lengthM": 0}
         if start_exit and start_exit.get("via") == "lift":
@@ -192,22 +216,26 @@ class ValhallaRouter:
                 if best is None or self._time(t) < self._time(best[0]):
                     best = (t, a, b)
         if best is None:
-            return self._no_route("No step-free route right now.")
+            return self._no_route(NO_ROUTE)
         trip, a, b = best
 
-        # 2. Hard slope limit: exclude steep edges and reroute, a few rounds at most.
+        # 2. Edges this profile must not use (steps, escalators; too steep when slopes are enforced): exclude, reroute.
         excludes: list = []
         tr = self._trace(trip)
-        rounds = 0
-        while steep := self._steep_excludes(tr, profile.max_slope):
+        rounds, any_steep = 0, False
+        while True:
+            bad, steep = self._forbidden_excludes(tr, profile)
+            any_steep = any_steep or steep
+            if not bad:
+                break
             if rounds == MAX_SLOPE_ROUNDS:
-                return self._no_route(SLOPE_REASON)
+                return self._no_route(SLOPE_REASON if any_steep else NO_ROUTE)
             rounds += 1
-            excludes += steep
+            excludes += bad
             try:
                 trip = self.client.route(self._body(a, b, profile, ctx, excludes))
             except NoPath:
-                return self._no_route(SLOPE_REASON)
+                return self._no_route(SLOPE_REASON if any_steep else NO_ROUTE)
             tr = self._trace(trip)
 
         # 3. Barriers that still need checking: detour if it costs at most 1.5x, otherwise warn.
@@ -219,7 +247,7 @@ class ValhallaRouter:
                 detour = self.client.route(self._body(a, b, profile, ctx, excludes + [square_around(*p) for p in near]))
                 if self._time(detour) <= DETOUR_MAX_RATIO * self._time(trip):
                     detour_tr = self._trace(detour)
-                    if not self._steep_excludes(detour_tr, profile.max_slope):
+                    if not self._forbidden_excludes(detour_tr, profile)[0]:
                         trip, tr, near = detour, detour_tr, []
             except NoPath:
                 pass
@@ -235,6 +263,9 @@ class ValhallaRouter:
         accessible = self._summary(trip, edges)
         fastest = fastest or accessible
         exit_used = (a["exit"] or b["exit"] or {}).get("id")
-        return {"ok": True, "accessible": accessible, "fastest": fastest,
-                "minutesLonger": max(0, accessible["minutes"] - fastest["minutes"]),
-                "steps": self._steps(tr, near, a["exit"], b["exit"]), "exitUsed": exit_used}
+        out = {"ok": True, "accessible": accessible, "fastest": fastest,
+               "minutesLonger": max(0, accessible["minutes"] - fastest["minutes"]),
+               "steps": self._steps(tr, near, a["exit"], b["exit"]), "exitUsed": exit_used}
+        if not self.enforce_slope:
+            out["slopeNote"] = SLOPE_NOTE
+        return out
