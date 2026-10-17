@@ -56,3 +56,21 @@ test("a departure with a lift alert says so on its chip", async ({ page, request
     await request.post(`${TFNSW}/_mock/lifts`, { data: { osmIds: [9756349250] } });
   }
 });
+
+test("the chosen card keeps the safety details: steps, arrival time and how sure we are", async ({ page }) => {
+  await page.route(/\/route$/, async (route) => {
+    if (route.request().method() !== "POST") return route.continue();
+    const res = await route.fetch();
+    const body = await res.json();
+    for (const o of body.options ?? []) if (o.mode === "transit") o.stepFree = false;   // pretend the bus trip has steps
+    body.status = "Some details not sure";
+    await route.fulfill({ response: res, json: body });
+  });
+  await page.goto("/route?from=library&to=mortarboard-cafe&option=transit-0");
+  await openDetails(page);
+  const ways = page.getByRole("group", { name: "Ways to get there" });
+  const card = ways.locator("[data-way]").filter({ has: page.getByRole("radio", { name: /Bus 141/ }) });
+  await expect(card.getByText("Has steps")).toBeVisible({ timeout: 20_000 });
+  await expect(card.getByText(/arrive \d/)).toBeVisible();
+  await expect(card.getByText("Some details not sure")).toBeVisible();
+});

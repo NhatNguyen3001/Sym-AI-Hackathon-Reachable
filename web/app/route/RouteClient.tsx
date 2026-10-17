@@ -316,7 +316,7 @@ export function RouteClient() {
             </WarnBanner>
           )}
 
-          {options && <TripOptions options={options} selected={selected?.id} onSelect={chooseOption} />}
+          {options && <TripOptions options={options} selected={selected?.id} onSelect={chooseOption} status={route?.status} />}
 
           {transit && !cards && (
             <section aria-labelledby="summary-h">
