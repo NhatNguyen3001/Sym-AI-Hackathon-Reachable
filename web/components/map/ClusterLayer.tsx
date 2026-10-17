@@ -17,13 +17,14 @@ export interface ClusterItem {
   onClick: () => void;
 }
 
+/** A soft blue bubble (primary-soft fill, primary number): calm on the map, still easy to read. */
 function bubble(cluster: L.MarkerCluster) {
   const n = cluster.getChildCount();
   const size = n < 10 ? 40 : n < 100 ? 46 : 54;
   return L.divIcon({
     className: "",
     iconSize: [size, size],
-    html: `<span style="display:flex;width:${size}px;height:${size}px;align-items:center;justify-content:center;border-radius:999px;background:#15201b;color:#fff;font-weight:700;font-size:15px;border:3px solid #fff;box-shadow:0 2px 8px rgba(21,32,27,.35)"><span aria-hidden="true">${n}</span><span class="sr-only">${n} places here, tap to see them</span></span>`,
+    html: `<span style="display:flex;width:${size}px;height:${size}px;align-items:center;justify-content:center;border-radius:999px;background:#e6edf9;color:#1d4fa8;font-weight:700;font-size:15px;border:3px solid #fff;box-shadow:0 0 0 2px #1d4fa8,0 2px 8px rgba(21,32,27,.25)"><span aria-hidden="true">${n}</span><span class="sr-only">${n} places here, tap to see them</span></span>`,
   });
 }
 
