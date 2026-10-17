@@ -27,6 +27,7 @@ export function ExploreClient() {
   const [hazards, setHazards] = useState<Hazard[]>([]);
   const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [going, setGoing] = useState(false);
   const [hidden, setHidden] = useState<string[]>([]);
   const [thanks, setThanks] = useState<Record<string, number>>({});
   const [note, setNote] = useState("");
@@ -76,6 +77,7 @@ export function ExploreClient() {
   function go(e: React.FormEvent) {
     e.preventDefault();
     if (!to) return;
+    setGoing(true);  // say so at once; the route page takes over from here
     saveProfile(profile);
     const from = startPlaceId(fix);
     router.push(`/route?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to.id)}`);
@@ -119,7 +121,7 @@ export function ExploreClient() {
                 <Button type="button" variant="secondary" size="lg" className="mt-3 w-full" onClick={saveFilter}>Save filter</Button>
               </div>
             )}
-            <Button type="submit" size="lg" className="mt-2 w-full" disabled={!to}>Show a step-free route</Button>
+            <Button type="submit" size="lg" className="mt-2 w-full" disabled={!to || going}>{going ? "Finding…" : "Show a step-free route"}</Button>
           </div>
         </form>
       </div>
@@ -201,7 +203,7 @@ export function ExploreClient() {
             </div>
           )}
           {(expanded || to) && (
-            <Button type="submit" size="lg" className="mt-3 w-full" disabled={!to}>Show a step-free route</Button>
+            <Button type="submit" size="lg" className="mt-3 w-full" disabled={!to || going}>{going ? "Finding…" : "Show a step-free route"}</Button>
           )}
         </form>
         <p role="status" className="sr-only">{note}</p>

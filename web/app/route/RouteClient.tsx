@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { InfoBanner, SampleDataBanner, WarnBanner, WeatherBanner } from "@/components/Banners";
 import { PlaceInput } from "@/components/PlaceInput";
 import { LegTimeline } from "@/components/LegTimeline";
+import { RouteSkeleton } from "@/components/RouteSkeleton";
 import { RouteStep, VenueCheckRow } from "@/components/Rows";
 import { StatusBadge } from "@/components/StatusBadge";
 import { TripOptions } from "@/components/TripOptions";
@@ -93,6 +94,8 @@ export function RouteClient() {
     setProfile(p);
     setPicked(null);
     setPickedOption(null);
+    setRoute(null);   // a new trip: show placeholders, not the previous trip
+    showDetails();    // open the panel straight away so there's something to see while the route loads
     load(p);
     findPlace(fromId).then(setFrom);
     findPlace(toId).then(setTo);
@@ -122,6 +125,10 @@ export function RouteClient() {
     router.replace(`${pathname}?from=${fromId}&to=${toId}&option=${id}`, { scroll: false });
   }
 
+  const ends = useMemo(() => ({
+    from: from ? [from.lat, from.lng] as [number, number] : undefined,
+    to: to ? [to.lat, to.lng] as [number, number] : undefined,
+  }), [from, to]);
   const options = route?.ok ? route.options : undefined;
   const selected = selectOption(options, pickedOption ?? urlOption);
   const transit = selected?.mode === "transit" ? selected : undefined;
@@ -179,11 +186,18 @@ export function RouteClient() {
   if (profile.destination.toilet && toilet?.status === "Not found") unmet.push("an accessible toilet");
   if (profile.destination.entrance && entrance?.status === "Not found") unmet.push("a level or ramped entrance");
 
-  function saveFilter() {
+  const [saving, setSaving] = useState(false);
+
+  async function saveFilter() {
     saveProfile(profile);
     setFiltersOpen(false);
     setSheetOpen(false);
-    load(profile);
+    setSaving(true);
+    try {
+      await load(profile);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -198,6 +212,7 @@ export function RouteClient() {
             : <PanelLeftOpen aria-hidden="true" className="size-5" strokeWidth={2.4} />}
         </button>
         <RouteMap
+          ends={ends}
           accessible={active}
           fastest={route?.ok && !transit ? route.fastest : null}
           alternatives={others}
@@ -288,7 +303,7 @@ export function RouteClient() {
           {route?.note && <InfoBanner>{route.note}. Sydney-wide routing is unavailable right now.</InfoBanner>}
           {route?.transitNote && <InfoBanner>{route.transitNote}</InfoBanner>}
           {error && <WarnBanner alert>{error}</WarnBanner>}
-          {route === null && !error && <p role="status" className="text-muted">Finding your route…</p>}
+          {route === null && !error && <RouteSkeleton from={from?.name} to={to?.name} />}
 
           {route && !route.ok && (
             <WarnBanner alert>
@@ -384,8 +399,8 @@ export function RouteClient() {
             </section>
           )}
 
-          <Button type="button" size="lg" className="w-full" onClick={saveFilter}>
-            Save filter
+          <Button type="button" size="lg" className="w-full" onClick={saveFilter} disabled={saving}>
+            {saving ? "Saving…" : "Save filter"}
           </Button>
         </div>
       </aside>

@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { closeDetails } from "./helpers";
 import type { Page } from "@playwright/test";
 
 /** Live updates is in the sidebar on desktop and behind the menu button on phones. */
@@ -25,6 +26,7 @@ test("the route map survives navigating away and back", async ({ page }) => {
   const map = page.getByRole("region", { name: "Route map" });
   await expect(map.locator(".leaflet-container")).toBeVisible();
   await expect(map.locator(".leaflet-tile-pane")).toHaveCount(1);
+  await closeDetails(page);   // on phones the open sheet covers the map buttons
   await map.getByRole("button", { name: "Zoom in" }).click();
   await page.waitForTimeout(500);
   expect(errors).toEqual([]);

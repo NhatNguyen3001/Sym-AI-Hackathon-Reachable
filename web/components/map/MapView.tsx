@@ -97,7 +97,7 @@ function sameLine(a?: RouteOut | null, b?: RouteOut | null) {
 }
 
 export default function MapView({
-  accessible, fastest, alternatives = [], barriers = [], routeLabel = "", marks = [], slopes = [], onPick, legs,
+  accessible, fastest, alternatives = [], barriers = [], routeLabel = "", marks = [], slopes = [], onPick, legs, ends,
 }: {
   accessible?: RouteOut | null;
   fastest?: RouteOut | null;
@@ -109,6 +109,8 @@ export default function MapView({
   onPick?: (which: "active" | number) => void;
   /** A public transport trip: walks drawn solid, rides dotted, stations as rings. */
   legs?: Leg[];
+  /** Start and destination, shown as pins before the route arrives. */
+  ends?: { from?: [number, number]; to?: [number, number] };
 }) {
   const [map, setMap] = useState<L.Map | null>(null);
   const [legendOpen, setLegendOpen] = useState(false);
@@ -142,6 +144,10 @@ export default function MapView({
     return { walks: walks.filter((w) => w.length > 1), rides: rides.filter((r) => r.length > 1), stops };
   }, [legs]);
   const hasTrip = trip.rides.length > 0;
+  const pins = useMemo(() => [
+    ...(ends?.from ? [[ends.from, "route-start"] as const] : []),
+    ...(ends?.to ? [[ends.to, "route-end"] as const] : []),
+  ], [ends]);
 
   // Leaflet measures its container once; tell it when the container changes size.
   useEffect(() => {
@@ -153,7 +159,8 @@ export default function MapView({
   }, [map]);
 
   useEffect(() => {
-    const pts = [...acc, ...extras.flatMap((alt) => toLatLng(alt)), ...trip.walks.flat(), ...trip.rides.flat()];
+    const line = [...acc, ...extras.flatMap((alt) => toLatLng(alt)), ...trip.walks.flat(), ...trip.rides.flat()];
+    const pts = line.length > 1 ? line : pins.map(([pt]) => pt as LatLng);
     if (map && pts.length > 1) {
       const narrow = window.matchMedia("(max-width: 1023px)").matches;
       map.fitBounds(L.latLngBounds(pts), {
@@ -165,7 +172,7 @@ export default function MapView({
       const closer = Math.min(19, map.getZoom() + 2);
       if (closer > map.getZoom()) map.setZoom(closer, { animate: false });
     }
-  }, [map, acc, extras, trip]);
+  }, [map, acc, extras, trip, pins]);
 
   return (
     <div role="region" aria-label="Route map" className="relative h-full min-h-[240px] w-full">
@@ -227,10 +234,16 @@ export default function MapView({
         {marks.map((mark) => (
           <Marker key={mark.id} position={[mark.lat, mark.lng]} icon={placeIcon(mark)} alt={mark.label} title={mark.label} keyboard={false} zIndexOffset={700} />
         ))}
+        {acc.length === 0 && !hasTrip && pins.map(([pt, kind]) => (
+          <CircleMarker key={kind} center={pt} radius={kind === "route-start" ? 9 : 10} className={kind}
+            pathOptions={kind === "route-start"
+              ? { color: PRIMARY, weight: 4, fillColor: "#fff", fillOpacity: 1 }
+              : { color: PRIMARY, weight: 2, fillColor: PRIMARY, fillOpacity: 1 }} />
+        ))}
         {acc.length > 0 && (
           <>
-            <CircleMarker center={acc[0]} radius={9} pathOptions={{ color: PRIMARY, weight: 4, fillColor: "#fff", fillOpacity: 1 }} />
-            <CircleMarker center={acc[acc.length - 1]} radius={10} pathOptions={{ color: PRIMARY, weight: 2, fillColor: PRIMARY, fillOpacity: 1 }} />
+            <CircleMarker center={acc[0]} radius={9} pathOptions={{ color: PRIMARY, weight: 4, fillColor: "#fff", fillOpacity: 1 }} className="route-start" />
+            <CircleMarker center={acc[acc.length - 1]} radius={10} pathOptions={{ color: PRIMARY, weight: 2, fillColor: PRIMARY, fillOpacity: 1 }} className="route-end" />
           </>
         )}
         {barriers.map((b) => (

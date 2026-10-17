@@ -1,15 +1,7 @@
 import { expect, test } from "@playwright/test";
+import { openDetails } from "./helpers";
 import AxeBuilder from "@axe-core/playwright";
-import type { Page } from "@playwright/test";
 
-/** The route details start hidden: a side panel on desktop, a collapsed sheet on phones. */
-async function openDetails(page: Page) {
-  const desktop = page.getByRole("button", { name: "Show search" });
-  const phone = page.getByRole("button", { name: "Show route details" });
-  await expect(desktop.or(phone).first()).toBeVisible();
-  if (await desktop.isVisible()) await desktop.click();
-  else await phone.click();
-}
 
 // Public transport options come from the mock Transport for NSW server (tests/e2e/tfnsw-mock.mjs).
 test("choose a public transport option; the URL keeps the choice", async ({ page }) => {
