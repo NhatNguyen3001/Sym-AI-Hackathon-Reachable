@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { startPlaceId } from "@/lib/start";
+import { insideSydney, startPlaceId } from "@/lib/start";
 import { readStored, writeStored } from "@/lib/storage";
 
 afterEach(() => vi.unstubAllGlobals());
@@ -15,4 +15,10 @@ test("storage that throws (private mode, blocked site data) never breaks the pag
   vi.stubGlobal("localStorage", { getItem: boom, setItem: boom });
   expect(readStored("k")).toBeNull();
   expect(() => writeStored("k", "v")).not.toThrow();
+});
+
+test("inside Greater Sydney", () => {
+  expect(insideSydney({ lat: -33.7765, lng: 151.116 })).toBe(true);
+  expect(insideSydney({ lat: -37.81, lng: 144.96 })).toBe(false);
+  expect(insideSydney(null)).toBe(false);
 });

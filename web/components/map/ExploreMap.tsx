@@ -6,7 +6,8 @@ import { Circle, MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import { LocateFixed, Minus, Plus } from "lucide-react";
 import { guardMap } from "./guardMap";
 import { useVisibleMount } from "./useVisibleMount";
-import { HAZARD_LABEL, haversine, type Hazard, type HazardKind } from "@/lib/hazards";
+import { HAZARD_LABEL, type Hazard, type HazardKind } from "@/lib/hazards";
+import { insideSydney } from "@/lib/start";
 import type { AmenityPin } from "@/lib/types";
 import type { UserFix } from "@/lib/useUserLocation";
 
@@ -75,6 +76,26 @@ function Recenter({ fix, token }: { fix: UserFix | null; token: number }) {
   return null;
 }
 
+/** Shows where the map is on its region (data-lat/lng/zoom), for tests and debugging. */
+function ViewReport() {
+  const map = useMap();
+  useEffect(() => {
+    const el = map.getContainer().parentElement;
+    const report = () => {
+      const c = map.getCenter();
+      el?.setAttribute("data-lat", c.lat.toFixed(5));
+      el?.setAttribute("data-lng", c.lng.toFixed(5));
+      el?.setAttribute("data-zoom", String(map.getZoom()));
+    };
+    report();
+    map.on("moveend", report);
+    return () => {
+      map.off("moveend", report);
+    };
+  }, [map]);
+  return null;
+}
+
 export default function ExploreMap({
   hazards, selectedId, onSelect, fix, amenities = [], onAmenity,
 }: {
@@ -89,8 +110,6 @@ export default function ExploreMap({
   const [recenter, setRecenter] = useState(0);
   const mountKey = useVisibleMount();
   const mapRef = useCallback((m: L.Map | null) => setMap(guardMap(m)), []);
-  const fitted = useRef({ hazards: false, amenities: false });
-  const near = fix ? haversine(fix.lat, fix.lng, CAMPUS[0], CAMPUS[1]) < 20000 : false;
 
   useEffect(() => {
     const el = map?.getContainer();
@@ -100,32 +119,33 @@ export default function ExploreMap({
     return () => ro.disconnect();
   }, [map]);
 
+  // Open where you are (inside Greater Sydney), else on campus. Pins never move the map. When your location arrives
+  // after the map opened, go there once, unless you've already moved the map yourself.
+  const moved = useRef(false);
+  const wentToFix = useRef(false);
   useEffect(() => {
     if (!map) return;
-    const readyHazards = hazards.length > 0;
-    const readyAmenities = amenities.length > 0;
-    if (!readyHazards && !readyAmenities) return;
-    if (fitted.current.hazards === readyHazards && fitted.current.amenities === readyAmenities) return;
-    const pts: [number, number][] = [
-      ...hazards.map((h) => [h.lat, h.lng] as [number, number]),
-      ...amenities.map((pin) => [pin.lat, pin.lng] as [number, number]),
-    ];
-    if (fix && near) pts.push([fix.lat, fix.lng]);
-    if (pts.length > 1) {
-      const bounds = L.latLngBounds(pts);
-      map.fitBounds(bounds, { padding: [72, 72], maxZoom: 18, animate: false });
-      if (map.getZoom() < 18) map.setView(bounds.getCenter(), 18, { animate: false });
-    }
-    fitted.current = { hazards: readyHazards, amenities: readyAmenities };
-  }, [map, hazards, amenities, fix, near]);
+    const mark = () => {
+      moved.current = true;
+    };
+    map.on("dragstart zoomstart", mark);
+    return () => {
+      map.off("dragstart zoomstart", mark);
+    };
+  }, [map]);
+  useEffect(() => {
+    if (!map || !fix || wentToFix.current || !insideSydney(fix)) return;
+    wentToFix.current = true;
+    if (!moved.current) map.setView([fix.lat, fix.lng], Math.max(map.getZoom(), 17), { animate: false });
+  }, [map, fix]);
 
   return (
     <div role="region" aria-label="Live map" className="absolute inset-0">
       {mountKey !== null && (
         <MapContainer
           key={mountKey}
-          center={CAMPUS}
-          zoom={18}
+          center={fix && insideSydney(fix) ? [fix.lat, fix.lng] : CAMPUS}
+          zoom={17}
           maxZoom={19}
           zoomControl={false}
           ref={mapRef}
@@ -137,6 +157,7 @@ export default function ExploreMap({
             maxZoom={19} // OSM serves zoom 19; Leaflet's TileLayer stops at 18 unless told (grey map)
           />
           <Recenter fix={fix} token={recenter} />
+          <ViewReport />
           {fix && fix.accuracy > 0 && fix.accuracy < 1500 && (
             <Circle center={[fix.lat, fix.lng]} radius={fix.accuracy}
               pathOptions={{ color: "#1d4fa8", weight: 1, fillColor: "#1d4fa8", fillOpacity: 0.12 }} />
