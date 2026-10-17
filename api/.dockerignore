@@ -1,0 +1,8 @@
+.venv
+uploads
+*.db
+tests
+__pycache__
+.osm_cache
+scripts
+.env
