@@ -102,3 +102,12 @@ def test_short_trip_does_not_ask_tfnsw(tmp_path):
     with make(tmp_path, Boom()) as c:
         r = c.post("/route", json={**BODY, "to": "library-cafe"}).json()
     assert r["ok"] and [o["mode"] for o in r["options"]] == ["walk"]
+
+
+def test_each_option_carries_its_lift_rows_and_bus_stops_have_none(tmp_path):
+    with make(tmp_path, FakeTfnsw()) as c:
+        r = c.post("/route", json=BODY).json()
+    t = next(o for o in r["options"] if o["mode"] == "transit")
+    assert t["liftStatus"] == [] and t["wayId"].startswith("way-")
+    w = next(o for o in r["options"] if o["mode"] == "walk")
+    assert w["wayId"] == "walk" and "liftStatus" in w
