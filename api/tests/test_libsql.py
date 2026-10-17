@@ -48,3 +48,22 @@ def test_make_engine_picks_the_database():
 
 def test_health_says_which_database(client):
     assert client.get("/health").json() == {"ok": True, "db": "sqlite"}
+
+
+def test_many_rows_go_in_a_few_statements_not_one_each(tmp_path):
+    """On Turso each statement is a network round trip with the GIL held: 5,500 map places must not be 5,500 trips."""
+    from sqlalchemy import event
+    from app.models import MapPlace
+    eng = local_libsql(tmp_path)
+    init_db(eng)
+    statements = []
+    event.listen(eng, "before_cursor_execute", lambda conn, cur, sql, params, ctx, many: statements.append(sql))
+    with Session(eng) as s:
+        for i in range(2500):
+            s.add(MapPlace(id=f"place:osm-n{i}", osm_id=f"node/{i}", name="Accessible toilet", kind="toilet",
+                           lat=-33.77, lng=151.11, tags={"amenity": "toilets"}, tile="t"))
+        s.commit()
+        assert s.get(MapPlace, "place:osm-n2499").tags == {"amenity": "toilets"}
+    inserts = [q for q in statements if q.lstrip().upper().startswith("INSERT")]
+    # A few multi-row INSERT ... VALUES (...), (...) statements, not one single-row statement run 2,500 times.
+    assert 1 <= len(inserts) <= 6 and all("), (" in q for q in inserts)
