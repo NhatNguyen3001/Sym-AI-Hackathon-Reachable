@@ -1,0 +1,125 @@
+"use client";
+// Accessible combobox (WAI-ARIA 1.2 list autocomplete): type to search campus places, arrows to move, Enter to pick.
+import { useId, useRef, useState } from "react";
+import { MapPin } from "lucide-react";
+import { cn } from "cn";
+import { getPlaces } from "@/lib/api";
+import type { Place } from "@/lib/types";
+
+export function PlaceInput({
+  label, value, onChange, placeholder, hint,
+}: {
+  label: string;
+  value: Place | null;
+  onChange: (p: Place | null) => void;
+  placeholder?: string;
+  hint?: string;
+}) {
+  const id = useId();
+  const listId = `${id}-list`;
+  const hintId = `${id}-hint`;
+  const [text, setText] = useState(value?.name ?? "");
+  const [options, setOptions] = useState<Place[]>([]);
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(-1);
+  const seq = useRef(0);
+  // When the parent changes the picked place (e.g. from the URL), show its name.
+  const [shown, setShown] = useState(value?.id);
+  if (value && value.id !== shown) {
+    setShown(value.id);
+    setText(value.name);
+  }
+
+  async function search(q: string) {
+    const n = ++seq.current;
+    const { data } = await getPlaces(q);
+    if (n === seq.current) {
+      setOptions(data);
+      setActive(data.length ? 0 : -1);
+    }
+  }
+
+  function pick(p: Place) {
+    onChange(p);
+    setText(p.name);
+    setOpen(false);
+  }
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (!open) {
+        setOpen(true);
+        search(text);
+      } else setActive((a) => Math.min(options.length - 1, a + 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActive((a) => Math.max(0, a - 1));
+    } else if (e.key === "Enter" && open && options[active]) {
+      e.preventDefault();
+      pick(options[active]);
+    } else if (e.key === "Escape") {
+      setOpen(false);
+    }
+  }
+
+  return (
+    <div className="relative">
+      <label htmlFor={id} className="mb-1.5 block text-[16px] font-bold">{label}</label>
+      <input
+        id={id}
+        type="text"
+        role="combobox"
+        aria-expanded={open && options.length > 0}
+        aria-controls={listId}
+        aria-autocomplete="list"
+        aria-activedescendant={open && active >= 0 ? `${listId}-${active}` : undefined}
+        aria-describedby={hint ? hintId : undefined}
+        autoComplete="off"
+        value={text}
+        placeholder={placeholder}
+        onChange={(e) => {
+          setText(e.target.value);
+          if (value) onChange(null);
+          setOpen(true);
+          search(e.target.value);
+        }}
+        onFocus={() => {
+          setOpen(true);
+          search(value ? "" : text);
+        }}
+        onBlur={() => setTimeout(() => setOpen(false), 120)}
+        onKeyDown={onKeyDown}
+        className="h-12 w-full rounded-[12px] border border-line-strong bg-surface px-3.5 text-[17px] text-ink"
+      />
+      {hint && <p id={hintId} className="mt-1 text-[14px] text-muted">{hint}</p>}
+      <ul
+        id={listId}
+        role="listbox"
+        aria-label={`${label} suggestions`}
+        className={cn("absolute z-[1000] mt-1 max-h-72 w-full overflow-auto rounded-[12px] border border-line bg-surface py-1",
+          !(open && options.length > 0) && "hidden")}
+      >
+        {options.map((p, i) => (
+          <li
+            key={p.id}
+            id={`${listId}-${i}`}
+            role="option"
+            aria-selected={i === active}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              pick(p);
+            }}
+            onMouseEnter={() => setActive(i)}
+            className={cn("flex min-h-11 cursor-pointer items-center gap-2 px-3.5 py-2 text-[16px]",
+              i === active && "bg-primary-soft text-primary-hover")}
+          >
+            <MapPin aria-hidden="true" className="size-4 shrink-0 text-muted" />
+            <span>{p.name}</span>
+            {p.kind === "station" && <span className="ml-auto text-[13px] text-muted">Station</span>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}

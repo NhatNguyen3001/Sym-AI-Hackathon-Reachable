@@ -1,0 +1,90 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Design tokens: .claude/docs/reachable-web-ui-spec.md section 1. Don't add colours here. */
+@theme {
+  --color-bg: #f4f5f1;
+  --color-surface: #ffffff;
+  --color-ink: #15201b;
+  --color-muted: #4a5550;
+  --color-line: #d5d9d3;
+  --color-line-strong: #9aa39d;
+  --color-map-bg: #e7eae3;
+  --color-primary: #1d4fa8;
+  --color-primary-hover: #163c80;
+  --color-primary-soft: #e6edf9;
+  --color-warn: #a84a00;
+  --color-warn-strong: #8a3d00;
+  --color-warn-soft: #fcebdd;
+  --color-warn-ink: #6e3000;
+  --color-fastest: #6b746f;
+
+  --font-sans: var(--font-atkinson), system-ui, sans-serif;
+  --font-heading: var(--font-atkinson), system-ui, sans-serif;
+
+  --radius-card: 18px;
+  --radius-control: 12px;
+  --radius-chip: 22px;
+  --radius-badge: 6px;
+}
+
+/* shadcn/ui semantic variables, mapped onto the tokens above. */
+@theme inline {
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-ink);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-ink);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-ink);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--color-surface);
+  --color-secondary-foreground: var(--color-ink);
+  --color-muted-foreground: var(--color-muted);
+  --color-accent: var(--color-primary-soft);
+  --color-accent-foreground: var(--color-primary-hover);
+  --color-destructive: var(--color-warn);
+  --color-border: var(--color-line);
+  --color-input: var(--color-line-strong);
+  --color-ring: var(--color-primary);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
+}
+
+@layer base {
+  * {
+    @apply border-line;
+  }
+  html {
+    @apply font-sans bg-bg text-ink;
+  }
+  body {
+    font-size: 17px;
+    line-height: 1.5;
+  }
+  /* One focus style everywhere: 2px primary outline, 2px offset. */
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Leaflet: keep its controls inside our focus and font styles. */
+.leaflet-container {
+  font-family: inherit;
+  background: var(--color-map-bg);
+}
