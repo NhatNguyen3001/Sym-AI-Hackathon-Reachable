@@ -134,6 +134,7 @@ export default function ExploreMap({
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+            maxZoom={19} // OSM serves zoom 19; Leaflet's TileLayer stops at 18 unless told (grey map)
           />
           <Recenter fix={fix} token={recenter} />
           {fix && fix.accuracy > 0 && fix.accuracy < 1500 && (

@@ -30,6 +30,7 @@ export default function PinPicker({
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+            maxZoom={19} // OSM serves zoom 19; Leaflet's TileLayer stops at 18 unless told (grey map)
           />
           <CircleMarker center={[lat, lng]} radius={10} pathOptions={{ color: "#A84A00", weight: 3, fillColor: "#A84A00", fillOpacity: 0.9 }} />
           <ClickToPick onPick={onPick} />
