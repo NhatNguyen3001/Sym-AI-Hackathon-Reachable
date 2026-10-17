@@ -15,9 +15,15 @@ class Place:
     lng: float
     node: object = None
     exits: list[str] = field(default_factory=list)
+    detail: str = ""
+    # Station exits with coordinates: {id, name, lat, lng, via}. Filled by the place resolver.
+    exit_points: list[dict] = field(default_factory=list)
 
     def public(self) -> dict:
-        return {"id": self.id, "name": self.name, "kind": self.kind, "lat": self.lat, "lng": self.lng}
+        out = {"id": self.id, "name": self.name, "kind": self.kind, "lat": self.lat, "lng": self.lng}
+        if self.detail:
+            out["detail"] = self.detail
+        return out
 
 
 def _fold(s: str) -> str:

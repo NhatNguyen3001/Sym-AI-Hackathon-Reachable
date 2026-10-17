@@ -21,17 +21,28 @@ def _merge_into(a: dict, b: dict):
     a["slope"] = max(a["slope"], b["slope"])
     a["unsure"] |= b["unsure"]
     a["measured"] |= b["measured"]
+    a["likely"] = a.get("likely", False) or b.get("likely", False)
 
 
 def group_steps(G, path_edges, ctx, exit_names: dict[str, str] | None = None) -> list[dict]:
-    exit_names = exit_names or {}
-    groups: list[dict] = []
+    """Step list for a campus-graph path."""
+    items = []
     for u, v, k in path_edges:
         d = G.edges[u, v, k]
         kind = kind_of(d)
-        g = {"kind": kind, "slope": round(float(d.get("grade_abs", 0) or 0) * 100), "length": float(d["length"]),
-             "unsure": ctx.barriers.get(edge_id(u, v, k)) == "needs_checking" or (kind == "crossing" and d.get("kerb") is None),
-             "measured": bool(d.get("slope_measured")), "exit": d.get("exit_id")}
+        items.append({"kind": kind, "slope": round(float(d.get("grade_abs", 0) or 0) * 100), "length": float(d["length"]),
+                      "unsure": ctx.barriers.get(edge_id(u, v, k)) == "needs_checking" or (kind == "crossing" and d.get("kerb") is None),
+                      "measured": bool(d.get("slope_measured")), "likely": False, "exit": d.get("exit_id")})
+    return group_items(items, exit_names)
+
+
+def group_items(items: list[dict], exit_names: dict[str, str] | None = None) -> list[dict]:
+    """Merge per-edge items ({kind, slope %, length m, unsure, measured, likely, exit}) into readable steps."""
+    exit_names = exit_names or {}
+    groups: list[dict] = []
+    for item in items:
+        g = dict(item)
+        kind = g["kind"]
         last = groups[-1] if groups else None
         if last and kind in MERGEABLE and last["kind"] == kind:
             _merge_into(last, g)
@@ -39,6 +50,7 @@ def group_steps(G, path_edges, ctx, exit_names: dict[str, str] | None = None) ->
             _merge_into(last, g)
         elif last and kind in ("flat", "slope") and last["kind"] in ("flat", "slope") and last["length"] < TINY_M:
             g["length"] += last["length"]
+            g["unsure"] |= last["unsure"]
             groups[-1] = g
         else:
             groups.append(g)
@@ -53,6 +65,13 @@ def group_steps(G, path_edges, ctx, exit_names: dict[str, str] | None = None) ->
             "lift": f"Lift at {exit_name}",
             "crossing": "Kerb ramp at crossing",
         }[g["kind"]]
-        conf = "Not sure" if g["unsure"] else ("Measured" if g["measured"] else "Confirmed")
+        if g["unsure"]:
+            conf = "Not sure"
+        elif g["measured"]:
+            conf = "Measured"
+        elif g.get("likely"):
+            conf = "Likely"
+        else:
+            conf = "Confirmed"
         out.append({"icon": "alert" if g["unsure"] else ICONS[g["kind"]], "label": label, "confidence": conf, "lengthM": m})
     return out

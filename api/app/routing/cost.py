@@ -12,6 +12,8 @@ class Context:
     raining: bool = False
     barriers: dict[str, str] = field(default_factory=dict)
     lift_out_exits: set[str] = field(default_factory=set)
+    # (lat, lng, status) of active non-lift barriers; used by routers that work on coordinates (Valhalla).
+    barrier_points: list[tuple[float, float, str]] = field(default_factory=list)
 
 
 def tag_set(value) -> set[str]:
