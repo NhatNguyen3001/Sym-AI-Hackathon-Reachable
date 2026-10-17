@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from sqlmodel import Session
 
 from app.checker import check_report
-from app.db import get_session
+from app.db import get_session, get_write_session
 from app.errors import ApiError
 from app.llm.vision import label_photo
 from app.models import Report, uid
@@ -52,7 +52,8 @@ def public(r: Report) -> dict:
 
 
 @router.post("/reports")
-async def create_report(body: ReportIn, request: Request, tasks: BackgroundTasks, session: Session = Depends(get_session)):
+async def create_report(body: ReportIn, request: Request, tasks: BackgroundTasks,
+                        session: Session = Depends(get_write_session)):
     # The AI label comes from our own upload step, never from the client, so the checker can trust it.
     ai_label = request.app.state.photo_labels.get(body.photoUrl) if body.photoUrl else None
     if body.photoUrl and body.photoUrl not in request.app.state.photo_labels:
@@ -64,10 +65,13 @@ async def create_report(body: ReportIn, request: Request, tasks: BackgroundTasks
     session.add(report)
     try:
         session.commit()
-    except Exception:  # noqa: BLE001 - e.g. Turso unreachable (read-only local copy): tell the person plainly
+    except Exception:  # noqa: BLE001 - e.g. Turso unreachable: tell the person plainly
         session.rollback()
+        session.close()
         raise ApiError(503, "save_failed", "Couldn't save your report right now. Please try again.")
     session.refresh(report)
-    await request.app.state.broadcaster.publish("report_created", {"reportId": report.id})
-    tasks.add_task(check_report, request.app.state, report.id)
-    return public(report)
+    out = public(report)
+    session.close()  # give the one Turso connection back now: the report check below needs it
+    await request.app.state.broadcaster.publish("report_created", {"reportId": out["id"]})
+    tasks.add_task(check_report, request.app.state, out["id"])
+    return out

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request
 from sqlmodel import Session
 
 from app.agents import agent_cards, log_run
-from app.db import get_session
+from app.db import get_session, get_write_session
 
 router = APIRouter()
 
@@ -13,7 +13,7 @@ def status(request: Request, session: Session = Depends(get_session)):
 
 
 @router.post("/agents/updates/run")
-async def run_updates(request: Request, session: Session = Depends(get_session)):
+async def run_updates(request: Request, session: Session = Depends(get_write_session)):
     st = request.app.state
     if st.lift_poller:
         summary = await st.lift_poller.run_once()  # logs its own run

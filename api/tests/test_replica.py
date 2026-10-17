@@ -8,7 +8,7 @@ import libsql
 import pytest
 from sqlalchemy import text
 
-from app.db import make_engine
+from app.db import make_engine, make_read_engine
 from app.replica import NO_COPY, Replica, ReplicaUnavailable
 
 TOKEN = "secret-token-value"
@@ -75,10 +75,12 @@ def test_offline_copy_is_read_only(tmp_path):
     c.commit()
     r = Replica(path, "libsql://x.turso.io", TOKEN, connect=fake_connect(fail_sync=True))
     r.start()
-    eng = make_engine("", replica=r)
-    with eng.connect() as conn:
+    with make_read_engine(r).connect() as conn:
         assert conn.execute(text("select count(*) from t")).scalar() == 1
         with pytest.raises(Exception):
+            conn.execute(text("insert into t values (2)"))
+    with pytest.raises(Exception):          # no Turso connection: saving fails clearly
+        with make_engine("", replica=r).begin() as conn:
             conn.execute(text("insert into t values (2)"))
 
 
@@ -109,10 +111,10 @@ def test_concurrent_reads_during_sync(tmp_path):
     connect = fake_connect(sync_delay=0.05)
     r = Replica(tmp_path / "rep.db", "libsql://x.turso.io", TOKEN, connect=connect)
     r.start()
-    eng = make_engine("", replica=r)
-    with eng.begin() as conn:
+    with make_engine("", replica=r).begin() as conn:
         conn.execute(text("create table t (x int)"))
         conn.execute(text("insert into t values (1), (2), (3)"))
+    eng = make_read_engine(r)
     errors, stop = [], threading.Event()
 
     def syncing():
@@ -167,3 +169,38 @@ def test_sync_is_forced_after_max_wait(tmp_path):
         task.cancel()
     asyncio.run(go())
     assert synced
+
+
+def replica_app(tmp_path, connect):
+    from fastapi.testclient import TestClient
+    from app.config import Settings
+    from app.main import create_app
+    from app.weather import WeatherService
+    from tests.conftest import _Dry
+    from tests.test_campus_graph import G, PL
+    s = Settings(database_url=f"sqlite:///{tmp_path / 'unused.db'}", anthropic_api_key="", uploads_dir=tmp_path / "u",
+                 router="campus", photon_url="", tfnsw_api_key="", turso_database_url="", lift_poll_seconds=0)
+    rep = Replica(tmp_path / "rep.db", "libsql://x.turso.io", TOKEN, connect=connect)
+    return TestClient(create_app(s, graph=G, places=PL, replica=rep,
+                                 weather_service=WeatherService(http_get=lambda *a, **k: _Dry())))
+
+
+def test_only_one_turso_connection_however_many_requests(tmp_path):
+    connect = fake_connect()
+    with replica_app(tmp_path, connect) as c:
+        for _ in range(6):
+            assert c.get("/updates").status_code == 200
+            assert c.post("/route", json={"from": "mq-station", "to": "library"}).status_code == 200
+        r = c.post("/reports", json={"lat": -33.776, "lng": 151.114, "userLabel": "stairs"})
+        assert r.status_code == 200
+        assert any(i["title"] == "Stairs on the path" for i in c.get("/updates").json())   # the write is readable at once
+    assert len(connect.made) == 1   # reads use local read-only connections; writes and syncs share one
+
+
+def test_reads_keep_working_when_turso_drops(tmp_path):
+    connect = fake_connect()
+    with replica_app(tmp_path, connect) as c:
+        assert c.get("/updates").status_code == 200
+        connect.made[0].fail_sync = True              # Turso goes away mid-run
+        c.app.state.replica.sync_quietly()
+        assert c.get("/updates").status_code == 200   # still served from the local copy

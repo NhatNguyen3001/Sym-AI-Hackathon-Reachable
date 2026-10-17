@@ -11,7 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session
 
 from app.config import Settings
-from app.db import init_db, make_engine
+from app.db import init_db, make_engine, make_read_engine
 from app.errors import ApiError, api_error_handler
 from app.events import Broadcaster
 from app.replica import Replica
@@ -54,23 +54,24 @@ def _quiet(st) -> bool:
 
 
 def create_app(settings: Settings | None = None, graph=None, places=None, weather_service=None, router=None,
-               tfnsw=None) -> FastAPI:
+               tfnsw=None, replica=None) -> FastAPI:
     settings = settings or Settings()
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         st = app.state
         st.settings = settings
-        st.db_kind = "turso" if settings.turso_database_url else "sqlite"
-        replica = None
-        if settings.turso_database_url:
-            replica = Replica(settings.turso_replica_path, settings.turso_database_url, settings.turso_auth_token)
-            replica.start()  # raises ReplicaUnavailable when Turso is down and there's no local copy yet
-        st.engine = make_engine(settings.database_url, replica=replica)
-        if replica:
-            replica.on_online = st.engine.dispose  # reopen pooled connections read-write once Turso is back
-        sync_task = (asyncio.create_task(replica.run(settings.turso_sync_seconds, quiet=lambda: _quiet(st)))
-                     if replica else None)
+        rep = replica
+        if rep is None and settings.turso_database_url:
+            rep = Replica(settings.turso_replica_path, settings.turso_database_url, settings.turso_auth_token)
+        st.replica = rep
+        st.db_kind = "turso" if rep else "sqlite"
+        if rep:
+            rep.start()  # raises ReplicaUnavailable when Turso is down and there's no local copy yet
+        st.engine = make_engine(settings.database_url, replica=rep)          # writes
+        st.read_engine = make_read_engine(rep) if rep else st.engine          # reads: the local copy
+        sync_task = (asyncio.create_task(rep.run(settings.turso_sync_seconds, quiet=lambda: _quiet(st)))
+                     if rep else None)
         try:
             init_db(st.engine)
         except Exception:
