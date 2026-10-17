@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Request
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app.agents import ago
 from app.db import get_session
@@ -8,12 +8,42 @@ from app.models import Venue
 
 router = APIRouter()
 FIELDS = [("Level entrance", "entrance"), ("Step-free inside", "step_free_inside"), ("Accessible toilet", "toilet")]
+AMENITIES = [
+    ("entrance", "Level or ramped entrance"),
+    ("toilet", "Accessible toilet"),
+    ("parking", "Accessible parking nearby"),
+]
 
 
 def _status(value: str, confidence: str | None) -> str:
     if value != "yes":
         return "Not found"
     return {"confirmed": "Confirmed", "likely": "Likely"}.get(confidence or "", "Not sure")
+
+
+@router.get("/amenities")
+def amenities(session: Session = Depends(get_session)):
+    """Places with a level entrance, accessible toilet, or accessible parking, drawn on the map before a search."""
+    spread = {"entrance": (0.0005, 0.0), "toilet": (0.0, 0.0006), "parking": (-0.0005, 0.0)}
+    pins = []
+    for venue in session.exec(select(Venue)).all():
+        for key, label in AMENITIES:
+            if getattr(venue, key) != "yes" or venue.confidence.get(key) not in ("confirmed", "likely"):
+                continue
+            dlat, dlng = spread[key]
+            pin = {
+                "id": f"{venue.id}:{key}",
+                "placeId": venue.id,
+                "name": venue.name,
+                "kind": key,
+                "label": label,
+                "lat": venue.lat + dlat,
+                "lng": venue.lng + dlng,
+            }
+            while any(abs(pin["lat"] - other["lat"]) < 0.0004 and abs(pin["lng"] - other["lng"]) < 0.0004 for other in pins):
+                pin["lng"] += 0.00055
+            pins.append(pin)
+    return pins
 
 
 @router.get("/venue/{venue_id}/check")

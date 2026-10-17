@@ -7,6 +7,7 @@ import { LocateFixed, Minus, Plus } from "lucide-react";
 import { guardMap } from "./guardMap";
 import { useVisibleMount } from "./useVisibleMount";
 import { HAZARD_LABEL, haversine, type Hazard, type HazardKind } from "@/lib/hazards";
+import type { AmenityPin } from "@/lib/types";
 import type { UserFix } from "@/lib/useUserLocation";
 
 const CAMPUS: [number, number] = [-33.7755, 151.1155];
@@ -35,6 +36,23 @@ function hazardIcon(h: Hazard, selected: boolean) {
   });
 }
 
+const AMENITY_STYLE: Record<AmenityPin["kind"], { colour: string; svg: string; legend: string }> = {
+  entrance: { colour: "#1D4FA8", legend: "Level entrance", svg: '<path d="M5 21V4h10l4 4v13"/><path d="M15 4v4h4"/><path d="M10 21v-6"/>' },
+  toilet: { colour: "#0F766E", legend: "Accessible toilet", svg: '<circle cx="12" cy="5" r="1.6"/><path d="M12 8v5M9 21l3-8 3 8M8 12h8"/>' },
+  parking: { colour: "#4338CA", legend: "Accessible parking", svg: '<path d="M7 21V3h7a5 5 0 0 1 0 10H7"/>' },
+};
+
+function amenityIcon(pin: AmenityPin) {
+  const { colour, svg } = AMENITY_STYLE[pin.kind];
+  return L.divIcon({
+    className: "",
+    iconSize: [40, 40],
+    iconAnchor: [20, 20],
+    html: `<span style="display:flex;width:40px;height:40px;align-items:center;justify-content:center;border-radius:999px;background:${colour};border:3px solid #fff;box-shadow:0 2px 8px rgba(21,32,27,.35)">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${svg}</svg></span>`,
+  });
+}
+
 const userIcon = L.divIcon({
   className: "",
   iconSize: [22, 22],
@@ -56,18 +74,20 @@ function Recenter({ fix, token }: { fix: UserFix | null; token: number }) {
 }
 
 export default function ExploreMap({
-  hazards, selectedId, onSelect, fix,
+  hazards, selectedId, onSelect, fix, amenities = [], onAmenity,
 }: {
   hazards: Hazard[];
   selectedId: string | null;
   onSelect: (id: string) => void;
   fix: UserFix | null;
+  amenities?: AmenityPin[];
+  onAmenity?: (pin: AmenityPin) => void;
 }) {
   const [map, setMap] = useState<L.Map | null>(null);
   const [recenter, setRecenter] = useState(0);
   const mountKey = useVisibleMount();
   const mapRef = useCallback((m: L.Map | null) => setMap(guardMap(m)), []);
-  const fitted = useRef(false);
+  const fitted = useRef({ hazards: false, amenities: false });
   const near = fix ? haversine(fix.lat, fix.lng, CAMPUS[0], CAMPUS[1]) < 20000 : false;
 
   useEffect(() => {
@@ -79,12 +99,19 @@ export default function ExploreMap({
   }, [map]);
 
   useEffect(() => {
-    if (!map || fitted.current || hazards.length === 0) return;
-    const pts: [number, number][] = hazards.map((h) => [h.lat, h.lng]);
+    if (!map) return;
+    const readyHazards = hazards.length > 0;
+    const readyAmenities = amenities.length > 0;
+    if (!readyHazards && !readyAmenities) return;
+    if (fitted.current.hazards === readyHazards && fitted.current.amenities === readyAmenities) return;
+    const pts: [number, number][] = [
+      ...hazards.map((h) => [h.lat, h.lng] as [number, number]),
+      ...amenities.map((pin) => [pin.lat, pin.lng] as [number, number]),
+    ];
     if (fix && near) pts.push([fix.lat, fix.lng]);
     if (pts.length > 1) map.fitBounds(L.latLngBounds(pts), { padding: [56, 56], maxZoom: 16, animate: false });
-    fitted.current = true;
-  }, [map, hazards, fix, near]);
+    fitted.current = { hazards: readyHazards, amenities: readyAmenities };
+  }, [map, hazards, amenities, fix, near]);
 
   return (
     <div role="region" aria-label="Live map" className="absolute inset-0">
@@ -109,6 +136,17 @@ export default function ExploreMap({
           {fix && (
             <Marker position={[fix.lat, fix.lng]} icon={userIcon} alt="Your location" title="Your location" keyboard={false} zIndexOffset={800} />
           )}
+          {amenities.map((pin) => (
+            <Marker
+              key={pin.id}
+              position={[pin.lat, pin.lng]}
+              icon={amenityIcon(pin)}
+              title={`${pin.label} at ${pin.name}`}
+              alt={`${pin.label} at ${pin.name}`}
+              eventHandlers={{ click: () => onAmenity?.(pin) }}
+              zIndexOffset={650}
+            />
+          ))}
           {hazards.map((h) => (
             <Marker
               key={h.id}
@@ -122,13 +160,21 @@ export default function ExploreMap({
           ))}
         </MapContainer>
       )}
-      <ul className="absolute top-3 left-3 z-[500] flex max-w-[calc(100%-4.5rem)] flex-wrap gap-1.5">
+      <ul className="absolute top-3 left-3 z-[500] flex max-w-[calc(100%-4.5rem)] flex-wrap gap-1.5 lg:top-auto lg:bottom-4">
         {fix && (
           <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[13px] font-bold">
             <span aria-hidden="true" className="size-2.5 rounded-full bg-primary" />
             You
           </li>
         )}
+        {(Object.keys(AMENITY_STYLE) as AmenityPin["kind"][])
+          .filter((kind) => amenities.some((pin) => pin.kind === kind))
+          .map((kind) => (
+            <li key={kind} className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[13px] font-bold">
+              <span aria-hidden="true" className="size-2.5 rounded-full" style={{ background: AMENITY_STYLE[kind].colour }} />
+              {AMENITY_STYLE[kind].legend}
+            </li>
+          ))}
         {(["slope", "roadworks", "lift", "amenity"] as HazardKind[]).map((kind) => (
           <li key={kind} className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[13px] font-bold">
             <span aria-hidden="true" className="size-2.5 rounded-full" style={{ background: COLOUR[kind] }} />

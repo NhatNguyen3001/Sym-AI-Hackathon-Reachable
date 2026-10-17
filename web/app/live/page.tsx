@@ -7,7 +7,10 @@ export const metadata: Metadata = { title: "Live updates" };
 export default function LivePage() {
   return (
     <AppPage>
-      <PageTitle title="Live updates" sub="Everything our agents and users have found near Macquarie University, newest first." />
+      <PageTitle
+        title="Live updates"
+        sub="What has changed on paths, lifts and buildings around Macquarie University, newest first. Each item says what happened, where, whether people can still get through, and where the information came from."
+      />
       <LiveClient />
     </AppPage>
   );

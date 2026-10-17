@@ -8,7 +8,7 @@ test.beforeEach(({}, info) => {
 });
 
 test("search Sydney places and get a step-free route with estimated slopes", async ({ page }) => {
-  await page.goto("/plan");
+  await page.goto("/route?from=mq-station&to=library");
   const from = page.getByRole("combobox", { name: "From" });
   await from.fill("Town Hall");
   await expect(page.getByRole("option", { name: /Town Hall/ }).first()).toBeVisible({ timeout: 10_000 });
@@ -18,8 +18,6 @@ test("search Sydney places and get a step-free route with estimated slopes", asy
   await to.fill("State Library of New South Wales");
   await expect(page.getByRole("option", { name: /State Library/ }).first()).toBeVisible({ timeout: 10_000 });
   await to.press("Enter");
-
-  await page.getByRole("button", { name: "Find a route I can use" }).click();
   await expect(page).toHaveURL(/\/route\?from=osm%3A|\/route\?from=osm:/);
   const aside = page.getByRole("complementary", { name: "Route details" });
   await expect(aside.getByText(/ min$/).first()).toBeVisible({ timeout: 20_000 });

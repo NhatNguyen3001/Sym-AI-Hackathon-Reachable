@@ -2,7 +2,7 @@
 // render when the API is down; writes throw ApiError so pages can say what went wrong.
 import * as sample from "./placeholder";
 import type {
-  AgentCardData, Fetched, Place, Profile, ReportIn, RouteResult, UpdateItem, UpdateType, VenueCheck, Weather,
+  AgentCardData, AmenityPin, Fetched, Place, Profile, ReportIn, RouteResult, UpdateItem, UpdateType, VenueCheck, Weather,
 } from "./types";
 
 export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000").replace(/\/$/, "");
@@ -78,6 +78,8 @@ export async function getRoute(from: string, to: string, profile: Profile): Prom
 }
 
 export const getVenueCheck = (id: string) => read<VenueCheck>(`/venue/${encodeURIComponent(id)}/check`, sample.venue);
+
+export const getAmenities = () => read<AmenityPin[]>("/amenities", sample.amenities);
 
 export const getUpdates = (type?: UpdateType | "all") =>
   read<UpdateItem[]>(type && type !== "all" ? `/updates?type=${type}` : "/updates",

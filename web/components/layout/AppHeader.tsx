@@ -5,9 +5,8 @@ import { cn } from "cn";
 import { LogoImage } from "@/components/brand/LogoImage";
 
 const NAV = [
-  { href: "/plan", label: "Plan a trip" },
+  { href: "/", label: "Map" },
   { href: "/live", label: "Live updates" },
-  { href: "/needs", label: "My needs" },
 ];
 
 export function Logo() {
@@ -27,7 +26,7 @@ export function AppHeader() {
         <nav aria-label="Main">
           <ul className="flex flex-wrap gap-1">
             {NAV.map((n) => {
-              const current = path === n.href || (n.href === "/plan" && path === "/route");
+              const current = path === n.href || (n.href === "/" && path.startsWith("/route"));
               return (
                 <li key={n.href}>
                   <Link

@@ -1,13 +1,6 @@
-import type { Metadata } from "next";
-import { AppPage } from "@/components/layout/Page";
-import { PlanClient } from "./PlanClient";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "Plan a trip" };
-
+/** The map is now where a trip starts. Keep the old address working. */
 export default function PlanPage() {
-  return (
-    <AppPage>
-      <PlanClient />
-    </AppPage>
-  );
+  redirect("/");
 }

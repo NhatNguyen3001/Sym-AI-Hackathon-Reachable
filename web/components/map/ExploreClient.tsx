@@ -1,58 +1,82 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ThumbsUp } from "lucide-react";
-import { PlaceInput } from "@/components/PlaceInput";
+import { cn } from "cn";
+import { SlidersHorizontal, ThumbsUp } from "lucide-react";
+import { NeedsTicks } from "@/components/NeedsTicks";
+import { PlaceSearch } from "@/components/PlaceSearch";
 import { Button } from "@/components/ui/button";
-import { getUpdates } from "@/lib/api";
-import { distanceLabel, HAZARD_LABEL, hazardsFromUpdates, type Hazard, type HazardKind } from "@/lib/hazards";
+import { WeatherBanner } from "@/components/Banners";
+import { getAmenities, getUpdates, getWeather } from "@/lib/api";
+import { distanceLabel, HAZARD_LABEL, hazardsFromUpdates, type Hazard } from "@/lib/hazards";
+import { loadProfile, saveProfile } from "@/lib/profile";
+import { profile as defaultProfile } from "@/lib/placeholder";
 import { useUserLocation } from "@/lib/useUserLocation";
-import type { Place } from "@/lib/types";
+import type { AmenityPin, Place, Profile, Weather } from "@/lib/types";
 
 const ExploreMap = dynamic(() => import("./ExploreMap"), {
   ssr: false,
   loading: () => <div className="absolute inset-0 bg-map-bg" aria-hidden="true" />,
 });
 
-const FILTERS: { id: HazardKind | "all"; label: string }[] = [
-  { id: "all", label: "All" },
-  { id: "slope", label: "Slopes" },
-  { id: "roadworks", label: "Roadworks" },
-  { id: "lift", label: "Lifts" },
-  { id: "amenity", label: "Amenities" },
-];
-
 export function ExploreClient() {
   const router = useRouter();
   const { fix, status } = useUserLocation();
   const [hazards, setHazards] = useState<Hazard[]>([]);
-  const [filter, setFilter] = useState<HazardKind | "all">("all");
+  const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hidden, setHidden] = useState<string[]>([]);
   const [thanks, setThanks] = useState<Record<string, number>>({});
   const [note, setNote] = useState("");
   const [to, setTo] = useState<Place | null>(null);
+  const [weather, setWeather] = useState<Weather | null>(null);
+  const [amenities, setAmenities] = useState<AmenityPin[]>([]);
+  const [expanded, setExpanded] = useState(true);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const drag = useRef({ y: 0, moved: false });
 
   useEffect(() => {
     let current = true;
     getUpdates().then((r) => {
       if (current) setHazards(hazardsFromUpdates(r.data));
     });
+    getWeather().then((r) => {
+      if (current) setWeather(r.data);
+    });
+    getAmenities().then((r) => {
+      if (current) setAmenities(r.data);
+    });
+    setProfile(loadProfile());
     return () => {
       current = false;
     };
   }, []);
 
   const visible = useMemo(
-    () => hazards.filter((h) => !hidden.includes(h.id) && (filter === "all" || h.kind === filter)),
-    [hazards, hidden, filter],
+    () => hazards.filter((h) => !hidden.includes(h.id)),
+    [hazards, hidden],
   );
   const selected = visible.find((h) => h.id === selectedId) ?? null;
+
+  function saveFilter() {
+    saveProfile(profile);
+    setFiltersOpen(false);
+    setExpanded(false);
+  }
+
+  function goToAmenity(pin: AmenityPin) {
+    saveProfile(profile);
+    const from = fix
+      ? `coord:here:${fix.lat.toFixed(5)},${fix.lng.toFixed(5)}`
+      : "mq-station";
+    router.push(`/route?from=${encodeURIComponent(from)}&to=${encodeURIComponent(pin.placeId)}`);
+  }
 
   function go(e: React.FormEvent) {
     e.preventDefault();
     if (!to) return;
+    saveProfile(profile);
     const from = fix
       ? `coord:here:${fix.lat.toFixed(5)},${fix.lng.toFixed(5)}`
       : "mq-station";
@@ -69,9 +93,40 @@ export function ExploreClient() {
     <div className="relative min-h-0 flex-1">
       <h1 className="sr-only">Around you</h1>
       <p role="status" className="sr-only">{locationText}</p>
-      <ExploreMap hazards={visible} selectedId={selected?.id ?? null} onSelect={setSelectedId} fix={fix} />
+      <ExploreMap hazards={visible} selectedId={selected?.id ?? null} onSelect={setSelectedId} fix={fix}
+        amenities={to ? [] : amenities} onAmenity={goToAmenity} />
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-20 z-[450] flex flex-col gap-3 px-3 lg:bottom-4">
+      <div className="pointer-events-none absolute top-16 right-16 left-3 z-[550] lg:top-3 lg:right-20 lg:left-auto lg:max-w-sm">
+        <div className="pointer-events-auto">
+          <WeatherBanner weather={weather} />
+        </div>
+      </div>
+
+      <div className="pointer-events-none absolute top-3 right-16 left-3 z-[600] hidden lg:block">
+        <form onSubmit={go} className="pointer-events-none flex items-start gap-2">
+          <div className="pointer-events-auto w-[min(100%,380px)] rounded-[18px] bg-surface p-3 shadow-lg">
+            {status !== "ready" && status !== "pending" && (
+              <p className="mb-2 text-[14px] text-muted">Location is off, so a route starts at Macquarie University station.</p>
+            )}
+            <PlaceSearch label="Where to?" value={to} onChange={setTo} />
+            <button type="button" aria-expanded={filtersOpen} aria-label={filtersOpen ? "Hide filter" : "Filter"}
+              onClick={() => setFiltersOpen((open) => !open)}
+              className={cn("mt-2 inline-flex size-11 items-center justify-center rounded-full border",
+                filtersOpen ? "border-primary bg-primary text-white" : "border-line-strong bg-surface text-ink")}>
+              <SlidersHorizontal aria-hidden="true" className="size-5" strokeWidth={2.4} />
+            </button>
+            {filtersOpen && (
+              <div className="mt-2 max-h-[34dvh] overflow-y-auto pr-1">
+                <NeedsTicks profile={profile} onChange={setProfile} />
+                <Button type="button" variant="secondary" size="lg" className="mt-3 w-full" onClick={saveFilter}>Save filter</Button>
+              </div>
+            )}
+            <Button type="submit" size="lg" className="mt-2 w-full" disabled={!to}>Show a step-free route</Button>
+          </div>
+        </form>
+      </div>
+
+      <div className="pointer-events-none absolute inset-x-0 bottom-20 z-[600] flex flex-col gap-3 px-3 lg:bottom-4 lg:left-3 lg:max-w-md">
         {selected && (
           <article className="pointer-events-auto rounded-[18px] bg-[#15201b] p-4 text-white shadow-lg">
             <p className="text-[14px] font-bold tracking-wide text-[#ffd7a8] uppercase">{HAZARD_LABEL[selected.kind]}</p>
@@ -110,24 +165,46 @@ export function ExploreClient() {
           </article>
         )}
 
-        <form onSubmit={go} className="pointer-events-auto rounded-[22px] border border-line bg-surface p-3 shadow-lg">
+        <form onSubmit={go} className="pointer-events-auto rounded-[22px] border border-line bg-surface p-3 shadow-lg lg:hidden">
+          <button
+            type="button"
+            aria-expanded={expanded}
+            aria-label={expanded ? "Hide options" : "Show options"}
+            onPointerDown={(e) => {
+              drag.current = { y: e.clientY, moved: false };
+            }}
+            onPointerMove={(e) => {
+              if (Math.abs(e.clientY - drag.current.y) > 8) drag.current.moved = true;
+            }}
+            onPointerUp={(e) => {
+              const dy = e.clientY - drag.current.y;
+              if (dy > 28) setExpanded(false);
+              else if (dy < -28) setExpanded(true);
+            }}
+            onClick={() => {
+              if (drag.current.moved) {
+                drag.current.moved = false;
+                return;
+              }
+              setExpanded((v) => !v);
+            }}
+            className="mx-auto mb-2 flex h-8 w-16 items-center justify-center rounded-full"
+          >
+            <span aria-hidden="true" className="h-1.5 w-10 rounded-full bg-line-strong" />
+          </button>
           {status !== "ready" && status !== "pending" && (
             <p className="mb-2 px-1 text-[14px] text-muted">Location is off, so a route starts at Macquarie University station.</p>
           )}
-          <PlaceInput label="Where to?" value={to} onChange={setTo} placeholder="Search a place" menuPlacement="up" />
-          <div className="mt-3 grid grid-cols-4 gap-2">
-            {FILTERS.filter((f) => f.id !== "all").map((f) => {
-              const on = filter === f.id;
-              return (
-                <button key={f.id} type="button" aria-pressed={on}
-                  onClick={() => setFilter(on ? "all" : f.id)}
-                  className={`min-h-12 rounded-[14px] px-1 text-[13px] font-bold ${on ? "bg-primary text-white" : "bg-bg text-ink"}`}>
-                  {f.label}
-                </button>
-              );
-            })}
-          </div>
-          <Button type="submit" size="lg" className="mt-3 w-full" disabled={!to}>Show a step-free route</Button>
+          <PlaceSearch label="Where to?" value={to} onChange={setTo} />
+          {expanded && (
+            <div className="mt-3 max-h-[38dvh] overflow-y-auto">
+              <NeedsTicks profile={profile} onChange={setProfile} />
+              <Button type="button" variant="secondary" size="lg" className="mt-3 w-full" onClick={saveFilter}>Save filter</Button>
+            </div>
+          )}
+          {(expanded || to) && (
+            <Button type="submit" size="lg" className="mt-3 w-full" disabled={!to}>Show a step-free route</Button>
+          )}
         </form>
         <p role="status" className="sr-only">{note}</p>
       </div>

@@ -9,8 +9,8 @@ test("the route map survives navigating away and back", async ({ page }) => {
   await page.goto("/route?from=mq-station&to=library");
   await expect(page.locator(".leaflet-container")).toBeVisible();
 
-  await page.getByRole("link", { name: "Plan a trip" }).first().click();
-  await page.waitForURL("**/plan");
+  await page.getByRole("link", { name: "Live updates" }).first().click();
+  await page.waitForURL("**/live");
   await page.goBack();
   await page.waitForURL("**/route**");
 
