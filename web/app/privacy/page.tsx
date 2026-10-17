@@ -21,7 +21,8 @@ export default function PrivacyPage() {
         </Disclosure>
         <Disclosure question="What do you keep about barrier reports?">
           <p>The kind of barrier, where it is, your note and your photo if you add one, and when it was reported. We
-            don&apos;t keep who sent it. Reports help everyone after you, so they stay until the barrier is fixed.</p>
+            don&apos;t keep who sent it. Reports are kept so they keep helping everyone after you; when a barrier is
+            fixed, its report is marked as cleared.</p>
         </Disclosure>
         <Disclosure question="Who sees my photo?">
           <p>Your photo is stored on our server and shown with the report. When it&apos;s uploaded we re-save it, which

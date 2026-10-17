@@ -27,6 +27,11 @@ test("privacy is plain questions you open one at a time", async ({ page }) => {
   await page.keyboard.press("Space");
   await expect(photo).toHaveAttribute("aria-expanded", "false");
 
+  const reports = page.getByRole("button", { name: "What do you keep about barrier reports?" });
+  await reports.click();
+  await expect(page.getByText(/until the barrier is fixed/)).toHaveCount(0);   // reports aren't deleted automatically
+  await expect(page.getByText(/kept so they keep helping/)).toBeVisible();
+
   const r = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
   expect(r.violations.map((v) => v.id)).toEqual([]);
 });

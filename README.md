@@ -46,8 +46,8 @@ Leave `TFNSW_API_KEY` and `TURSO_DATABASE_URL` empty: you get walk/roll routes o
 
 Start it (leave this terminal running):
 ```bash
-.venv\Scripts\python -m uvicorn app.main:app --reload --port 8000     # Windows
-.venv/bin/python -m uvicorn app.main:app --reload --port 8000         # macOS / Linux
+.venv\Scripts\python -m uvicorn app.main:app --port 8000 --no-access-log     # Windows
+.venv/bin/python -m uvicorn app.main:app --port 8000 --no-access-log         # macOS / Linux
 ```
 Check: http://127.0.0.1:8000/health shows `{"ok":true,...}`. The web app talks to the API at `127.0.0.1`, not `localhost`: on Windows `localhost` tries IPv6 first and adds about 0.2 s to every request.
 
