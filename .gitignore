@@ -11,3 +11,5 @@ web/playwright-report/
 .superpowers/
 api/.osm_cache/
 api/e2e*.db
+.claude/
+.codegraph/
