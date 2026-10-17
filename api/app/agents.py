@@ -39,7 +39,7 @@ def agent_cards(session: Session) -> list[dict]:
         running = last is not None and last.status == "running" and now() - aware(last.started_at) < timedelta(minutes=5)
         if key == "report_checker" and pending:
             status, tone = f"{pending} in queue", "warn"
-        elif running or (key == "updates" and last and now() - aware(last.started_at) < timedelta(minutes=10)):
+        elif running or (key == "updates" and last and now() - aware(last.started_at) < timedelta(minutes=5)):
             status, tone = "Running", "primary"
         else:
             status, tone = "Idle", "muted"
