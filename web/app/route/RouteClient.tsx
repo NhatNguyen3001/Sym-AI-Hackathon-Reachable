@@ -107,8 +107,8 @@ export function RouteClient() {
   if (profile.destination.entrance && entrance?.status === "Not found") unmet.push("a level or ramped entrance");
 
   return (
-    <div className="flex flex-1 flex-col lg:flex-row">
-      <aside aria-label="Route details" className="w-full border-line bg-surface px-4 py-6 sm:px-7 lg:max-w-[460px] lg:basis-[400px] lg:border-r">
+    <div className="flex h-full min-h-0 flex-1 flex-col lg:flex-row">
+      <aside aria-label="Route details" className="max-h-[58dvh] w-full overflow-y-auto border-line bg-surface px-4 py-6 sm:px-7 lg:h-full lg:max-h-full lg:max-w-[460px] lg:basis-[400px] lg:border-r">
         <h1 className="sr-only">Route and destination</h1>
         <div className="space-y-4">
           <PlaceInput label="From" value={from} onChange={(p) => { setFrom(p); go(p, to); }} />
@@ -245,7 +245,7 @@ export function RouteClient() {
         </div>
       </aside>
 
-      <div className="relative min-h-[560px] flex-1 lg:sticky lg:top-0 lg:h-screen">
+      <div className="relative min-h-[280px] flex-1 lg:min-h-0">
         <RouteMap accessible={acc} fastest={route?.ok ? route.fastest : null} barriers={route?.barriers ?? []} />
         <WeatherBanner weather={route?.weather} className="absolute top-3 right-3 z-[600] max-w-[340px]" />
         <div aria-live="polite" className="absolute bottom-6 left-3 z-[600] max-w-[380px]">

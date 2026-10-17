@@ -88,3 +88,43 @@
   font-family: inherit;
   background: var(--color-map-bg);
 }
+
+/* Night mode keeps the same blue and amber fills on buttons so white labels stay readable. */
+.dark {
+  --color-bg: #0e1624;
+  --color-surface: #172232;
+  --color-ink: #f4f7fb;
+  --color-muted: #d0d8e2;
+  --color-line: #31445c;
+  --color-line-strong: #9aafc4;
+  --color-map-bg: #1b2838;
+  --color-primary: #c5d6ff;
+  --color-primary-hover: #e7eeff;
+  --color-primary-soft: #243656;
+  --color-warn: #ffd08a;
+  --color-warn-strong: #ffe1b0;
+  --color-warn-soft: #3d2c12;
+  --color-warn-ink: #ffe7c4;
+  --color-fastest: #b7c2cc;
+  color-scheme: dark;
+}
+
+.dark .bg-primary {
+  background-color: #1d4fa8;
+}
+.dark .hover\:bg-primary-hover:hover,
+.dark .hover\:border-primary-hover:hover {
+  background-color: #163c80;
+  border-color: #163c80;
+}
+.dark .border-primary {
+  border-color: #1d4fa8;
+}
+.dark .bg-warn {
+  background-color: #a84a00;
+}
+
+[data-slot="dialog-overlay"].z-50,
+[data-slot="dialog-content"].z-50 {
+  z-index: 3000;
+}

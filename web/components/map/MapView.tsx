@@ -3,11 +3,12 @@
 import "leaflet/dist/leaflet.css";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import L from "leaflet";
-import { CircleMarker, MapContainer, Marker, Polyline, TileLayer } from "react-leaflet";
+import { Circle, CircleMarker, MapContainer, Marker, Polyline, TileLayer } from "react-leaflet";
 import { Minus, Plus } from "lucide-react";
 import { guardMap } from "./guardMap";
 import { useVisibleMount } from "./useVisibleMount";
 import type { MapBarrier, RouteOut } from "@/lib/types";
+import { useUserLocation } from "@/lib/useUserLocation";
 
 const PRIMARY = "#1D4FA8";
 const FASTEST = "#6B746F";
@@ -30,6 +31,13 @@ function barrierIcon(b: MapBarrier) {
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${glyph}</svg></span>`,
   });
 }
+
+const userIcon = L.divIcon({
+  className: "",
+  iconSize: [22, 22],
+  iconAnchor: [11, 11],
+  html: `<span style="display:block;width:22px;height:22px;border-radius:999px;background:${PRIMARY};border:3px solid #fff;box-shadow:0 0 0 6px rgba(29,79,168,.25)"></span>`,
+});
 
 const toLatLng = (r?: RouteOut | null) => (r ? r.geometry.coordinates.map(([lng, lat]) => [lat, lng] as [number, number]) : []);
 
@@ -56,6 +64,7 @@ export default function MapView({
   const mountKey = useVisibleMount();
   const mapRef = useCallback((m: L.Map | null) => setMap(guardMap(m)), []);
   const reduced = useReducedMotion();
+  const { fix } = useUserLocation();
   const acc = useMemo(() => toLatLng(accessible), [accessible]);
   const fast = useMemo(() => toLatLng(fastest), [fastest]);
   const sameAsFastest = acc.length === fast.length && acc.every((p, i) => p[0] === fast[i][0] && p[1] === fast[i][1]);
@@ -75,7 +84,7 @@ export default function MapView({
   }, [map, acc, fast, reduced]);
 
   return (
-    <div role="region" aria-label="Route map" className="relative h-full min-h-[560px] w-full">
+    <div role="region" aria-label="Route map" className="relative h-full min-h-[240px] w-full">
       {mountKey !== null && <MapContainer
         key={mountKey}
         center={CAMPUS}
@@ -104,6 +113,13 @@ export default function MapView({
         {barriers.map((b) => (
           <Marker key={b.id} position={[b.lat, b.lng]} icon={barrierIcon(b)} title={b.title} alt={b.title} keyboard={false} />
         ))}
+        {fix && fix.accuracy > 0 && fix.accuracy < 1500 && (
+          <Circle center={[fix.lat, fix.lng]} radius={fix.accuracy}
+            pathOptions={{ color: PRIMARY, weight: 1, fillColor: PRIMARY, fillOpacity: 0.12 }} />
+        )}
+        {fix && (
+          <Marker position={[fix.lat, fix.lng]} icon={userIcon} alt="Your location" title="Your location" keyboard={false} zIndexOffset={900} />
+        )}
       </MapContainer>}
 
       <div className="pointer-events-none absolute top-3 left-3 z-[500] rounded-[14px] border border-line bg-surface px-3.5 py-2.5 text-[14px]">
@@ -116,10 +132,11 @@ export default function MapView({
             </li>
           )}
           <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-[4px] bg-warn" />Barrier</li>
+          {fix && <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-full border-2 border-white bg-primary" />You</li>}
         </ul>
       </div>
 
-      <div className="absolute right-3 bottom-6 z-[500] flex flex-col gap-2">
+      <div className="absolute right-3 bottom-24 z-[500] flex flex-col gap-2 lg:bottom-6">
         <button type="button" aria-label="Zoom in" onClick={() => map?.zoomIn()}
           className="flex size-12 items-center justify-center rounded-[12px] border border-line-strong bg-surface text-ink hover:bg-bg">
           <Plus aria-hidden="true" className="size-5" strokeWidth={2.4} />

@@ -63,10 +63,10 @@ export const venue: VenueCheck = {
 
 export const updates: UpdateItem[] = [
   { id: "s1", type: "report", title: "Footpath blocked by fencing", place: "Wally's Walk", time: "10 min ago", source: "User photo, matched to a roadworks notice", status: "Confirmed", tone: "warn" },
-  { id: "s2", type: "report", title: "Kerb ramp may be damaged", place: "Herring Road crossing", time: "25 min ago", source: "One user report, no photo yet", status: "Needs checking", tone: "warn" },
+  { id: "s2", type: "report", title: "Kerb ramp may be damaged", place: "Herring Road crossing", time: "25 min ago", source: "One user report, no photo yet", status: "Needs checking", tone: "warn", lat: -33.7783, lng: 151.1195 },
   { id: "s3", type: "weather", title: "Light rain until about 3 pm", place: "Macquarie Park", time: "30 min ago", source: "Weather forecast", status: "Active", tone: "warn" },
-  { id: "s4", type: "transport", title: "Lift out of service", place: "Macquarie University station, south exit", time: "1 hr ago", source: "Transport for NSW lift alert", status: "Confirmed", tone: "warn" },
-  { id: "s5", type: "roadworks", title: "Footpath works, detour in place", place: "Management Drive", time: "2 hrs ago", source: "Live Traffic NSW", status: "Confirmed", tone: "warn" },
+  { id: "s4", type: "transport", title: "Lift out of service", place: "Macquarie University station, south exit", time: "1 hr ago", source: "Transport for NSW lift alert", status: "Confirmed", tone: "warn", lat: -33.777433, lng: 151.118452 },
+  { id: "s5", type: "roadworks", title: "Footpath works, detour in place", place: "Management Drive", time: "2 hrs ago", source: "Live Traffic NSW", status: "Confirmed", tone: "warn", lat: -33.77215, lng: 151.1159 },
   { id: "s6", type: "venue", title: "Entrance details updated", place: "Library Café", time: "Today", source: "Venue website and 2 reviews", status: "Updated", tone: "primary" },
   { id: "s7", type: "report", title: "Ramp repaired", place: "Near the Library", time: "Today", source: "Confirmed by 3 users", status: "Resolved", tone: "primary" },
 ];

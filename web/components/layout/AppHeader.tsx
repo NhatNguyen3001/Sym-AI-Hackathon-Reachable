@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "cn";
-import { LogoMark } from "@/components/icons";
+import { LogoImage } from "@/components/brand/LogoImage";
 
 const NAV = [
   { href: "/plan", label: "Plan a trip" },
@@ -12,9 +12,8 @@ const NAV = [
 
 export function Logo() {
   return (
-    <Link href="/" className="inline-flex min-h-11 items-center gap-2.5 text-[22px] font-bold text-ink">
-      <LogoMark />
-      Reachable
+    <Link href="/" className="inline-flex min-h-11 items-center">
+      <LogoImage className="h-auto w-[148px]" />
     </Link>
   );
 }
