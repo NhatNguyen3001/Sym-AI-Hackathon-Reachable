@@ -306,3 +306,27 @@ def test_trace_failure_still_returns_route_with_unsure_step():
     r = router(c).plan(START, END, P, Context())
     assert r["ok"] is True and r["accessible"]["distanceM"] == 330
     assert r["steps"] == [{"icon": "alert", "label": "Footpath, 330 m", "confidence": "Not sure", "lengthM": 330}]
+
+
+def _inside(pt_lnglat, ring):
+    """Ray-casting point-in-polygon for a [lng, lat] ring."""
+    x, y = pt_lnglat
+    inside = False
+    for (x1, y1), (x2, y2) in zip(ring, ring[1:]):
+        if (y1 > y) != (y2 > y) and x < (x2 - x1) * (y - y1) / (y2 - y1) + x1:
+            inside = not inside
+    return inside
+
+
+def test_forbidden_edge_exclusion_covers_whole_edge_and_parallel_ways():
+    # A 40 m flight of steps along a line of three shape points, then a footway.
+    pts = [(-33.8732, 151.2066), (-33.87302, 151.2066), (-33.87284, 151.2066), (-33.8702, 151.2066)]
+    edges = [edge(0, 2, 0.04, "steps"), edge(2, 3, 0.29)]
+    c = FakeClient([trip(pts), trip(pts, time_s=420)], [trace(pts, edges), trace(pts, [edge(0, 3, 0.33)])])
+    router(c).plan(START, END, P, Context())
+    ring = accessible_bodies(c)[1]["exclude_polygons"][0]
+    for lat, lng in pts[:3]:  # both ends and the middle of the steps
+        assert _inside([lng, lat], ring)
+    beside = (-33.87302, 151.2066 + 6 / (111_320 * 0.8302))  # 6 m east of the middle of the steps
+    assert _inside([beside[1], beside[0]], ring)
+    assert not _inside([151.2066, -33.8702], ring)  # the footway's far end stays usable

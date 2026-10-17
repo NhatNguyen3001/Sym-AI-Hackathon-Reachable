@@ -8,7 +8,7 @@ import math
 import httpx
 
 from app.routing.cost import Context
-from app.routing.geo import decode_polyline6, in_bbox, point_line_distance_m, square_around
+from app.routing.geo import decode_polyline6, in_bbox, point_line_distance_m, segment_polygon, square_around
 from app.routing.graph import dist_m
 from app.routing.route import SUGGESTION
 from app.routing.steps import group_items
@@ -20,6 +20,7 @@ SLOPE_REASON = "No step-free route within your slope limit."
 NO_ROUTE = "No step-free route right now."
 SLOPE_NOTE = "Slopes outside the Macquarie University campus are estimates. Check steep sections before you go."
 STAIR_USES = {"steps", "escalator"}
+FORBIDDEN_PAD_M = 8  # padding around forbidden edges; catches parallel stair ways mapped a few metres apart
 MAX_SLOPE_ROUNDS = 4
 NEAR_BARRIER_M = 15
 DETOUR_MAX_RATIO = 1.5
@@ -145,7 +146,11 @@ class ValhallaRouter:
         return [{"lat": e["lat"], "lng": e["lng"], "exit": e} for e in usable], not usable
 
     def _forbidden_excludes(self, tr: dict, profile) -> tuple[list, bool]:
-        """Exclusion squares for edges this profile must not use, and whether any of them were too steep."""
+        """Exclusion polygons for edges this profile must not use, and whether any of them were too steep.
+
+        Each polygon covers the whole edge (first to last shape point) padded by FORBIDDEN_PAD_M, so it also
+        catches parallel ways mapped a few metres apart (e.g. two flights of the same stairs). A single small
+        square at one point could land on the edge's end node and fail to exclude it."""
         coords = decode_polyline6(tr.get("shape", "")) if tr.get("shape") else []
         out, steep_found = [], False
         for e in tr.get("edges", []):
@@ -153,10 +158,8 @@ class ValhallaRouter:
             stairs = profile.avoid.stairs and e.get("use") in STAIR_USES
             steep_found = steep_found or steep
             if (steep or stairs) and coords:
-                i, j = e["begin_shape_index"], e["end_shape_index"]
-                mid = (i + j) // 2
-                a, b = coords[mid], coords[min(mid + 1, len(coords) - 1)]
-                out.append(square_around((a[0] + b[0]) / 2, (a[1] + b[1]) / 2))
+                i, j = e["begin_shape_index"], min(e["end_shape_index"], len(coords) - 1)
+                out.append(segment_polygon(coords[i], coords[j], half_width_m=FORBIDDEN_PAD_M))
         return out, steep_found
 
     def _no_route(self, reason: str, fastest=None) -> dict:

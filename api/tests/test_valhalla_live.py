@@ -66,3 +66,17 @@ def test_town_hall_to_chatswood_suggests_public_transport(live):
     # 8.8 km straight line, about 11.5 km on foot: a train trip, not a walk.
     body = live.post("/route", json={"from": "coord:-33.8732,151.2066", "to": "coord:-33.7969,151.1803"}).json()
     assert body["ok"] is False and "public transport" in body["reason"]
+
+
+def test_steps_near_destination_are_avoided_not_reported_as_no_route():
+    # Regression: Town Hall -> Chatswood plaza has two short flights of steps near the end. One tiny square per edge
+    # failed to exclude them, so the router wrongly said "No step-free route". Distance cap lifted to reach that code.
+    from app.routing.geo import parse_bbox
+    from app.routing.places import Place
+    from app.routing.profile import DEFAULT_PROFILE
+    from app.routing.cost import Context
+    from app.routing.valhalla import ValhallaClient, ValhallaRouter
+    r = ValhallaRouter(ValhallaClient(VALHALLA), parse_bbox(Settings().coverage_bbox), 20, 1.0)
+    out = r.plan(Place("a", "Town Hall", "place", -33.8732, 151.2066), Place("b", "Chatswood", "place", -33.7969, 151.1803),
+                 DEFAULT_PROFILE, Context())
+    assert out["ok"] is True and out["accessible"]["stepFree"] is True
