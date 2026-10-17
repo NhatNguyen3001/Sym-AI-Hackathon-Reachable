@@ -13,3 +13,4 @@ api/.osm_cache/
 api/e2e*.db
 .claude/
 .codegraph/
+docs/
