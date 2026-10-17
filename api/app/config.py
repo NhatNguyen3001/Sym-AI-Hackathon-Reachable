@@ -38,3 +38,6 @@ class Settings(BaseSettings):
     map_agent_paused: bool = False
     # Dated OpenStreetMap places, loaded only when the map has never been updated. Empty string: none.
     osm_snapshot_path: str = str(API_DIR / "data" / "osm_places_snapshot.json")
+    # Browser tests only: fixed map places, and a map agent that calls nothing real.
+    seed_map_places: bool = False
+    map_agent_fake: bool = False

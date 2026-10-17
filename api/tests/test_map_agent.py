@@ -180,3 +180,14 @@ def test_snapshot_loads_only_into_an_empty_table(engine, tmp_path):
     with Session(engine) as s:
         st = MapAgent(engine, None, None, None, G).status(s)
     assert st["snapshot"] == {"takenOn": "2026-10-18"} and st["lastRun"] is None and st["places"] == 1
+
+
+def test_a_place_on_a_tile_border_is_stored_once(engine):
+    run(agent(engine, Overpass({T1: [el(1)], T2: [el(1)]})))
+    assert list(places(engine)) == ["place:osm-n1"]
+
+
+def test_a_place_now_found_by_another_tile_moves_without_error(engine):
+    run(agent(engine, Overpass({T1: [el(1)], T2: []})))
+    run(agent(engine, Overpass({T1: None, T2: [el(1)]})))  # T1 failed this time, T2 now reports it
+    assert list(places(engine)) == ["place:osm-n1"]

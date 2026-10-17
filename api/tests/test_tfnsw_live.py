@@ -36,7 +36,7 @@ def test_real_lift_alerts_parse():
 @pytest.mark.skipif(not _valhalla_up(), reason="Valhalla container not running")
 def test_real_door_to_door_trip(tmp_path):
     s = Settings(database_url=f"sqlite:///{tmp_path / 'live.db'}", anthropic_api_key="", uploads_dir=tmp_path / "u",
-                 router="valhalla", photon_url="", turso_database_url="", lift_poll_seconds=0)
+                 router="valhalla", photon_url="", turso_database_url="", osm_snapshot_path="", lift_poll_seconds=0)
     app = create_app(s, graph=G, places=PL, weather_service=WeatherService(http_get=lambda *a, **k: _Dry()))
     with TestClient(app) as c:
         r = c.post("/route", json={"from": "coord:-33.8755,151.2065", "to": "coord:-33.7969,151.1810"}).json()

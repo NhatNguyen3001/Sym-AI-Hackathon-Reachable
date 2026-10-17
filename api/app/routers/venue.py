@@ -4,7 +4,8 @@ from sqlmodel import Session, select
 from app.agents import ago
 from app.db import get_session
 from app.errors import ApiError
-from app.models import Venue
+from app.mapdata.roadworks import TZ as SYDNEY_TZ
+from app.models import MapPlace, Venue, aware
 
 router = APIRouter()
 FIELDS = [("Level entrance", "entrance"), ("Step-free inside", "step_free_inside"), ("Accessible toilet", "toilet")]
@@ -46,8 +47,30 @@ def amenities(session: Session = Depends(get_session)):
     return pins
 
 
+def _osm_status(value: str | None) -> str:
+    """OpenStreetMap tags are added by the community, so "yes" is Likely, never Confirmed (spec section 5)."""
+    return {"yes": "Likely", "designated": "Likely", "limited": "Not sure"}.get(value or "", "Not checked")
+
+
+def osm_check(p: MapPlace) -> dict:
+    t = p.tags or {}
+    toilet = t.get("toilets:wheelchair") or (t.get("wheelchair") if t.get("amenity") == "toilets" else None)
+    step_free = _osm_status(t.get("wheelchair"))
+    checks = [("Level entrance", step_free), ("Step-free inside", step_free), ("Accessible toilet", _osm_status(toilet))]
+    label = f"OpenStreetMap, {aware(p.seen_at).astimezone(SYDNEY_TZ).day} {aware(p.seen_at).astimezone(SYDNEY_TZ):%b}"
+    return {"id": p.id, "name": p.name, "checkedBy": "Map agent", "checkedAgo": ago(p.seen_at), "sourceCount": 1,
+            "sources": [{"label": label, "url": f"https://www.openstreetmap.org/{p.osm_id}"}],
+            "checks": [{"field": f, "status": s, "source": label if s != "Not checked" else "Not mentioned in OpenStreetMap"}
+                       for f, s in checks]}
+
+
 @router.get("/venue/{venue_id}/check")
 def venue_check(venue_id: str, request: Request, session: Session = Depends(get_session)):
+    if venue_id.startswith("place:"):
+        row = session.get(MapPlace, venue_id)
+        if row is None:
+            raise ApiError(404, "venue_not_found", "We don't know that place yet.")
+        return osm_check(row)
     place = request.app.state.resolver.get(venue_id)
     v = session.get(Venue, venue_id)
     if v is None:

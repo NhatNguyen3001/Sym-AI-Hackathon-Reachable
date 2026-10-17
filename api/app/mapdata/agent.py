@@ -36,7 +36,7 @@ class MapAgent:
 
     def _places(self) -> tuple[dict[str, list[dict]], int]:
         """New places per tile that answered, and how many tiles failed."""
-        got, failed = {}, 0
+        got, failed, taken = {}, 0, set()
         if self.overpass is None:
             return got, len(self.tiles)
         for t in self.tiles:
@@ -44,12 +44,13 @@ class MapAgent:
             if els is None:
                 failed += 1
                 continue
-            seen = {}
+            rows = []
             for el in els:
                 p = classify(el)
-                if p and p["id"] not in seen:
-                    seen[p["id"]] = p
-            got[tile_key(t)] = list(seen.values())
+                if p and p["id"] not in taken:  # a place on a tile border comes back from both tiles
+                    taken.add(p["id"])
+                    rows.append(p)
+            got[tile_key(t)] = rows
         return got, failed
 
     def _roadworks(self) -> tuple[list[dict] | None, dict | None, list[str]]:
@@ -83,10 +84,14 @@ class MapAgent:
     def _save(self, g: dict) -> str:
         t = now()
         with Session(self.engine) as s:
-            for key, rows in g["places"].items():
+            new = [(key, p) for key, rows in g["places"].items() for p in rows]
+            for key in g["places"]:
                 s.exec(delete(MapPlace).where(MapPlace.tile == key))
-                for p in rows:
-                    s.add(MapPlace(**p, tile=key, seen_at=t))
+            ids = [p["id"] for _, p in new]
+            for i in range(0, len(ids), 500):  # a place another tile now reports moves to that tile
+                s.exec(delete(MapPlace).where(MapPlace.id.in_(ids[i:i + 500])))
+            for key, p in new:
+                s.add(MapPlace(**p, tile=key, seen_at=t))
             kept = 0
             if g["items"] is not None and g["verdicts"] is not None:
                 existing = {b.id: b for b in s.exec(select(Barrier).where(Barrier.type == "roadworks")).all()
@@ -122,10 +127,16 @@ class MapAgent:
             s.commit()
         return summary
 
-    async def run(self) -> str:
+    def claim(self) -> bool:
+        """Mark a run as started (True), or False when one is already running. Lets a caller answer at once."""
         if self.running:
-            raise AlreadyRunning()
+            return False
         self.running = True
+        return True
+
+    async def run(self, claimed: bool = False) -> str:
+        if not claimed and not self.claim():
+            raise AlreadyRunning()
         try:
             g = await asyncio.to_thread(self._gather)
             # Every Turso write pauses the API (spec cycle 4, section 11): save at a quiet moment.

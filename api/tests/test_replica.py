@@ -179,7 +179,7 @@ def replica_app(tmp_path, connect):
     from tests.conftest import _Dry
     from tests.test_campus_graph import G, PL
     s = Settings(database_url=f"sqlite:///{tmp_path / 'unused.db'}", anthropic_api_key="", uploads_dir=tmp_path / "u",
-                 router="campus", photon_url="", tfnsw_api_key="", turso_database_url="", lift_poll_seconds=0)
+                 router="campus", photon_url="", tfnsw_api_key="", turso_database_url="", osm_snapshot_path="", lift_poll_seconds=0)
     rep = Replica(tmp_path / "rep.db", "libsql://x.turso.io", TOKEN, connect=connect)
     return TestClient(create_app(s, graph=G, places=PL, replica=rep,
                                  weather_service=WeatherService(http_get=lambda *a, **k: _Dry())))

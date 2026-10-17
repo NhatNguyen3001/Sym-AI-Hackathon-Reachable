@@ -85,6 +85,9 @@ def _kind(e: dict, slopes_known: bool) -> str:
     return "slope" if _grade(e) >= 2 else "flat"
 
 
+NEAR_TRIP_DEG = 0.01  # about 1 km
+
+
 class ValhallaRouter:
     def __init__(self, client, bbox, max_leg_km: float, speed_mps: float, exit_names: dict[str, str] | None = None,
                  enforce_slope: bool = False):
@@ -102,7 +105,12 @@ class ValhallaRouter:
                       "max_distance": int(self.max_leg_km * 1000)}
         if profile.avoid.stairs:
             opts["step_penalty"] = 3600
-        excludes = [square_around(lat, lng) for lat, lng, status in ctx.barrier_points if status == "confirmed"]
+        # Only barriers near this trip: the start-to-end box plus about 1 km (keeps requests small across Sydney).
+        m = NEAR_TRIP_DEG
+        lo_lat, hi_lat = min(a["lat"], b["lat"]) - m, max(a["lat"], b["lat"]) + m
+        lo_lng, hi_lng = min(a["lng"], b["lng"]) - m, max(a["lng"], b["lng"]) + m
+        excludes = [square_around(lat, lng) for lat, lng, status in ctx.barrier_points
+                    if status == "confirmed" and lo_lat <= lat <= hi_lat and lo_lng <= lng <= hi_lng]
         body = {"locations": [{"lat": a["lat"], "lon": a["lng"]}, {"lat": b["lat"], "lon": b["lng"]}],
                 "costing": "pedestrian", "costing_options": {"pedestrian": opts}, "units": "kilometers"}
         if excludes or extra_excludes:

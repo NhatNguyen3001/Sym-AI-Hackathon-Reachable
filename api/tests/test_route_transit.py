@@ -48,7 +48,7 @@ class FakeTfnsw:
 
 def make(tmp_path, tfnsw, **kw):
     s = Settings(database_url=f"sqlite:///{tmp_path / 't.db'}", anthropic_api_key="", uploads_dir=tmp_path / "u",
-                 router="campus", photon_url="", tfnsw_api_key="", turso_database_url="", transit_min_km=0.3,
+                 router="campus", photon_url="", tfnsw_api_key="", turso_database_url="", osm_snapshot_path="", transit_min_km=0.3,
                  lift_poll_seconds=0, **kw)
     return TestClient(create_app(s, graph=G, places=PL, tfnsw=tfnsw,
                                  weather_service=WeatherService(http_get=lambda *a, **k: _Dry())))
