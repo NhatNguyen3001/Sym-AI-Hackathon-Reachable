@@ -8,13 +8,13 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
-import { SampleDataBanner, WarnBanner, WeatherBanner } from "@/components/Banners";
+import { InfoBanner, SampleDataBanner, WarnBanner, WeatherBanner } from "@/components/Banners";
 import { NeedsChips } from "@/components/NeedsChips";
 import { PlaceInput } from "@/components/PlaceInput";
 import { RouteStep, VenueCheckRow } from "@/components/Rows";
 import { StatusBadge } from "@/components/StatusBadge";
 import { RouteMap } from "@/components/map/RouteMap";
-import { ApiError, getPlaces, getRoute, getVenueCheck } from "@/lib/api";
+import { ApiError, getPlace, getRoute, getVenueCheck } from "@/lib/api";
 import { useEvents } from "@/lib/events";
 import { addTrip, loadProfile } from "@/lib/profile";
 import { profile as defaultProfile } from "@/lib/placeholder";
@@ -26,10 +26,7 @@ interface LiveCard {
   text: string;
 }
 
-async function findPlace(id: string): Promise<Place | null> {
-  const { data } = await getPlaces("");
-  return data.find((p) => p.id === id) ?? null;
-}
+const findPlace = (id: string) => getPlace(id);
 
 export function RouteClient() {
   const params = useSearchParams();
@@ -64,7 +61,7 @@ export function RouteClient() {
       setRoute(null);
       setError(e instanceof ApiError && e.code === "place_not_found"
         ? "We couldn't find that place. Pick one from the list."
-        : "We couldn't plan this route. Please try again.");
+        : e instanceof ApiError && e.status > 0 ? e.message : "We couldn't plan this route. Please try again.");
     }
     try {
       setVenue((await getVenueCheck(toId)).data);
@@ -121,6 +118,7 @@ export function RouteClient() {
 
         <div className="mt-5 space-y-4 border-t border-line pt-5">
           <SampleDataBanner show={sample} />
+          {route?.note && <InfoBanner>{route.note}. Sydney-wide routing is unavailable right now.</InfoBanner>}
           {error && <WarnBanner alert>{error}</WarnBanner>}
           {route === null && !error && <p role="status" className="text-muted">Finding your route…</p>}
 
@@ -138,7 +136,8 @@ export function RouteClient() {
                 <div>
                   <p className="text-[32px] leading-none font-bold">{acc.minutes} min</p>
                   <p className="mt-1 text-[15px] text-muted">
-                    {acc.distanceM} m · {acc.stepFree ? "step-free" : "has steps"} · max slope {acc.maxSlope}%
+                    {acc.distanceM} m · {acc.stepFree ? "step-free" : "has steps"} ·{" "}
+                    {acc.slopeEstimated ? "slopes estimated" : `max slope ${acc.maxSlope}%`}
                   </p>
                 </div>
                 {route?.status && <StatusBadge label={route.status} />}
@@ -165,6 +164,8 @@ export function RouteClient() {
               </ul>
             </section>
           )}
+
+          {route?.ok && route.slopeNote && <WarnBanner>{route.slopeNote}</WarnBanner>}
 
           {route?.ok && route.explanation && (
             <p className="rounded-[14px] bg-bg px-4 py-3 text-[16px]">{route.explanation}</p>

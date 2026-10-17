@@ -14,6 +14,8 @@ export interface Place {
   kind: "station" | "venue" | "place";
   lat: number;
   lng: number;
+  /** Suburb or area, shown under the name in search results. */
+  detail?: string;
 }
 
 export interface RouteOut {
@@ -22,6 +24,8 @@ export interface RouteOut {
   minutes: number;
   maxSlope: number;
   stepFree: boolean;
+  /** True when slopes come from coarse elevation data and are only estimates. */
+  slopeEstimated?: boolean;
 }
 
 export interface Step {
@@ -69,6 +73,10 @@ export interface RouteResult {
   weather: Weather;
   reason?: string;
   suggestion?: string;
+  /** Set when the server used the offline campus map instead of Sydney-wide routing. */
+  note?: string;
+  /** Explains that slopes are estimates (routes outside the campus). */
+  slopeNote?: string;
 }
 
 export interface VenueCheck {

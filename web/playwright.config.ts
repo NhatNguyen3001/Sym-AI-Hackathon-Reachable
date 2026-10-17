@@ -39,6 +39,9 @@ export default defineConfig({
       env: {
         DATABASE_URL: `sqlite:///./${DB}`,
         ANTHROPIC_API_KEY: "",
+        // Deterministic by default: campus graph, no live address search. E2E_VALHALLA=1 uses the real Sydney stack.
+        ROUTER: process.env.E2E_VALHALLA ? "valhalla" : "campus",
+        PHOTON_URL: process.env.E2E_VALHALLA ? "https://photon.komoot.io" : "",
         CORS_ORIGINS: `["http://localhost:${WEB_PORT}"]`,
       },
       reuseExistingServer: false,

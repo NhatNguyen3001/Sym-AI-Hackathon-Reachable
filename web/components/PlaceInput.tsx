@@ -22,7 +22,9 @@ export function PlaceInput({
   const [options, setOptions] = useState<Place[]>([]);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
+  const [limited, setLimited] = useState(false);
   const seq = useRef(0);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // When the parent changes the picked place (e.g. from the URL), show its name.
   const [shown, setShown] = useState(value?.id);
   if (value && value.id !== shown) {
@@ -30,13 +32,22 @@ export function PlaceInput({
     setText(value.name);
   }
 
-  async function search(q: string) {
+  async function runSearch(q: string) {
     const n = ++seq.current;
-    const { data } = await getPlaces(q);
+    const { data, limited: lim } = await getPlaces(q);
     if (n === seq.current) {
       setOptions(data);
+      setLimited(lim && q.trim().length >= 2);
       setActive(data.length ? 0 : -1);
     }
+  }
+
+  /** Waits for a pause in typing (250 ms). One or no characters only shows our known places. */
+  function search(q: string, immediate = false) {
+    if (timer.current) clearTimeout(timer.current);
+    const query = q.trim().length >= 2 ? q : "";
+    if (immediate) void runSearch(query);
+    else timer.current = setTimeout(() => void runSearch(query), 250);
   }
 
   function pick(p: Place) {
@@ -50,7 +61,7 @@ export function PlaceInput({
       e.preventDefault();
       if (!open) {
         setOpen(true);
-        search(text);
+        search(text, true);
       } else setActive((a) => Math.min(options.length - 1, a + 1));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
@@ -82,11 +93,14 @@ export function PlaceInput({
           setText(e.target.value);
           if (value) onChange(null);
           setOpen(true);
+          // Drop suggestions for the old text so Enter can't pick a stale result while the new search waits.
+          setOptions([]);
+          setActive(-1);
           search(e.target.value);
         }}
         onFocus={() => {
           setOpen(true);
-          search(value ? "" : text);
+          search(value ? "" : text, true);
         }}
         onBlur={() => setTimeout(() => setOpen(false), 120)}
         onKeyDown={onKeyDown}
@@ -115,11 +129,17 @@ export function PlaceInput({
               i === active && "bg-primary-soft text-primary-hover")}
           >
             <MapPin aria-hidden="true" className="size-4 shrink-0 text-muted" />
-            <span>{p.name}</span>
+            <span className="min-w-0">
+              <span className="block">{p.name}</span>
+              {p.detail && <span className="block text-[14px] text-muted">{p.detail}</span>}
+            </span>
             {p.kind === "station" && <span className="ml-auto text-[13px] text-muted">Station</span>}
           </li>
         ))}
       </ul>
+      <p role="status" className={cn("mt-1 text-[14px] text-warn-strong", !(open && limited) && "sr-only")}>
+        {open && limited ? "Search is limited right now. Only some places are shown." : ""}
+      </p>
     </div>
   );
 }

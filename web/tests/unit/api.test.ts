@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { ApiError, getRoute, getUpdates, labelPhoto, parseProfile, sendReport } from "@/lib/api";
+import { ApiError, getPlace, getPlaces, getRoute, getUpdates, labelPhoto, parseProfile, sendReport } from "@/lib/api";
 import { profile } from "@/lib/placeholder";
 
 afterEach(() => vi.unstubAllGlobals());
@@ -56,4 +56,28 @@ test("route falls back to the sample route when the API is down", async () => {
   const r = await getRoute("mq-station", "library", profile);
   expect(r.sample).toBe(true);
   expect(r.data.ok).toBe(true);
+});
+
+test("route falls back to sample only for the sample trip", async () => {
+  vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+  expect((await getRoute("mq-station", "library", profile)).sample).toBe(true);
+  await expect(getRoute("osm:N1", "library", profile)).rejects.toMatchObject({ code: "network" });
+});
+
+test("a 503 route is an error with the server message", async () => {
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue(json({ error: { code: "routing_unavailable", message: "Route planning is unavailable right now. Please try again soon." } }, 503)));
+  await expect(getRoute("osm:N1", "osm:N2", profile)).rejects.toMatchObject({ code: "routing_unavailable", status: 503 });
+});
+
+test("place search reports when it is limited", async () => {
+  const res = new Response(JSON.stringify([{ id: "library" }]), { status: 200, headers: { "X-Search-Limited": "1" } });
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue(res));
+  expect(await getPlaces("lib")).toMatchObject({ data: [{ id: "library" }], sample: false, limited: true });
+});
+
+test("getPlace returns null for an unknown place and the place otherwise", async () => {
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue(json({ error: { code: "place_not_found", message: "x" } }, 404)));
+  expect(await getPlace("osm:N404")).toBeNull();
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue(json({ id: "osm:N1", name: "Town Hall", kind: "station", lat: 0, lng: 0 })));
+  expect(await getPlace("osm:N1")).toMatchObject({ name: "Town Hall" });
 });

@@ -24,6 +24,8 @@ export function PlanClient() {
   const [changes, setChanges] = useState<UpdateItem[]>([]);
   const [sample, setSample] = useState(false);
   const [trips, setTrips] = useState<Trip[]>([]);
+  const [locating, setLocating] = useState(false);
+  const [locError, setLocError] = useState<string | null>(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage is only readable after mount
@@ -37,6 +39,29 @@ export function PlanClient() {
       setSample(r.sample);
     });
   }, []);
+
+  function useMyLocation() {
+    setLocError(null);
+    if (!("geolocation" in navigator)) {
+      setLocError("Your browser can't share your location. Search for a place instead.");
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude.toFixed(5);
+        const lng = pos.coords.longitude.toFixed(5);
+        setFrom({ id: `coord:here:${lat},${lng}`, name: "Your location", kind: "place", lat: +lat, lng: +lng });
+        setError(false);
+        setLocating(false);
+      },
+      () => {
+        setLocError("We couldn't get your location. Check location permission, or search for a place instead.");
+        setLocating(false);
+      },
+      { timeout: 10000 },
+    );
+  }
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -59,8 +84,14 @@ export function PlanClient() {
         <form onSubmit={submit} noValidate>
           <Card className="space-y-5">
             <div className="grid gap-4 sm:grid-cols-2">
-              <PlaceInput label="From" value={from} onChange={(p) => { setFrom(p); setError(false); }}
-                hint="Stations, bus stops and drop-off points come first." />
+              <div>
+                <PlaceInput label="From" value={from} onChange={(p) => { setFrom(p); setError(false); }}
+                  hint="Stations, bus stops and drop-off points come first." />
+                <Button type="button" variant="link" className="min-h-11 px-0" onClick={useMyLocation} disabled={locating}>
+                  {locating ? "Finding your location…" : "Use my location"}
+                </Button>
+                {locError && <p role="alert" className="text-[14px] text-warn-strong">{locError}</p>}
+              </div>
               <PlaceInput label="To" value={to} onChange={(p) => { setTo(p); setError(false); }} placeholder="Search campus places" />
             </div>
             <NeedsChips profile={profile} label="Planning for:" />
