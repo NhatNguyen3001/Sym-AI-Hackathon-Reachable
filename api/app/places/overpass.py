@@ -1,4 +1,6 @@
 """Station entrances from OpenStreetMap via the Overpass API (one query per station, cached by the resolver)."""
+import time
+
 import httpx
 
 from app.places.photon import USER_AGENT
@@ -25,3 +27,20 @@ class OverpassClient:
             exits.append({"id": f"osm-{el['id']}", "name": f"{name} entrance" if name else f"Entrance {i}",
                           "lat": el["lat"], "lng": el["lon"], "via": "unknown"})
         return exits
+
+    def accessible_places(self, bbox, sleep=time.sleep, tries: int = 6) -> list[dict] | None:
+        """Accessible places in one tile, or None when Overpass stays busy (it asks for backoff: 5 s, doubling)."""
+        from app.mapdata.osm import query
+        wait = 5
+        for attempt in range(tries):
+            if attempt:
+                sleep(wait)
+                wait = min(60, wait * 2)
+            try:
+                r = self.http.post(self.url, data={"data": query(bbox)}, headers={"User-Agent": USER_AGENT},
+                                   timeout=120)
+                if r.status_code == 200:
+                    return r.json().get("elements", [])
+            except (httpx.HTTPError, ValueError):
+                pass
+        return None
