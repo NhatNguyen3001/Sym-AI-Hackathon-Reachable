@@ -51,8 +51,15 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
     async def lifespan(app: FastAPI):
         st = app.state
         st.settings = settings
-        st.engine = make_engine(settings.database_url)
-        init_db(st.engine)
+        st.engine = make_engine(settings.database_url, settings.turso_database_url, settings.turso_auth_token)
+        st.db_kind = "turso" if settings.turso_database_url else "sqlite"
+        try:
+            init_db(st.engine)
+        except Exception:
+            if st.db_kind == "turso":  # no silent fallback: two databases would drift apart
+                log.error("Can't reach the Turso database. Check TURSO_DATABASE_URL / TURSO_AUTH_TOKEN, "
+                          "or clear them to use local SQLite.")
+            raise
         st.graph = graph if graph is not None else load_graph(settings.graph_path)
         st.places = places or Places(settings.places_path, settings.overrides_path, st.graph)
         st.weather = weather_service or WeatherService()

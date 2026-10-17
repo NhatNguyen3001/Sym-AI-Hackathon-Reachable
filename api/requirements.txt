@@ -10,3 +10,4 @@ pillow
 python-multipart
 httpx
 pydantic-settings
+libsql==0.1.11

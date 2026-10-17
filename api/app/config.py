@@ -7,6 +7,9 @@ API_DIR = Path(__file__).resolve().parent.parent
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=API_DIR / ".env", extra="ignore")
     database_url: str = f"sqlite:///{API_DIR / 'reachable.db'}"
+    # Turso (libsql). When the URL is set the API uses Turso instead of DATABASE_URL.
+    turso_database_url: str = ""
+    turso_auth_token: str = ""
     anthropic_api_key: str = ""
     cors_origins: list[str] = ["http://localhost:3000"]
     speed_mps: float = 1.0
