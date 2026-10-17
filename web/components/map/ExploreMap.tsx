@@ -7,7 +7,7 @@ import { LocateFixed, Minus, Plus } from "lucide-react";
 import { guardMap } from "./guardMap";
 import { useVisibleMount } from "./useVisibleMount";
 import { HAZARD_LABEL, type Hazard, type HazardKind } from "@/lib/hazards";
-import { insideSydney } from "@/lib/start";
+import { opensOn } from "@/lib/start";
 import type { AmenityPin, MapPlacePin } from "@/lib/types";
 import { ClusterLayer, type ClusterItem } from "./ClusterLayer";
 import type { UserFix } from "@/lib/useUserLocation";
@@ -164,7 +164,7 @@ export default function ExploreMap({
     };
   }, [map]);
   useEffect(() => {
-    if (!map || !fix || wentToFix.current || !insideSydney(fix)) return;
+    if (!map || !fix || wentToFix.current || !opensOn(fix)) return;
     wentToFix.current = true;
     if (!moved.current) map.setView([fix.lat, fix.lng], Math.max(map.getZoom(), 17), { animate: false });
   }, [map, fix]);
@@ -184,7 +184,7 @@ export default function ExploreMap({
       {mountKey !== null && (
         <MapContainer
           key={mountKey}
-          center={fix && insideSydney(fix) ? [fix.lat, fix.lng] : CAMPUS}
+          center={fix && opensOn(fix) ? [fix.lat, fix.lng] : CAMPUS}
           zoom={17}
           maxZoom={19}
           zoomControl={false}
