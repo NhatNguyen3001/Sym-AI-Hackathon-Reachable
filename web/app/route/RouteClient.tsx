@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "cn";
-import { CircleCheck, PanelLeftClose, PanelLeftOpen, SlidersHorizontal, TriangleAlert } from "lucide-react";
+import { ChevronLeft, ChevronRight, CircleCheck, SlidersHorizontal, TriangleAlert } from "lucide-react";
 import { NeedsTicks } from "@/components/NeedsTicks";
 import { Button } from "@/components/ui/button";
 import { InfoBanner, SampleDataBanner, WarnBanner, WeatherBanner } from "@/components/Banners";
@@ -205,13 +205,15 @@ export function RouteClient() {
   return (
     <div className="relative flex h-full min-h-0 flex-1 flex-col lg:flex-row">
       <div className="relative min-h-0 flex-1 lg:order-2 lg:min-h-0">
+        {/* Round handle on the panel's edge (desktop), like the sidebar's. 44 px to tap, 28 px to see. */}
         <button type="button" aria-expanded={searchOpen}
-          aria-label={searchOpen ? "Hide search" : "Show search"}
+          aria-label={searchOpen ? "Hide route details" : "Show route details"}
           onClick={() => setSearchOpen((open) => !open)}
-          className="absolute top-3 left-3 z-[700] hidden size-12 items-center justify-center rounded-[12px] border border-line-strong bg-surface text-ink shadow-lg lg:inline-flex">
-          {searchOpen
-            ? <PanelLeftClose aria-hidden="true" className="size-5" strokeWidth={2.4} />
-            : <PanelLeftOpen aria-hidden="true" className="size-5" strokeWidth={2.4} />}
+          className="group absolute top-3 -left-[22px] z-[700] hidden size-11 items-center justify-center lg:inline-flex">
+          <span aria-hidden="true"
+            className="flex size-7 items-center justify-center rounded-full border border-line-strong bg-surface text-ink shadow-sm group-hover:bg-bg group-focus-visible:outline-2 group-focus-visible:outline-primary">
+            {searchOpen ? <ChevronLeft className="size-4" strokeWidth={2.6} /> : <ChevronRight className="size-4" strokeWidth={2.6} />}
+          </span>
         </button>
         <RouteMap
           ends={ends}
