@@ -59,9 +59,9 @@ export function RouteClient() {
     setSheetOpen(true);
   }
 
-  const load = useCallback(async (p: Profile) => {
+  const load = useCallback(async (p: Profile, fresh = false) => {
     try {
-      const r = await getRoute(fromId, toId, p);
+      const r = await getRoute(fromId, toId, p, { fresh });
       setRoute(r.data);
       setPicked(null); // a reloaded route (live update, new filter) may have different alternatives
       if (!r.data.ok) showDetails(); // "no step-free route" must never hide in a closed panel
@@ -102,7 +102,7 @@ export function RouteClient() {
   }, [load, fromId, toId]);
 
   useEvents(["barrier_changed", "lift_changed", "weather_changed"], (event, data) => {
-    load(profile);
+    load(profile, true);   // re-plan after the change, not with a request that started before it
     if (event === "barrier_changed" && data.status === "confirmed") {
       setLive({
         title: String(data.title ?? "New barrier"),

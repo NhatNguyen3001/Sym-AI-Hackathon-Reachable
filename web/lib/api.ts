@@ -100,11 +100,13 @@ export async function searchPlaces(q: string, onUpdate: (r: SearchUpdate) => voi
 const SAMPLE_TRIP = { from: "mq-station", to: "library" };
 
 /** The sample route only stands in for the sample trip; any other failed trip is reported as an error. */
-export function getRoute(from: string, to: string, profile: Profile): Promise<Fetched<RouteResult>> {
-  return shared(`route ${from} ${to} ${JSON.stringify(profile)}`, async () => {
+/** `fresh`: after a live change (lift, barrier, weather), never reuse a request that started before it. */
+export function getRoute(from: string, to: string, profile: Profile, { fresh = false } = {}): Promise<Fetched<RouteResult>> {
+  const run = async () => {
     if (from === SAMPLE_TRIP.from && to === SAMPLE_TRIP.to) return read<RouteResult>("/route", sample.route, jsonBody({ from, to, profile }));
     return { data: await request<RouteResult>("/route", jsonBody({ from, to, profile })), sample: false };
-  });
+  };
+  return fresh ? run() : shared(`route ${from} ${to} ${JSON.stringify(profile)}`, run);
 }
 
 export const getVenueCheck = (id: string) => read<VenueCheck>(`/venue/${encodeURIComponent(id)}/check`, sample.venue);

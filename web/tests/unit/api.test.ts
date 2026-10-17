@@ -112,3 +112,10 @@ test("a place found once isn't fetched again", async () => {
   await getPlace("globe-cafe");
   expect(f).toHaveBeenCalledTimes(1);
 });
+
+test("a fresh route request after a live change doesn't reuse one already on its way", async () => {
+  const f = vi.fn().mockImplementation(() => Promise.resolve(json({ ok: true, liftStatus: [], explanation: "", weather: {} })));
+  vi.stubGlobal("fetch", f);
+  await Promise.all([getRoute("osm:N1", "library", profile), getRoute("osm:N1", "library", profile, { fresh: true })]);
+  expect(f).toHaveBeenCalledTimes(2);
+});
