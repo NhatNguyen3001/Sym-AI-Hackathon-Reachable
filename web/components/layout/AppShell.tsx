@@ -121,7 +121,7 @@ export function AppShell({ children, map = false }: { children: ReactNode; map?:
         </main>
       </div>
       <button type="button" onClick={() => setOpen(true)} aria-label="Open menu" aria-haspopup="dialog"
-        className="fixed top-3 right-3 z-[800] inline-flex size-12 items-center justify-center rounded-[12px] border-2 border-ink bg-surface text-ink shadow-sm lg:hidden">
+        className="fixed top-3 left-3 z-[800] inline-flex size-12 items-center justify-center rounded-[12px] border-2 border-ink bg-surface text-ink shadow-sm lg:hidden">
         <Menu aria-hidden="true" className="size-6" strokeWidth={2.6} />
       </button>
       <Dialog open={open} onOpenChange={setOpen}>

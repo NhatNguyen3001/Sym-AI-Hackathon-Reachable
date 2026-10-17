@@ -96,7 +96,7 @@ export function ExploreClient() {
       <ExploreMap hazards={visible} selectedId={selected?.id ?? null} onSelect={setSelectedId} fix={fix}
         amenities={to ? [] : amenities} onAmenity={goToAmenity} />
 
-      <div className="pointer-events-none absolute top-16 right-16 left-3 z-[550] lg:top-3 lg:right-20 lg:left-auto lg:max-w-sm">
+      <div className="pointer-events-none absolute top-3 right-3 left-[4.5rem] z-[550] lg:top-3 lg:right-20 lg:left-auto lg:max-w-sm">
         <div className="pointer-events-auto">
           <WeatherBanner weather={weather} />
         </div>

@@ -5,7 +5,7 @@ import { AppShell } from "./AppShell";
 export function AppPage({ children }: { children: ReactNode }) {
   return (
     <AppShell>
-      <div className="mx-auto w-full max-w-[1240px] flex-1 px-4 pt-8 pb-10 sm:px-7">{children}</div>
+      <div className="mx-auto w-full max-w-[1240px] flex-1 px-4 pt-16 pb-10 sm:px-7 lg:pt-8">{children}</div>
     </AppShell>
   );
 }

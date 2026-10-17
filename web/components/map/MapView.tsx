@@ -210,7 +210,7 @@ export default function MapView({
         )}
       </MapContainer>}
 
-      <div className="pointer-events-none absolute top-3 left-3 z-[500] rounded-[14px] border border-line bg-surface px-3.5 py-2.5 text-[14px] lg:top-16">
+      <div className="pointer-events-none absolute top-3 left-[4.5rem] z-[500] rounded-[14px] border border-line bg-surface px-3.5 py-2.5 text-[14px] lg:top-16 lg:left-3">
         <p className="sr-only">Map legend</p>
         <ul className="space-y-1">
           <li className="flex items-center gap-2"><span aria-hidden="true" className="h-1.5 w-7 rounded bg-primary" />Your route</li>

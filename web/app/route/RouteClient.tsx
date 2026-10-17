@@ -174,8 +174,8 @@ export function RouteClient() {
           slopes={features.spans}
           onPick={chooseRoute}
         />
-        <WeatherBanner weather={route?.weather} className="absolute top-16 right-3 z-[600] max-w-[340px] lg:top-3" />
-        <div aria-live="polite" className="absolute top-3 left-3 z-[600] max-w-[280px] lg:top-auto lg:bottom-6 lg:max-w-[380px]">
+        <WeatherBanner weather={route?.weather} className="absolute top-3 right-3 z-[600] max-w-[340px]" />
+        <div aria-live="polite" className="absolute top-3 left-[4.5rem] z-[600] max-w-[280px] lg:top-auto lg:bottom-6 lg:left-3 lg:max-w-[380px]">
           {live && (
             <div className="rounded-[14px] border border-line bg-surface p-4">
               <div className="flex flex-wrap items-start justify-between gap-2">

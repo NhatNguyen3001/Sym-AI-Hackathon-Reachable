@@ -165,7 +165,7 @@ export default function ExploreMap({
           ))}
         </MapContainer>
       )}
-      <ul className="absolute top-3 left-3 z-[500] flex max-w-[calc(100%-4.5rem)] flex-wrap gap-1.5 lg:top-auto lg:bottom-4">
+      <ul className="absolute top-3 left-[4.5rem] z-[500] flex max-w-[calc(100%-5.25rem)] flex-wrap gap-1.5 lg:top-auto lg:bottom-4 lg:left-3 lg:max-w-[calc(100%-4.5rem)]">
         {fix && (
           <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[13px] font-bold">
             <span aria-hidden="true" className="size-2.5 rounded-full bg-primary" />
@@ -187,7 +187,7 @@ export default function ExploreMap({
           </li>
         ))}
       </ul>
-      <div className="absolute top-[4.5rem] right-3 z-[500] flex flex-col gap-2 lg:top-3">
+      <div className="absolute top-[4.5rem] left-3 z-[500] flex flex-col gap-2 lg:top-3 lg:right-3 lg:left-auto">
         <button type="button" aria-label="Centre on your location" onClick={() => setRecenter((n) => n + 1)}
           className="flex size-12 items-center justify-center rounded-full border border-line-strong bg-surface text-primary shadow-sm hover:bg-bg">
           <LocateFixed aria-hidden="true" className="size-5" strokeWidth={2.4} />
