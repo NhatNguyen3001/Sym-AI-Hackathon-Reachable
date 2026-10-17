@@ -1,8 +1,8 @@
 # Reachable
 
-*From the stop to the door.* An accessible door-to-door trip planner for Macquarie University, built for the Sym AI Open 2026.
+*From the stop to the door.* An accessible door-to-door trip planner for Sydney, starting at Macquarie University, built for the Sym AI Open 2026.
 
-- `api/` — FastAPI: real campus routing (OpenStreetMap footpaths, slope, stairs, station lifts, barriers, rain), Claude for needs parsing, route explanations and photo labels, live updates over Server-Sent Events.
+- `api/` — FastAPI: real campus routing (OpenStreetMap footpaths, slope, stairs, station lifts, barriers, rain), Sydney-wide walking routes (Valhalla), public transport trips and live lift alerts (Transport for NSW), Claude for needs parsing, route explanations and photo labels, live updates over Server-Sent Events. Data in local SQLite or Turso.
 - `web/` — Next.js + Tailwind + shadcn/ui + react-leaflet: the six pages (`/`, `/plan`, `/route`, `/report`, `/live`, `/needs`).
 - The UI spec, design mockups, specs and plans are kept outside the repo (`.claude/`, `docs/` are gitignored); ask the team for them.
 
@@ -40,6 +40,9 @@ ROUTER=campus
 PHOTON_URL=
 ```
 (`ROUTER=campus` uses the built-in campus map instead of Sydney-wide Valhalla; an empty `PHOTON_URL` limits search to campus places.)
+Leave `TFNSW_API_KEY` and `TURSO_DATABASE_URL` empty: you get walk/roll routes only, a local SQLite database, and station lifts shown as "Not sure" (there is no live lift data without the key).
+
+**Windows: "No such file or directory … Long Path" during `pip install`?** The folder path is too long for Windows (one of the packages has very long file names). Clone the repo somewhere short, for example `C:\dev\Sym-AI-Hackathon-Reachable`, delete `api\.venv` and install again, or turn on Windows long paths (PowerShell as Administrator: `New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name LongPathsEnabled -Value 1 -PropertyType DWORD -Force`, then restart).
 
 Start it (leave this terminal running):
 ```bash
@@ -72,16 +75,14 @@ npm run e2e                        # starts its own API and web server on ports 
 
 ## Demo controls
 
-The lift outage and rain are simulated for the demo (labelled "demo data" in the app):
+Lift status is live from Transport for NSW (see below), so there is no lift toggle any more. Rain can still be simulated:
 
 ```bash
-curl -X POST localhost:8000/demo/lifts/north   # toggle the north exit lift
-curl -X POST localhost:8000/demo/lifts/south   # toggle the south exit lift (out at start)
 curl -X POST localhost:8000/demo/rain          # toggle rain
-curl -X POST localhost:8000/agents/updates/run # log an Updates agent run
+curl -X POST localhost:8000/agents/updates/run # check Transport for NSW lift alerts now
 ```
 
-Open `/route?from=mq-station&to=library` and toggle a lift: the page updates without a reload.
+When a real lift alert changes, an open `/route` page updates without a reload.
 
 To start from fresh demo data, stop the API and delete `api/reachable.db`.
 
@@ -90,8 +91,32 @@ To start from fresh demo data, stop the API and delete `api/reachable.db`.
 ```bash
 cd api && .venv/Scripts/python -m pytest
 cd web && npm test          # unit
-cd web && npm run e2e       # accessibility (axe) + live reroute, starts both servers
+cd web && npm run e2e       # accessibility (axe), live reroute, transit options; starts the API, web and a mock Transport for NSW
 ```
+
+The e2e run never uses your keys or Turso: it starts its own API on a temporary SQLite file and a mock Transport for NSW server (`web/tests/e2e/tfnsw-mock.mjs`).
+
+## Public transport and live lifts (Transport for NSW)
+
+1. Get a free API key at [opendata.transport.nsw.gov.au](https://opendata.transport.nsw.gov.au) (an application with the Trip Planner APIs).
+2. Put it in `api/.env`: `TFNSW_API_KEY=<your key>` and restart the API.
+
+What changes:
+- **Live lifts.** Every 5 minutes (`LIFT_POLL_SECONDS`) the API reads current lift alerts. Macquarie University station exits are matched exactly by the broken lift's OpenStreetMap id; other stations show on `/live` and on trips through them.
+- **Public transport trips.** Trips longer than 1 km (`TRANSIT_MIN_KM`) also get wheelchair-accessible journeys from the Trip Planner. The walks to and from the stations are our own accessible routes (stairs, slopes, barriers); the rides and the paths inside stations (lifts, level paths) come from Transport for NSW. Up to 3 options, best first; a lift alert on your platform removes that option when another exists.
+
+Live tests (use your key, read only): `cd api && .venv/Scripts/python -m pytest -m tfnsw`.
+
+## Database: local SQLite or Turso
+
+By default the API uses `api/reachable.db` (SQLite). To use [Turso](https://turso.tech) instead, set in `api/.env`:
+
+```
+TURSO_DATABASE_URL=libsql://<db>-<org>.turso.io
+TURSO_AUTH_TOKEN=<token>
+```
+
+On the first start the API creates the tables (`agentrun`, `barrier`, `placecache`, `report`, `venue`) and seeds the demo data. `/health` says which database is in use (`"db": "turso"` or `"sqlite"`). Clear `TURSO_DATABASE_URL` to go back to local SQLite. Live check (read only): `pytest -m turso`.
 
 ## Sydney-wide routing (Valhalla)
 
@@ -138,4 +163,4 @@ Station exits and hand-measured slopes live in `api/data/overrides.json`; the el
 
 ## Deploy (not done yet)
 
-`api/Dockerfile` builds the API image. For Turso, add `sqlalchemy-libsql` to `api/requirements.txt` (it has no Windows wheel, so it is left out for local development) and set `DATABASE_URL=sqlite+libsql://<db>.turso.io?secure=true&authToken=...`.
+`api/Dockerfile` builds the API image. Set `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` and `TFNSW_API_KEY` as secrets on the host.

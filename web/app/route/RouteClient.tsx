@@ -37,7 +37,7 @@ export function RouteClient() {
   const pathname = usePathname();
   const fromId = params.get("from") ?? "mq-station";
   const toId = params.get("to") ?? "library";
-  const optionId = params.get("option");
+  const urlOption = params.get("option");
 
   const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [from, setFrom] = useState<Place | null>(null);
@@ -50,6 +50,9 @@ export function RouteClient() {
   const [announce, setAnnounce] = useState("");
   const [copied, setCopied] = useState(false);
   const [shareUrl, setShareUrl] = useState("");
+  // The choice applies at once; the URL catches up so Back, refresh and shared links keep it.
+  const [picked, setPicked] = useState<string | null>(null);
+  const optionId = picked ?? urlOption;
 
   const load = useCallback(async (p: Profile) => {
     try {
@@ -105,6 +108,7 @@ export function RouteClient() {
   }
 
   function choose(id: string) {
+    setPicked(id);
     router.replace(`${pathname}?from=${fromId}&to=${toId}&option=${id}`, { scroll: false });
   }
 

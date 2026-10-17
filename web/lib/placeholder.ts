@@ -72,7 +72,7 @@ export const updates: UpdateItem[] = [
 ];
 
 export const agents: AgentCardData[] = [
-  { name: "Updates agent", status: "Running", tone: "primary", desc: "Watching roadworks, transport, weather and council notices. Last check 3 min ago." },
+  { name: "Updates agent", status: "Running", tone: "primary", desc: "Watching Transport for NSW lift alerts and the weather. Last check 3 min ago." },
   { name: "Report checker", status: "2 in queue", tone: "warn", desc: "Rechecks every user report against other sources before it changes the map." },
   { name: "Venue agent", status: "Idle", tone: "muted", desc: "Checks entrances, toilets and parking when someone picks a destination." },
   { name: "Route agent", status: "Idle", tone: "muted", desc: "Turns your needs into a route and explains it in plain English." },

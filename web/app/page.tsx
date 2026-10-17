@@ -19,7 +19,7 @@ const PROBLEMS = [
 
 const STEPS = [
   { title: "Tell us what you need", text: "In your own words, like 'manual wheelchair, nothing steep'." },
-  { title: "We check the whole trip", text: "Sym AI agents check the path and the place you're going, using street photos, slope data, official updates and reviews." },
+  { title: "We check the whole trip", text: "Reachable checks the path, the station lifts and the place you're going, using slope data, Transport for NSW alerts, user photos and venue details." },
   { title: "Every trip makes it better", text: "Spot a barrier? One photo updates the map for everyone after you." },
 ];
 
@@ -49,7 +49,7 @@ export default function Landing() {
               </div>
             </div>
             <figure className="rounded-[18px] border border-line bg-surface p-6">
-              <figcaption className="text-[18px] font-bold">Same trip, two answers</figcaption>
+              <figcaption className="text-[18px] font-bold">For example: same trip, two answers</figcaption>
               <div className="mt-4 space-y-3">
                 <div className="flex items-start gap-3 rounded-[14px] border border-line bg-bg p-4">
                   <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-[9px] bg-warn text-white">
@@ -71,7 +71,7 @@ export default function Landing() {
                 </div>
               </div>
               <p className="mt-4 text-[14px] text-muted">
-                Macquarie University station to Waranara Library, manual wheelchair. Lift outage is demo data.
+                Macquarie University station to Waranara Library, manual wheelchair. An example lift outage; live lift status comes from Transport for NSW.
               </p>
             </figure>
           </div>
