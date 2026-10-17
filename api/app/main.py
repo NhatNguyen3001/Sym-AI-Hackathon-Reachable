@@ -17,6 +17,10 @@ from app.routers import agents, demo, events, health, places, profile, reports, 
 from app.routing.graph import load_graph
 from app.routing.places import Places
 from app.routing.router import CampusRouter, get_router
+from app.routing.geo import parse_bbox
+from app.places.overpass import OverpassClient
+from app.places.photon import PhotonClient
+from app.places.resolver import PlaceResolver
 from app.seed import seed
 from app.weather import WeatherService
 
@@ -50,6 +54,9 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
         st.weather = weather_service or WeatherService()
         st.campus = CampusRouter(st.graph, settings.speed_mps, st.places.exit_names)
         st.router = router or get_router(settings, st.graph, st.places)
+        st.resolver = PlaceResolver(st.places, PhotonClient(settings.photon_url) if settings.photon_url else None,
+                                    OverpassClient(settings.overpass_url) if settings.router == "valhalla" else None,
+                                    st.engine, parse_bbox(settings.coverage_bbox))
         st.broadcaster = Broadcaster()
         st.llm = get_client(settings.anthropic_api_key)
         st.photo_labels = {}
@@ -59,7 +66,8 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
         yield
 
     app = FastAPI(title="Reachable API", lifespan=lifespan)
-    app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["*"], allow_headers=["*"])
+    app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["*"], allow_headers=["*"],
+                       expose_headers=["X-Search-Limited"])
     app.add_exception_handler(ApiError, api_error_handler)
     app.add_exception_handler(RequestValidationError, validation_handler)
     app.add_exception_handler(Exception, server_error_handler)

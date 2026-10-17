@@ -70,3 +70,15 @@ class AgentRun(SQLModel, table=True):
     finished_at: datetime | None = None
     status: str = "done"
     summary: str = ""
+
+
+class PlaceCache(SQLModel, table=True):
+    """Places found through search (Photon), so shared links and restarts can resolve their ids."""
+    id: str = Field(primary_key=True)
+    name: str
+    kind: str
+    lat: float
+    lng: float
+    detail: str = ""
+    exits: list | None = Field(default=None, sa_column=Column(JSON))
+    seen_at: datetime = Field(default_factory=now)

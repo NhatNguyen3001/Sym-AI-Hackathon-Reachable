@@ -18,7 +18,7 @@ def _status(value: str, confidence: str | None) -> str:
 
 @router.get("/venue/{venue_id}/check")
 def venue_check(venue_id: str, request: Request, session: Session = Depends(get_session)):
-    place = request.app.state.places.get(venue_id)
+    place = request.app.state.resolver.get(venue_id)
     v = session.get(Venue, venue_id)
     if v is None:
         if place is None:
