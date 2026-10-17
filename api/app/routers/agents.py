@@ -8,8 +8,8 @@ router = APIRouter()
 
 
 @router.get("/agents/status")
-def status(session: Session = Depends(get_session)):
-    return agent_cards(session)
+def status(request: Request, session: Session = Depends(get_session)):
+    return agent_cards(session, request.app.state.lift_feed)
 
 
 @router.post("/agents/updates/run")

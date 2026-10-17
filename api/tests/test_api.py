@@ -125,3 +125,24 @@ def test_barriers_along_an_alternative_are_listed(client, app):
         s.commit()
     r = client.post("/route", json=body()).json()
     assert "on-alt" in {b["id"] for b in r["barriers"]}
+
+
+def test_route_writes_no_log(client, app):
+    from sqlmodel import Session, select
+    from app.models import AgentRun
+    def count():
+        with Session(app.state.engine) as s:
+            return len(s.exec(select(AgentRun).where(AgentRun.agent == "route")).all())
+    before = count()
+    client.post("/route", json=body())
+    assert count() == before  # trips aren't stored (privacy page), and a write would pause the API
+
+
+def test_report_save_failure_is_friendly(client, app, monkeypatch):
+    from sqlmodel import Session
+    def boom(self):
+        raise ValueError("attempt to write a readonly database")
+    monkeypatch.setattr(Session, "commit", boom)
+    r = client.post("/reports", json={"lat": -33.776, "lng": 151.114, "userLabel": "stairs"})
+    assert r.status_code == 503
+    assert r.json()["error"] == {"code": "save_failed", "message": "Couldn't save your report right now. Please try again."}

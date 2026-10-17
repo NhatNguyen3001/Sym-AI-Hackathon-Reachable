@@ -135,3 +135,35 @@ def test_concurrent_reads_during_sync(tmp_path):
     stop.set()
     s.join()
     assert errors == []
+
+
+def test_sync_waits_for_a_quiet_moment(tmp_path):
+    r = Replica(tmp_path / "rep.db", "libsql://x.turso.io", TOKEN, connect=fake_connect())
+    r.start()
+    synced, checks = [], {"n": 0}
+    r.sync = lambda: synced.append(checks["n"])
+
+    def quiet():
+        checks["n"] += 1
+        return checks["n"] > 5   # busy for the first five checks
+
+    async def go():
+        task = asyncio.create_task(r.run(0.01, quiet=quiet, check=0.005, max_wait=10))
+        await asyncio.sleep(0.15)
+        task.cancel()
+    asyncio.run(go())
+    assert synced and synced[0] > 5
+
+
+def test_sync_is_forced_after_max_wait(tmp_path):
+    r = Replica(tmp_path / "rep.db", "libsql://x.turso.io", TOKEN, connect=fake_connect())
+    r.start()
+    synced = []
+    r.sync = lambda: synced.append(1)
+
+    async def go():
+        task = asyncio.create_task(r.run(0.01, quiet=lambda: False, check=0.005, max_wait=0.03))
+        await asyncio.sleep(0.15)
+        task.cancel()
+    asyncio.run(go())
+    assert synced

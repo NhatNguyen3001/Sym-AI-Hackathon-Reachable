@@ -1,10 +1,10 @@
 from functools import partial
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Request
 from pydantic import BaseModel, ConfigDict, Field
 from sqlmodel import Session
 
-from app.agents import ago, log_run
+from app.agents import ago
 from app.db import get_session
 from app.errors import ApiError
 from app.llm.explain import explain_route, explain_transit, template_transit
@@ -93,7 +93,7 @@ def _status(steps: list[dict], estimated: bool) -> str:
 
 
 @router.post("/route")
-def plan_route(body: RouteIn, request: Request, session: Session = Depends(get_session)):
+def plan_route(body: RouteIn, request: Request, tasks: BackgroundTasks, session: Session = Depends(get_session)):
     st = request.app.state
     start, end = st.resolver.get(body.from_), st.resolver.get(body.to)
     if not start or not end:
@@ -121,7 +121,9 @@ def plan_route(body: RouteIn, request: Request, session: Session = Depends(get_s
         r, note = st.campus.plan(start, end, body.profile, ctx), CAMPUS_NOTE
     lifts = [row for p in (start, end) if st.places.get(p.id) and p.kind == "station"
              for row in lift_rows(session, st.places, p.id, st.lift_feed)]
-    log_run(session, "route", f"Planned {start.name} to {end.name}.")
+    for p in (start, end):
+        if st.resolver.unsaved(p):
+            tasks.add_task(st.resolver.save_quietly, [p])
     extra = {"note": note} if note else {}
 
     # Public transport options (cycle 3), for trips longer than TRANSIT_MIN_KM.

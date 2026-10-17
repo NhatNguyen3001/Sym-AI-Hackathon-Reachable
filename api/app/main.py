@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import time
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
@@ -45,6 +46,13 @@ async def server_error_handler(_: Request, exc: Exception):
     return JSONResponse({"error": {"code": "server_error", "message": "Something went wrong on our side."}}, status_code=500)
 
 
+QUIET_AFTER_S = 1.0  # sync only when no request is running and none finished in the last second
+
+
+def _quiet(st) -> bool:
+    return st.requests_in_flight == 0 and time.monotonic() - st.last_request_end >= QUIET_AFTER_S
+
+
 def create_app(settings: Settings | None = None, graph=None, places=None, weather_service=None, router=None,
                tfnsw=None) -> FastAPI:
     settings = settings or Settings()
@@ -61,7 +69,8 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
         st.engine = make_engine(settings.database_url, replica=replica)
         if replica:
             replica.on_online = st.engine.dispose  # reopen pooled connections read-write once Turso is back
-        sync_task = asyncio.create_task(replica.run(settings.turso_sync_seconds)) if replica else None
+        sync_task = (asyncio.create_task(replica.run(settings.turso_sync_seconds, quiet=lambda: _quiet(st)))
+                     if replica else None)
         try:
             init_db(st.engine)
         except Exception:
@@ -97,6 +106,18 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
                 t.cancel()
 
     app = FastAPI(title="Reachable API", lifespan=lifespan)
+    app.state.requests_in_flight, app.state.last_request_end = 0, 0.0
+
+    @app.middleware("http")
+    async def track_requests(request: Request, call_next):
+        if request.url.path == "/events":  # the live stream stays open; it isn't "busy"
+            return await call_next(request)
+        app.state.requests_in_flight += 1
+        try:
+            return await call_next(request)
+        finally:
+            app.state.requests_in_flight -= 1
+            app.state.last_request_end = time.monotonic()
     app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["*"], allow_headers=["*"],
                        expose_headers=["X-Search-Limited"])
     app.add_exception_handler(ApiError, api_error_handler)

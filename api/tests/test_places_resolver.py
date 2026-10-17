@@ -74,7 +74,8 @@ def test_unnamed_feature_uses_address(engine):
 
 
 def test_results_cached_and_resolvable(engine):
-    resolver(engine, photon_with([TOWN_HALL])).search("town hall")
+    r = resolver(engine, photon_with([TOWN_HALL]))
+    r.remember(r.search("town hall")[0])
     fresh = resolver(engine, photon=None)
     p = fresh.get("osm:N1763901273")
     assert p and p.name == "Town Hall" and p.kind == "station" and (p.lat, p.lng) == (-33.873567, 151.2068498)
@@ -126,7 +127,7 @@ def test_station_exits_from_overpass_cached(engine):
     elements = [{"type": "node", "id": 5, "lat": -33.8731, "lon": 151.2061, "tags": {"railway": "train_station_entrance", "name": "George St"}},
                 {"type": "node", "id": 6, "lat": -33.8740, "lon": 151.2070, "tags": {"railway": "train_station_entrance"}}]
     r = resolver(engine, photon_with([TOWN_HALL]), overpass_with(elements, calls=calls))
-    r.search("town hall")
+    r.remember(r.search("town hall")[0])
     st = r.get("osm:N1763901273")
     r.ensure_exits(st)
     assert [e["name"] for e in st.exit_points] == ["George St entrance", "Entrance 2"]
@@ -139,7 +140,7 @@ def test_station_exits_from_overpass_cached(engine):
 def test_overpass_failure_means_no_exits_and_retries_later(engine):
     calls = []
     r = resolver(engine, photon_with([TOWN_HALL]), overpass_with(fail=True, calls=calls))
-    r.search("town hall")
+    r.remember(r.search("town hall")[0])
     st = r.get("osm:N1763901273")
     r.ensure_exits(st)
     assert st.exit_points == []
@@ -195,3 +196,39 @@ def test_place_by_id_endpoint(client):
     assert client.get("/places/coord:here:-33.87,151.21").json()["name"] == "Your location"
     r = client.get("/places/osm:N404")
     assert r.status_code == 404 and r.json()["error"]["code"] == "place_not_found"
+
+
+def test_search_does_not_write_and_remember_batches(engine):
+    from sqlalchemy import event
+    from sqlmodel import select
+    from app.models import PlaceCache
+    r = resolver(engine, photon_with([TOWN_HALL, CAFE, ADDRESS]))
+    found, _ = r.search("town hall")
+    with Session(engine) as s:
+        assert s.exec(select(PlaceCache)).all() == []
+    statements = []
+    event.listen(engine, "before_cursor_execute", lambda *a, **k: statements.append(a[2]))
+    r.remember(found)
+    writes = [q for q in statements if not q.lstrip().upper().startswith(("BEGIN", "COMMIT"))]
+    assert len(writes) <= 3, writes
+    with Session(engine) as s:
+        assert {row.id for row in s.exec(select(PlaceCache)).all()} >= {"osm:N1763901273", "osm:N55"}
+
+
+def test_search_writes_nothing_opening_a_place_saves_it(client):
+    from sqlmodel import Session, select
+    from app.models import PlaceCache
+    client.app.state.resolver.photon = photon_with([TOWN_HALL, CAFE])
+    assert client.get("/places", params={"q": "town hall"}).json()[0]["id"] == "osm:N1763901273"
+    with Session(client.app.state.engine) as s:
+        assert s.exec(select(PlaceCache)).all() == []                   # a search writes nothing
+    assert client.get("/places/osm:N1763901273").status_code == 200    # resolved from memory
+    with Session(client.app.state.engine) as s:
+        assert [r.id for r in s.exec(select(PlaceCache)).all()] == ["osm:N1763901273"]  # saved once, after
+
+
+def test_places_known_only_skips_photon(client):
+    seen = []
+    client.app.state.resolver.photon = photon_with([TOWN_HALL], seen=seen)
+    r = client.get("/places", params={"q": "libr", "photon": "0"}).json()
+    assert seen == [] and r[0]["id"] in {"library", "library-cafe"}

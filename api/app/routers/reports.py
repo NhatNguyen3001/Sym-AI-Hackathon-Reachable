@@ -62,7 +62,11 @@ async def create_report(body: ReportIn, request: Request, tasks: BackgroundTasks
     report = Report(photo_url=body.photoUrl, ai_label=ai_label, user_label=body.userLabel, note=body.note,
                     lat=body.lat, lng=body.lng)
     session.add(report)
-    session.commit()
+    try:
+        session.commit()
+    except Exception:  # noqa: BLE001 - e.g. Turso unreachable (read-only local copy): tell the person plainly
+        session.rollback()
+        raise ApiError(503, "save_failed", "Couldn't save your report right now. Please try again.")
     session.refresh(report)
     await request.app.state.broadcaster.publish("report_created", {"reportId": report.id})
     tasks.add_task(check_report, request.app.state, report.id)

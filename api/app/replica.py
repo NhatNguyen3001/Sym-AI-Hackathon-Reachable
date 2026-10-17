@@ -67,9 +67,15 @@ class Replica:
             if self.on_online:
                 self.on_online()
 
-    async def run(self, interval: float) -> None:
+    async def run(self, interval: float, quiet=lambda: True, check: float = 0.25, max_wait: float = 60) -> None:
+        """Sync every `interval` seconds, at a quiet moment: a sync pauses the whole API (libsql holds the GIL
+        during network calls, spec §11), so wait until quiet() is true, or at most max_wait seconds."""
+        loop = asyncio.get_running_loop()
         while True:
             await asyncio.sleep(interval)
+            waited_since = loop.time()
+            while not quiet() and loop.time() - waited_since < max_wait:
+                await asyncio.sleep(check)
             try:
                 await asyncio.to_thread(self.sync)
             except Exception as e:  # noqa: BLE001 - keep syncing; one failed sync must not stop the loop
