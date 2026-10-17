@@ -171,4 +171,5 @@ Station exits and hand-measured slopes live in `api/data/overrides.json`; the el
 
 - **Run the API as a long-running server with a writable disk** (AWS App Runner, Render, Fly.io, Railway and similar), not as serverless functions: it keeps the local Turso copy and runs the lift checker in the background. The disk doesn't have to survive restarts; the copy is rebuilt from Turso on start.
 - **Set `NEXT_PUBLIC_API_URL` to the API's public address before `npm run build`.** Next.js bakes it into the web app at build time (local development uses `http://127.0.0.1:8000`).
+- **Run one API instance for now.** Search results are kept in that server's memory until someone opens one (to avoid a Turso write per search), and live updates are sent from that server. A second instance behind a load balancer could answer a search but not the follow-up, and wouldn't share live updates.
 - **Known gap:** uploaded photos are saved in `api/uploads/` on the server's disk, so a host that wipes the disk loses them. Move them to object storage (for example S3 or R2) before a real launch.
