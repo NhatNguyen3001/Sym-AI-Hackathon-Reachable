@@ -1,13 +1,12 @@
 import type { ReactNode } from "react";
-import { AppHeader } from "./AppHeader";
+import { AppShell } from "./AppShell";
 
-/** Standard app page: header + centred container (max 1240px, 28px sides, 16px on phones, 40px top). */
+/** Standard app page: sidebar on desktop, menu button on a phone, then a centred column. */
 export function AppPage({ children }: { children: ReactNode }) {
   return (
-    <>
-      <AppHeader />
-      <main id="main" className="mx-auto w-full max-w-[1240px] flex-1 px-4 pt-10 pb-16 sm:px-7">{children}</main>
-    </>
+    <AppShell>
+      <div className="mx-auto w-full max-w-[1240px] flex-1 px-4 pt-16 pb-10 sm:px-7 lg:pt-8">{children}</div>
+    </AppShell>
   );
 }
 

@@ -1,5 +1,5 @@
 // Sample data from the UI spec (section 6), with real campus names. Shown only when the API can't be reached.
-import type { AgentCardData, Place, Profile, RouteResult, UpdateItem, VenueCheck, Weather } from "./types";
+import type { AgentCardData, AmenityPin, Place, Profile, RouteResult, UpdateItem, VenueCheck, Weather } from "./types";
 
 export const profile: Profile = {
   aid: "manual_wheelchair",
@@ -14,6 +14,15 @@ export const places: Place[] = [
   { id: "library", name: "Waranara Library", kind: "venue", lat: -33.775688, lng: 151.113509 },
   { id: "library-cafe", name: "Library Café", kind: "venue", lat: -33.775877, lng: 151.113573 },
   { id: "globe-cafe", name: "Globe Café", kind: "venue", lat: -33.775408, lng: 151.115141 },
+];
+
+export const amenities: AmenityPin[] = [
+  { id: "library:entrance", placeId: "library", name: "Waranara Library", kind: "entrance", label: "Level or ramped entrance", lat: -33.775688, lng: 151.113189 },
+  { id: "library:toilet", placeId: "library", name: "Waranara Library", kind: "toilet", label: "Accessible toilet", lat: -33.775688, lng: 151.113509 },
+  { id: "library:parking", placeId: "library", name: "Waranara Library", kind: "parking", label: "Accessible parking nearby", lat: -33.775688, lng: 151.113829 },
+  { id: "library-cafe:entrance", placeId: "library-cafe", name: "Library Café", kind: "entrance", label: "Level or ramped entrance", lat: -33.775877, lng: 151.113573 },
+  { id: "globe-cafe:entrance", placeId: "globe-cafe", name: "Globe Café", kind: "entrance", label: "Level or ramped entrance", lat: -33.775408, lng: 151.114981 },
+  { id: "globe-cafe:toilet", placeId: "globe-cafe", name: "Globe Café", kind: "toilet", label: "Accessible toilet", lat: -33.775408, lng: 151.115301 },
 ];
 
 export const weather: Weather = { raining: false, summary: "Dry right now.", until: null, source: "Sample data" };
@@ -31,6 +40,23 @@ export const route: RouteResult = {
     distanceM: 578, minutes: 10, maxSlope: 3, stepFree: true,
   },
   fastest: null,
+  alternatives: [
+    {
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [151.11825, -33.77735], [151.1176, -33.7781], [151.1162, -33.7774],
+          [151.1148, -33.7766], [151.11354, -33.77547],
+        ],
+      },
+      distanceM: 690, minutes: 12, maxSlope: 2, stepFree: true,
+      summary: "Gentler slope, but about 2 min slower",
+      steps: [
+        { icon: "check", label: "Flat footpath, 210 m", confidence: "Confirmed", lengthM: 210 },
+        { icon: "slope", label: "Gentle slope, up to 2%, 180 m", confidence: "Confirmed", lengthM: 180 },
+      ],
+    },
+  ],
   minutesLonger: 0,
   exitUsed: "north",
   steps: [
@@ -63,10 +89,10 @@ export const venue: VenueCheck = {
 
 export const updates: UpdateItem[] = [
   { id: "s1", type: "report", title: "Footpath blocked by fencing", place: "Wally's Walk", time: "10 min ago", source: "User photo, matched to a roadworks notice", status: "Confirmed", tone: "warn" },
-  { id: "s2", type: "report", title: "Kerb ramp may be damaged", place: "Herring Road crossing", time: "25 min ago", source: "One user report, no photo yet", status: "Needs checking", tone: "warn" },
+  { id: "s2", type: "report", title: "Kerb ramp may be damaged", place: "Herring Road crossing", time: "25 min ago", source: "One user report, no photo yet", status: "Needs checking", tone: "warn", lat: -33.7783, lng: 151.1195 },
   { id: "s3", type: "weather", title: "Light rain until about 3 pm", place: "Macquarie Park", time: "30 min ago", source: "Weather forecast", status: "Active", tone: "warn" },
-  { id: "s4", type: "transport", title: "Lift out of service", place: "Macquarie University station, south exit", time: "1 hr ago", source: "Transport for NSW lift alert", status: "Confirmed", tone: "warn" },
-  { id: "s5", type: "roadworks", title: "Footpath works, detour in place", place: "Management Drive", time: "2 hrs ago", source: "Live Traffic NSW", status: "Confirmed", tone: "warn" },
+  { id: "s4", type: "transport", title: "Lift out of service", place: "Macquarie University station, south exit", time: "1 hr ago", source: "Transport for NSW lift alert", status: "Confirmed", tone: "warn", lat: -33.777433, lng: 151.118452 },
+  { id: "s5", type: "roadworks", title: "Footpath works, detour in place", place: "Management Drive", time: "2 hrs ago", source: "Live Traffic NSW", status: "Confirmed", tone: "warn", lat: -33.77215, lng: 151.1159 },
   { id: "s6", type: "venue", title: "Entrance details updated", place: "Library Café", time: "Today", source: "Venue website and 2 reviews", status: "Updated", tone: "primary" },
   { id: "s7", type: "report", title: "Ramp repaired", place: "Near the Library", time: "Today", source: "Confirmed by 3 users", status: "Resolved", tone: "primary" },
 ];

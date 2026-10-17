@@ -1,9 +1,10 @@
 // The user's needs and recent trips live on this device only (localStorage), never on the server.
 import { profile as DEFAULT_PROFILE } from "./placeholder";
-import type { Aid, Profile, Trip } from "./types";
+import type { Aid, Place, Profile, Trip } from "./types";
 
 const PROFILE_KEY = "reachable.profile";
 const TRIPS_KEY = "reachable.trips";
+const PLACES_KEY = "reachable.places";
 const AIDS: Aid[] = ["manual_wheelchair", "power_wheelchair", "walker", "cane", "pram"];
 
 /** Sensible defaults when someone picks how they get around. */
@@ -77,4 +78,34 @@ export function loadTrips(): Trip[] {
 export function addTrip(trip: Trip) {
   const rest = loadTrips().filter((t) => !(t.fromId === trip.fromId && t.toId === trip.toId));
   write(TRIPS_KEY, [trip, ...rest].slice(0, 3));
+}
+
+const KINDS = ["station", "venue", "place"] as const;
+
+function asSaved(raw: unknown): Place | null {
+  if (!raw || typeof raw !== "object") return null;
+  const p = raw as Partial<Place>;
+  if (typeof p.id !== "string" || typeof p.name !== "string") return null;
+  const kind = KINDS.includes(p.kind as Place["kind"]) ? (p.kind as Place["kind"]) : "place";
+  return {
+    id: p.id,
+    name: p.name,
+    kind,
+    lat: typeof p.lat === "number" ? p.lat : 0,
+    lng: typeof p.lng === "number" ? p.lng : 0,
+    detail: typeof p.detail === "string" ? p.detail : undefined,
+  };
+}
+
+/** Places the person has searched for or travelled to. Newest first, on this device only. */
+export function loadPlaces(): Place[] {
+  const saved = read(PLACES_KEY);
+  const places = Array.isArray(saved) ? saved.map(asSaved).filter((p): p is Place => p !== null) : [];
+  if (places.length) return places.slice(0, 8);
+  return loadTrips().map((t) => ({ id: t.toId, name: t.to, kind: "place" as const, lat: 0, lng: 0, detail: `From ${t.from}` }));
+}
+
+export function rememberPlace(place: Place) {
+  const rest = loadPlaces().filter((p) => p.id !== place.id);
+  write(PLACES_KEY, [place, ...rest].slice(0, 8));
 }

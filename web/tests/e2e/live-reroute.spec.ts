@@ -31,13 +31,13 @@ test("a live lift alert reroutes an open route page without a reload", async ({ 
 });
 
 test("plan a trip with the keyboard, then report a barrier", async ({ page }) => {
-  await page.goto("/plan");
-  const to = page.getByRole("combobox", { name: "To" });
+  await page.goto("/");
+  const to = page.getByRole("combobox", { name: "Where to?" });
   await to.focus();
   await to.fill("libr");
   await expect(page.getByRole("option", { name: /Waranara Library/ })).toBeVisible();
   await to.press("Enter");
-  await page.getByRole("button", { name: "Find a route I can use" }).press("Enter");
+  await page.getByRole("button", { name: "Show a step-free route" }).press("Enter");
   await expect(page).toHaveURL(/\/route\?from=mq-station&to=library/);
 
   await page.goto("/report");
@@ -58,7 +58,7 @@ test("rain shows the weather banner on plan and route", async ({ page }) => {
   const on = await (await api.post("/demo/rain")).json();
   try {
     expect(on.raining).toBe(true);
-    await page.goto("/plan");
+    await page.goto("/");
     await expect(page.getByText("Light rain now.")).toBeVisible();
     await page.goto("/route?from=mq-station&to=library");
     await expect(page.getByText("Avoiding steep or smooth paths that get slippery.")).toBeVisible();

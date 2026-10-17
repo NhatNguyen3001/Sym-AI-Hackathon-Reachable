@@ -3,7 +3,7 @@
 *From the stop to the door.* An accessible door-to-door trip planner for Sydney, starting at Macquarie University, built for the Sym AI Open 2026.
 
 - `api/` — FastAPI: real campus routing (OpenStreetMap footpaths, slope, stairs, station lifts, barriers, rain), Sydney-wide walking routes (Valhalla), public transport trips and live lift alerts (Transport for NSW), Claude for needs parsing, route explanations and photo labels, live updates over Server-Sent Events. Data in local SQLite or Turso.
-- `web/` — Next.js + Tailwind + shadcn/ui + react-leaflet: the six pages (`/`, `/plan`, `/route`, `/report`, `/live`, `/needs`).
+- `web/` — Next.js + Tailwind + shadcn/ui + react-leaflet: map, route, report and live updates (`/`, `/route`, `/report`, `/live`).
 - The UI spec, design mockups, specs and plans are kept outside the repo (`.claude/`, `docs/` are gitignored); ask the team for them.
 
 ## Quick start: campus only, no Docker

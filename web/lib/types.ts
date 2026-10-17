@@ -8,6 +8,16 @@ export interface Profile {
   text: string;
 }
 
+export interface AmenityPin {
+  id: string;
+  placeId: string;
+  name: string;
+  kind: "entrance" | "toilet" | "parking";
+  label: string;
+  lat: number;
+  lng: number;
+}
+
 export interface Place {
   id: string;
   name: string;
@@ -133,11 +143,19 @@ export interface TripOption {
   explanation?: string;
 }
 
+/** A secondary route drawn as a dashed line, with a plain comparison to the recommended one. */
+export interface RouteOption extends RouteOut {
+  summary: string;
+  steps?: Step[];
+}
+
 export interface RouteResult {
   ok: boolean;
   /** The walk/roll route. Null when the trip is only possible with public transport. */
   accessible?: RouteOut | null;
   fastest?: RouteOut | null;
+  /** Other real paths. The recommended route stays solid; these are dashed. */
+  alternatives?: RouteOption[];
   minutesLonger?: number;
   steps?: Step[];
   exitUsed?: string | null;

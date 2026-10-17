@@ -7,13 +7,14 @@ import { getPlaces } from "@/lib/api";
 import type { Place } from "@/lib/types";
 
 export function PlaceInput({
-  label, value, onChange, placeholder, hint,
+  label, value, onChange, placeholder, hint, menuPlacement = "down",
 }: {
   label: string;
   value: Place | null;
   onChange: (p: Place | null) => void;
   placeholder?: string;
   hint?: string;
+  menuPlacement?: "up" | "down";
 }) {
   const id = useId();
   const listId = `${id}-list`;
@@ -135,7 +136,8 @@ export function PlaceInput({
         id={listId}
         role="listbox"
         aria-label={`${label} suggestions`}
-        className={cn("absolute z-[1000] mt-1 max-h-72 w-full overflow-auto rounded-[12px] border border-line bg-surface py-1",
+        className={cn("absolute z-[1000] max-h-72 w-full overflow-auto rounded-[12px] border border-line bg-surface py-1",
+          menuPlacement === "up" ? "bottom-full mb-1" : "mt-1",
           !(open && options.length > 0) && "hidden")}
       >
         {options.map((p, i) => (

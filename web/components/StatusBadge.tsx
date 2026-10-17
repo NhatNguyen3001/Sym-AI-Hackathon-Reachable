@@ -1,7 +1,7 @@
 import { cn } from "cn";
 
-const PRIMARY = ["confirmed", "updated", "resolved", "active", "working", "measured"];
-const WARN = ["not sure", "needs checking", "not found", "not checked", "out of service", "some details not sure"];
+const PRIMARY = ["confirmed", "updated", "resolved", "active", "working", "measured", "cleared", "refreshed"];
+const WARN = ["not sure", "needs checking", "not found", "not checked", "out of service", "some details not sure", "in effect", "unconfirmed", "happening now"];
 
 export function badgeTone(label: string): "primary" | "warn" | "muted" {
   const l = label.toLowerCase();

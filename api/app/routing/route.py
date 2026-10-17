@@ -33,6 +33,69 @@ def _summary(G, edges, speed_mps):
             "stepFree": not any(is_steps(G.edges[e]) for e in edges)}
 
 
+def _same_line(a, b) -> bool:
+    return a["geometry"]["coordinates"] == b["geometry"]["coordinates"]
+
+
+def _alt_summary(alt, primary) -> str:
+    """One plain sentence a non-specialist can compare with the recommended route."""
+    slower = alt["minutes"] - primary["minutes"]
+    if alt["maxSlope"] < primary["maxSlope"] and slower > 0:
+        return f"Gentler slope, but about {slower} min slower"
+    if alt["maxSlope"] < primary["maxSlope"] and slower <= 0:
+        return "Gentler slope, and no slower"
+    if alt["minutes"] < primary["minutes"] and alt["maxSlope"] > primary["maxSlope"]:
+        return "Faster, but steeper"
+    if not alt["stepFree"] and primary["stepFree"] and alt["minutes"] < primary["minutes"]:
+        return "Faster, but it has steps"
+    if not alt["stepFree"] and primary["stepFree"]:
+        return "Another way, but it has steps"
+    if slower > 0 and alt["maxSlope"] == primary["maxSlope"] and alt["stepFree"] == primary["stepFree"]:
+        return f"A longer way around, about {slower} min slower, with the same slope"
+    if slower > 0:
+        return f"Another way, about {slower} min slower"
+    if slower < 0:
+        return f"About {-slower} min faster"
+    return "Another way, about the same time"
+
+
+def _other_routes(G, src, dst, primary, primary_edges, speed_mps, ctx: Context, exit_names) -> list[dict]:
+    """Up to two real alternatives: a flatter path, then the shortest path, drawn dashed on the map."""
+    found: list[dict] = []
+
+    def add(edges):
+        if not edges or len(found) >= 2:
+            return
+        item = _summary(G, edges, speed_mps)
+        if _same_line(item, primary) or any(_same_line(item, other) for other in found):
+            return
+        item["summary"] = _alt_summary(item, primary)
+        item["steps"] = group_steps(G, edges, ctx, exit_names)
+        found.append(item)
+
+    def gentle_w(u, v, k, d):
+        if is_steps(d):
+            return math.inf
+        length = max(float(d.get("length", 1) or 1), 1.0)
+        grade = float(d.get("grade_abs", 0) or 0) * 100
+        return length * (1 + grade * grade)
+
+    def len_w(u, v, k, d):
+        return float(d.get("length", 0) or 0)
+
+    add(_path(G, src, dst, gentle_w))
+    add(_path(G, src, dst, len_w))
+    if len(found) < 2:
+        blocked = set(primary_edges)
+
+        def detour_w(u, v, k, d):
+            length = float(d.get("length", 0) or 0)
+            return length * 8 if (u, v, k) in blocked else length
+
+        add(_path(G, src, dst, detour_w))
+    return found
+
+
 def find_routes(G, start, end, profile, ctx: Context, speed_mps: float, exit_names: dict[str, str] | None = None) -> dict:
     def acc_w(u, v, k, d):
         return edge_cost(edge_id(u, v, k), d, profile, ctx)
@@ -48,11 +111,12 @@ def find_routes(G, start, end, profile, ctx: Context, speed_mps: float, exit_nam
         for place in (start, end):
             if place.exits and set(place.exits) <= ctx.lift_out_exits:
                 reason = f"Every lift at {place.name} is out of service."
-        return {"ok": False, "reason": reason, "suggestion": SUGGESTION, "fastest": fastest}
+        return {"ok": False, "reason": reason, "suggestion": SUGGESTION, "fastest": fastest, "alternatives": []}
     accessible = _summary(G, acc, speed_mps)
     fastest = fastest or accessible
     exit_used = next((G.edges[e].get("exit_id") for e in acc if G.edges[e].get("exit_id")), None)
     return {"ok": True, "accessible": accessible, "fastest": fastest,
             "minutesLonger": max(0, accessible["minutes"] - fastest["minutes"]),
             "steps": group_steps(G, acc, ctx, exit_names), "exitUsed": exit_used,
+            "alternatives": _other_routes(G, start.node, end.node, accessible, acc, speed_mps, ctx, exit_names),
             "edges": [edge_id(*e) for e in acc]}

@@ -80,6 +80,16 @@ def test_venue_check(client):
     assert v["sourceCount"] == 4 and v["checkedAgo"] == "2 min ago"
 
 
+def test_amenities_offer_a_place_to_route_to(client):
+    pins = client.get("/amenities").json()
+    found = {(p["placeId"], p["kind"]) for p in pins}
+    assert ("library", "entrance") in found
+    assert ("library", "toilet") in found
+    assert ("library", "parking") in found
+    assert ("library-cafe", "toilet") not in found
+    assert all(p["name"] and p["lat"] and p["lng"] for p in pins)
+
+
 def test_venue_check_unchecked_place_and_unknown(client):
     v = client.get("/venue/mortarboard-cafe/check").json()
     assert v["checkedBy"] == "Not checked yet" and all(c["status"] == "Not checked" for c in v["checks"])

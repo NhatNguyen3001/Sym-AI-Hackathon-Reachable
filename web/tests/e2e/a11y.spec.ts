@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-const PAGES = ["/", "/plan", "/route?from=mq-station&to=library", "/report", "/live", "/needs", "/privacy"];
+const PAGES = ["/", "/route?from=mq-station&to=library", "/report", "/live", "/privacy"];
 
 for (const path of PAGES) {
   test(`accessibility: ${path}`, async ({ page }) => {
@@ -31,7 +31,7 @@ test("every page has a unique title", async ({ page }) => {
 });
 
 test("keyboard: skip link and visible focus ring", async ({ page }) => {
-  await page.goto("/plan");
+  await page.goto("/");
   await page.keyboard.press("Tab");
   const skip = page.getByRole("link", { name: "Skip to main content" });
   await expect(skip).toBeFocused();

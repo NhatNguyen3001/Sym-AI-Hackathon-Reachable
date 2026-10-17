@@ -19,8 +19,8 @@ export function NeedsChips({ profile, label = "Your needs:" }: { profile: Profil
           <li key={n} className="rounded-[8px] border border-line bg-bg px-2.5 py-1 text-ink">{n}</li>
         ))}
       </ul>
-      <Link href="/needs" className="inline-flex min-h-11 items-center px-1 font-bold text-primary underline underline-offset-4">
-        Change<span className="sr-only"> my needs</span>
+      <Link href="/" className="inline-flex min-h-11 items-center px-1 font-bold text-primary underline underline-offset-4">
+        Change<span className="sr-only"> on the map</span>
       </Link>
     </div>
   );

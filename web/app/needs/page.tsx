@@ -1,14 +1,6 @@
-import type { Metadata } from "next";
-import { AppPage, PageTitle } from "@/components/layout/Page";
-import { NeedsClient } from "./NeedsClient";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "My needs" };
-
+/** Route filters now live on the map. Keep the old address working. */
 export default function NeedsPage() {
-  return (
-    <AppPage>
-      <PageTitle title="My needs" sub="Tell us in your own words. We'll turn it into route settings you can check and adjust." />
-      <NeedsClient />
-    </AppPage>
-  );
+  redirect("/");
 }

@@ -58,6 +58,20 @@ def test_geometry_is_lnglat_linestring():
     assert g["type"] == "LineString" and g["coordinates"][0] == [0, 0]
 
 
+def test_alternatives_differ_from_the_recommended_route():
+    r = run()
+    alts = r["alternatives"]
+    assert 1 <= len(alts) <= 2
+    summaries = [a["summary"] for a in alts]
+    assert any(s.startswith("Gentler slope") for s in summaries)
+    primary = r["accessible"]["geometry"]["coordinates"]
+    for alt in alts:
+        assert alt["geometry"]["type"] == "LineString"
+        assert alt["geometry"]["coordinates"] != primary
+        assert alt["summary"]
+        assert alt["steps"] and alt["steps"][0]["label"]
+
+
 def test_step_grouping_labels():
     labels = [s["label"] for s in run()["steps"]]
     assert labels[0] == "Lift at north exit"
