@@ -1,0 +1,7938 @@
+{
+ "version": "10.6.21.17",
+ "journeys": [
+  {
+   "rating": 0,
+   "isAdditional": false,
+   "interchanges": 1,
+   "legs": [
+    {
+     "duration": 420,
+     "distance": 126,
+     "origin": {
+      "id": "coord:4881426:3745088:GDAV:140 Herring Rd, Macquarie Park:0",
+      "name": "140 Herring Rd, Macquarie Park",
+      "disassembledName": "140 Herring Rd",
+      "type": "address",
+      "coord": [
+       -33.777256,
+       151.118233
+      ],
+      "parent": {
+       "id": "placeID:95352007:-1",
+       "name": "Macquarie Park",
+       "type": "locality",
+       "disassembledName": ""
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:15:06Z",
+      "departureTimePlanned": "2026-10-17T07:15:06Z",
+      "departureTimeEstimated": "2026-10-17T07:15:06Z",
+      "properties": {
+       "area": "0"
+      }
+     },
+     "destination": {
+      "isGlobalId": true,
+      "id": "2113351",
+      "name": "Macquarie University Station, Macquarie Park",
+      "disassembledName": "Macquarie University Station",
+      "type": "platform",
+      "coord": [
+       -33.777596,
+       151.118314
+      ],
+      "niveau": -3,
+      "parent": {
+       "isGlobalId": true,
+       "id": "211310",
+       "name": "Macquarie University Station, Macquarie Park",
+       "disassembledName": "Macquarie University Station",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95352007:1",
+        "name": "Macquarie Park",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101508"
+       },
+       "coord": [
+        -33.777282,
+        151.118267
+       ],
+       "niveau": 0
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T07:22:06Z",
+      "arrivalTimePlanned": "2026-10-17T07:22:06Z",
+      "arrivalTimeEstimated": "2026-10-17T07:22:06Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-3",
+       "stoppingPointPlanned": "Platform 1",
+       "area": "1",
+       "platform": "MCU1",
+       "platformName": "Platform 1",
+       "plannedPlatformName": "Platform 1",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0,
+          "stepFromStreet": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       2,
+       5,
+       11
+      ]
+     },
+     "transportation": {
+      "product": {
+       "class": 100,
+       "name": "footpath",
+       "iconId": 100
+      },
+      "properties": {
+       "tripCode": 0,
+       "lineDisplay": "LINE"
+      }
+     },
+     "footPathInfo": [
+      {
+       "position": "IDEST",
+       "duration": 240,
+       "footPathElem": [
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": 0,
+         "levelTo": -2,
+         "level": "DOWN",
+         "origin": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777162,
+            151.118089
+           ],
+           "properties": {
+            "area": "21",
+            "georef": "1003152783:4:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          },
+          "area": "21",
+          "georef": "1003152783:4:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777206,
+            151.118102
+           ],
+           "properties": {
+            "area": "24",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 15,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -2,
+         "levelTo": -2,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777206,
+            151.118102
+           ],
+           "properties": {
+            "area": "24",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "24",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777319,
+            151.118236
+           ],
+           "properties": {
+            "area": "27",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -2,
+         "levelTo": -2,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777319,
+            151.118236
+           ],
+           "properties": {
+            "area": "27",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "27",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777412,
+            151.118155
+           ],
+           "properties": {
+            "area": "28",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 3,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -2,
+         "levelTo": -2,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777412,
+            151.118155
+           ],
+           "properties": {
+            "area": "28",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "28",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.77753,
+            151.118139
+           ],
+           "properties": {
+            "area": "29",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": -2,
+         "levelTo": -3,
+         "level": "DOWN",
+         "origin": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.77753,
+            151.118139
+           ],
+           "properties": {
+            "area": "29",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "29",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777596,
+            151.118314
+           ],
+           "properties": {
+            "area": "1",
+            "georef": "1002368403:21:GDAV:100",
+            "areaGid": "",
+            "areaType": 65
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        }
+       ]
+      }
+     ],
+     "footPathInfoRedundant": true,
+     "infos": [],
+     "coords": [
+      [
+       -33.777257,
+       151.118232
+      ],
+      [
+       -33.777306,
+       151.118183
+      ],
+      [
+       -33.777139,
+       151.118057
+      ],
+      [
+       -33.77749,
+       151.118132
+      ],
+      [
+       -33.77748,
+       151.118132
+      ],
+      [
+       -33.777605,
+       151.118302
+      ]
+     ],
+     "pathDescriptions": [
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ORIGIN",
+       "name": "Herring Road",
+       "coord": [
+        -33.777256,
+        151.118233
+       ],
+       "duration": 0,
+       "cumDuration": 0,
+       "distance": 0,
+       "cumDistance": 0,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 0
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "Herring Road",
+       "coord": [
+        -33.777256,
+        151.118233
+       ],
+       "skyDirection": 220,
+       "duration": 6,
+       "cumDuration": 6,
+       "distance": 7,
+       "cumDistance": 7,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 1,
+       "properties": {
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "RIGHT",
+       "manoeuvre": "TURN",
+       "name": "secondary road",
+       "coord": [
+        -33.777303,
+        151.118182
+       ],
+       "skyDirection": 309,
+       "duration": 28,
+       "cumDuration": 34,
+       "distance": 10,
+       "cumDistance": 17,
+       "fromCoordsIndex": 1,
+       "toCoordsIndex": 2,
+       "properties": {
+        "OUTDOOR_TYPE": "TRAFFICLIGHT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "RIGHT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.777243,
+        151.118093
+       ],
+       "skyDirection": 44,
+       "duration": 5,
+       "cumDuration": 40,
+       "distance": 5,
+       "cumDistance": 23,
+       "fromCoordsIndex": 2,
+       "toCoordsIndex": 3,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.777205,
+        151.118134
+       ],
+       "skyDirection": 312,
+       "duration": 10,
+       "cumDuration": 50,
+       "distance": 12,
+       "cumDistance": 35,
+       "fromCoordsIndex": 3,
+       "toCoordsIndex": 5,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "UNKNOWN",
+       "name": "elevator downward to level -2",
+       "coord": [
+        -33.777136,
+        151.118044
+       ],
+       "duration": 100,
+       "cumDuration": 150,
+       "distance": 0,
+       "cumDistance": 35,
+       "fromCoordsIndex": 5,
+       "toCoordsIndex": 6,
+       "properties": {
+        "FLOOR_LEVEL_CHANGE_DIRECTION": "DOWN",
+        "FLOOR_LEVEL_DIFFERENCE": "-2",
+        "INDOOR_TYPE": "LIFT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "SLIGHT_LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.777136,
+        151.118044
+       ],
+       "skyDirection": 127,
+       "duration": 54,
+       "cumDuration": 205,
+       "distance": 61,
+       "cumDistance": 96,
+       "fromCoordsIndex": 6,
+       "toCoordsIndex": 13,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": [
+         "ASPHALTED",
+         "COBBLE"
+        ]
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "UNKNOWN",
+       "name": "elevator downward to level -3",
+       "coord": [
+        -33.777487,
+        151.118072
+       ],
+       "duration": 100,
+       "cumDuration": 305,
+       "distance": 0,
+       "cumDistance": 96,
+       "fromCoordsIndex": 13,
+       "toCoordsIndex": 14,
+       "properties": {
+        "FLOOR_LEVEL_CHANGE_DIRECTION": "DOWN",
+        "FLOOR_LEVEL_DIFFERENCE": "-1",
+        "INDOOR_TYPE": "LIFT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "SLIGHT_LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.777487,
+        151.118072
+       ],
+       "skyDirection": 142,
+       "duration": 26,
+       "cumDuration": 332,
+       "distance": 29,
+       "cumDistance": 126,
+       "fromCoordsIndex": 14,
+       "toCoordsIndex": 17,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ENTER",
+       "name": "Enter Commuter train M1 Metro North West & Bankstown Line: low platform vehicle",
+       "coord": [
+        -33.777605,
+        151.118304
+       ],
+       "duration": 0,
+       "cumDuration": 332,
+       "distance": 0,
+       "cumDistance": 126,
+       "fromCoordsIndex": 17,
+       "toCoordsIndex": 17,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      }
+     ],
+     "properties": {
+      "PTWalkMinutes": "2"
+     }
+    },
+    {
+     "duration": 1236,
+     "isRealtimeControlled": true,
+     "realtimeStatus": [
+      "EXTRA_TRIP",
+      "MONITORED"
+     ],
+     "origin": {
+      "isGlobalId": true,
+      "id": "2113351",
+      "name": "Macquarie University Station, Platform 1, Macquarie Park",
+      "disassembledName": "Macquarie University Station, Platform 1",
+      "type": "platform",
+      "coord": [
+       -33.777596,
+       151.118314
+      ],
+      "niveau": -3,
+      "parent": {
+       "isGlobalId": true,
+       "id": "211310",
+       "name": "Macquarie University Station, Platform 1, Macquarie Park",
+       "disassembledName": "Macquarie University Station, Platform 1",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95352007:1",
+        "name": "Macquarie Park",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101508"
+       },
+       "coord": [
+        -33.777282,
+        151.118267
+       ],
+       "niveau": 0
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:22:06Z",
+      "departureTimePlanned": "2026-10-17T07:22:06Z",
+      "departureTimeEstimated": "2026-10-17T07:22:06Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-3",
+       "stoppingPointPlanned": "Platform 1",
+       "occupancy": "FEW_SEATS",
+       "realtimeStatus": [
+        "EXTRA_TRIP"
+       ],
+       "area": "1",
+       "platform": "MCU1",
+       "platformName": "Platform 1",
+       "plannedPlatformName": "Platform 1",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0,
+          "stepFromStreet": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       2,
+       5,
+       11
+      ]
+     },
+     "destination": {
+      "isGlobalId": true,
+      "id": "2000463",
+      "name": "Martin Place Station, Platform 3, Sydney",
+      "disassembledName": "Martin Place Station, Platform 3",
+      "type": "platform",
+      "coord": [
+       -33.867135,
+       151.210568
+      ],
+      "niveau": -5,
+      "parent": {
+       "isGlobalId": true,
+       "id": "200030",
+       "name": "Martin Place Station, Platform 3, Sydney",
+       "disassembledName": "Martin Place Station, Platform 3",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95301001:1",
+        "name": "Sydney",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101106"
+       },
+       "coord": [
+        -33.867648,
+        151.210583
+       ],
+       "niveau": 0
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T07:42:42Z",
+      "arrivalTimePlanned": "2026-10-17T07:42:42Z",
+      "arrivalTimeEstimated": "2026-10-17T07:42:42Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-5",
+       "AREA_NIVEAU_GIS": "-5.00",
+       "stoppingPointPlanned": "Platform 3",
+       "occupancy": "FEW_SEATS",
+       "realtimeStatus": [
+        "EXTRA_TRIP"
+       ],
+       "area": "2",
+       "platform": "MPL3",
+       "platformName": "Platform 3",
+       "plannedPlatformName": "Platform 3",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       2
+      ]
+     },
+     "transportation": {
+      "id": "nsw:030M1: :R:sj2",
+      "name": "SMNW_M1 M1 Metro North West & Bankstown Line",
+      "disassembledName": "M1",
+      "number": "M1 Metro North West & Bankstown Line",
+      "description": "Tallawong to Bankstown",
+      "product": {
+       "id": 24,
+       "class": 2,
+       "name": "SMNW_M1",
+       "iconId": 2
+      },
+      "operator": {
+       "id": "SMNW",
+       "name": "Sydney Metro"
+      },
+      "destination": {
+       "name": "Sydenham Station, Sydenham",
+       "type": "stop"
+      },
+      "properties": {
+       "isTTB": true,
+       "tripCode": 65521,
+       "timetablePeriod": "NSW JP",
+       "lineDisplay": "LINE",
+       "globalId": "3001",
+       "AVMSTripID": "M1-I-CUD_UP-SYD_UP-1-20261017-065417:X",
+       "OperatorURL": "http://transportnsw.info",
+       "FrequencyLine": "1",
+       "attributes": [
+        "AVM_LOWFLOORVEHICLE",
+        "PLAN_LOWFLOORVEHICLE"
+       ]
+      },
+      "iconId": 24
+     },
+     "stopSequence": [
+      {
+       "id": "2113351",
+       "name": "Macquarie University Station, Platform 1, Macquarie Park",
+       "coord": [
+        -33.777596,
+        151.118314
+       ]
+      },
+      {
+       "id": "2113341",
+       "name": "Macquarie Park Station, Platform 1, Macquarie Park",
+       "coord": [
+        -33.784982,
+        151.128337
+       ]
+      },
+      {
+       "id": "2113361",
+       "name": "North Ryde Station, Platform 1, North Ryde",
+       "coord": [
+        -33.794171,
+        151.13806
+       ]
+      },
+      {
+       "id": "2067142",
+       "name": "Chatswood Station, Platform 2, Chatswood",
+       "coord": [
+        -33.797469,
+        151.180988
+       ]
+      },
+      {
+       "id": "2065163",
+       "name": "Crows Nest Station, Platform 1, Crows Nest",
+       "coord": [
+        -33.825801,
+        151.199372
+       ]
+      },
+      {
+       "id": "2060115",
+       "name": "Victoria Cross Station, Platform 1, North Sydney",
+       "coord": [
+        -33.836219,
+        151.207494
+       ]
+      },
+      {
+       "id": "2000460",
+       "name": "Barangaroo Station, Platform 1, Barangaroo",
+       "coord": [
+        -33.859314,
+        151.202656
+       ]
+      },
+      {
+       "id": "2000463",
+       "name": "Martin Place Station, Platform 3, Sydney",
+       "coord": [
+        -33.867135,
+        151.210568
+       ]
+      }
+     ],
+     "footPathInfo": [
+      {
+       "position": "AFTER",
+       "duration": 240,
+       "footPathElem": [
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -5,
+         "levelTo": -5,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867135,
+            151.210568
+           ],
+           "properties": {
+            "area": "2",
+            "georef": "1003733472:12:GDAV:100",
+            "areaGid": "",
+            "areaType": 65
+           }
+          },
+          "area": "2",
+          "georef": "1003733472:12:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867922,
+            151.210207
+           ],
+           "properties": {
+            "area": "39",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 3,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": -5,
+         "levelTo": -3,
+         "level": "UP",
+         "origin": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867922,
+            151.210207
+           ],
+           "properties": {
+            "area": "39",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "39",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867928,
+            151.210294
+           ],
+           "properties": {
+            "area": "38",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -3,
+         "levelTo": -3,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867928,
+            151.210294
+           ],
+           "properties": {
+            "area": "38",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "38",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867842,
+            151.210441
+           ],
+           "properties": {
+            "area": "37",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 4,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -3,
+         "levelTo": -3,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867842,
+            151.210441
+           ],
+           "properties": {
+            "area": "37",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "37",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867838,
+            151.211067
+           ],
+           "properties": {
+            "area": "36",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 8,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -3,
+         "levelTo": -3,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867838,
+            151.211067
+           ],
+           "properties": {
+            "area": "36",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "36",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867803,
+            151.211822
+           ],
+           "properties": {
+            "area": "1",
+            "georef": "1003164050:3:GDAV:100",
+            "areaGid": "",
+            "areaType": 81
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        }
+       ]
+      }
+     ],
+     "footPathInfoRedundant": true,
+     "infos": [
+      {
+       "timestamps": {
+        "creation": "2026-10-15T04:19:00Z"
+       },
+       "priority": "normal",
+       "id": "ems-80229",
+       "version": 220,
+       "type": "lineInfo",
+       "properties": {
+        "publisher": "ems.comm.addinfo",
+        "infoType": "lineInfo",
+        "smsText": "Temporary timetable changes for testing",
+        "speechText": "Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.\nAllow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services."
+       },
+       "infoLinks": [
+        {
+         "urlText": "Temporary timetable changes for testing",
+         "url": "https://transportnsw.info/alerts/details#/ems-80229",
+         "content": "<ul>\n<li>Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.</li>\n<li>Allow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services.&nbsp;</li>\n</ul>",
+         "subtitle": "Temporary timetable changes for testing",
+         "smsText": "Temporary timetable changes for testing",
+         "speechText": "Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.\nAllow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services."
+        }
+       ],
+       "urlText": "Temporary timetable changes for testing",
+       "url": "https://transportnsw.info/alerts/details#/ems-80229",
+       "content": "<ul>\n<li>Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.</li>\n<li>Allow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services.&nbsp;</li>\n</ul>",
+       "subtitle": "Temporary timetable changes for testing"
+      }
+     ],
+     "coords": [
+      [
+       -33.777596,
+       151.118317
+      ],
+      [
+       -33.777952,
+       151.118805
+      ],
+      [
+       -33.784479,
+       151.127705
+      ],
+      [
+       -33.787101,
+       151.13106
+      ],
+      [
+       -33.790132,
+       151.132762
+      ],
+      [
+       -33.79241,
+       151.134397
+      ],
+      [
+       -33.793725,
+       151.136411
+      ],
+      [
+       -33.794894,
+       151.140805
+      ],
+      [
+       -33.796012,
+       151.147458
+      ],
+      [
+       -33.795054,
+       151.151751
+      ],
+      [
+       -33.79286,
+       151.155547
+      ],
+      [
+       -33.789225,
+       151.160052
+      ],
+      [
+       -33.785531,
+       151.162366
+      ],
+      [
+       -33.782693,
+       151.163487
+      ],
+      [
+       -33.780426,
+       151.165653
+      ],
+      [
+       -33.779111,
+       151.168498
+      ],
+      [
+       -33.778808,
+       151.17214
+      ],
+      [
+       -33.779452,
+       151.174927
+      ],
+      [
+       -33.781181,
+       151.177688
+      ],
+      [
+       -33.782838,
+       151.17902
+      ],
+      [
+       -33.784743,
+       151.179749
+      ],
+      [
+       -33.786649,
+       151.180011
+      ],
+      [
+       -33.788798,
+       151.180651
+      ],
+      [
+       -33.79002,
+       151.180854
+      ],
+      [
+       -33.793196,
+       151.180881
+      ],
+      [
+       -33.796111,
+       151.180938
+      ],
+      [
+       -33.801922,
+       151.181057
+      ],
+      [
+       -33.803421,
+       151.181099
+      ],
+      [
+       -33.8049,
+       151.180924
+      ],
+      [
+       -33.807141,
+       151.180466
+      ],
+      [
+       -33.809198,
+       151.180723
+      ],
+      [
+       -33.811089,
+       151.181762
+      ],
+      [
+       -33.815851,
+       151.187494
+      ],
+      [
+       -33.823306,
+       151.19686
+      ],
+      [
+       -33.825706,
+       151.199343
+      ],
+      [
+       -33.827235,
+       151.200806
+      ],
+      [
+       -33.827998,
+       151.201978
+      ],
+      [
+       -33.829165,
+       151.204964
+      ],
+      [
+       -33.829984,
+       151.206336
+      ],
+      [
+       -33.830881,
+       151.207193
+      ],
+      [
+       -33.832065,
+       151.20781
+      ],
+      [
+       -33.833268,
+       151.208014
+      ],
+      [
+       -33.835354,
+       151.207699
+      ],
+      [
+       -33.838454,
+       151.207048
+      ],
+      [
+       -33.840613,
+       151.205929
+      ],
+      [
+       -33.842852,
+       151.203742
+      ],
+      [
+       -33.843803,
+       151.203166
+      ],
+      [
+       -33.845411,
+       151.202983
+      ],
+      [
+       -33.846741,
+       151.203433
+      ],
+      [
+       -33.848144,
+       151.203958
+      ],
+      [
+       -33.84935,
+       151.204104
+      ],
+      [
+       -33.850778,
+       151.203864
+      ],
+      [
+       -33.854478,
+       151.202735
+      ],
+      [
+       -33.856585,
+       151.202505
+      ],
+      [
+       -33.859315,
+       151.202682
+      ],
+      [
+       -33.861575,
+       151.202978
+      ],
+      [
+       -33.862354,
+       151.203544
+      ],
+      [
+       -33.862989,
+       151.20473
+      ],
+      [
+       -33.863104,
+       151.205614
+      ],
+      [
+       -33.862885,
+       151.207267
+      ],
+      [
+       -33.862849,
+       151.207965
+      ],
+      [
+       -33.86294,
+       151.208654
+      ],
+      [
+       -33.863263,
+       151.20949
+      ],
+      [
+       -33.86366,
+       151.210049
+      ],
+      [
+       -33.864288,
+       151.210556
+      ],
+      [
+       -33.864942,
+       151.210804
+      ],
+      [
+       -33.866513,
+       151.210702
+      ],
+      [
+       -33.867142,
+       151.21062
+      ]
+     ],
+     "pathDescriptions": [
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "LEAVE",
+       "name": "Leave Commuter train M1 Metro North West & Bankstown Line in direction of travel: low platform vehicle",
+       "coord": [
+        -33.867143,
+        151.210601
+       ],
+       "duration": 0,
+       "cumDuration": 0,
+       "distance": 0,
+       "cumDistance": 0,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 0,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "",
+       "coord": [
+        -33.867143,
+        151.210601
+       ],
+       "skyDirection": 186,
+       "duration": 179,
+       "cumDuration": 179,
+       "distance": 199,
+       "cumDistance": 199,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 7,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ENTER",
+       "name": "Enter Underground T4 Eastern Suburbs & Illawarra Line: low platform vehicle",
+       "coord": [
+        -33.867821,
+        151.211823
+       ],
+       "duration": 0,
+       "cumDuration": 179,
+       "distance": 0,
+       "cumDistance": 199,
+       "fromCoordsIndex": 7,
+       "toCoordsIndex": 7,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      }
+     ],
+     "interchange": {
+      "desc": "Fussweg",
+      "type": 100,
+      "coords": [
+       [
+        -33.867141,
+        151.210596
+       ],
+       [
+        -33.867801,
+        151.210509
+       ],
+       [
+        -33.867801,
+        151.210517
+       ],
+       [
+        -33.86779,
+        151.210539
+       ],
+       [
+        -33.867781,
+        151.210568
+       ],
+       [
+        -33.867781,
+        151.210596
+       ],
+       [
+        -33.867748,
+        151.210599
+       ],
+       [
+        -33.867824,
+        151.211826
+       ]
+      ]
+     },
+     "properties": {
+      "vehicleAccess": [
+       {
+        "height": 0,
+        "halfWidth": 0,
+        "doorWidth": 0,
+        "attributes": 1342177280,
+        "areaToStay": 0,
+        "areaToMove": 0
+       }
+      ],
+      "AVMLowFloorVeh": "1",
+      "PlanLowFloorVehicle": "1"
+     }
+    },
+    {
+     "duration": 648,
+     "isRealtimeControlled": true,
+     "realtimeStatus": [
+      "MONITORED"
+     ],
+     "origin": {
+      "isGlobalId": true,
+      "id": "2000362",
+      "name": "Martin Place Station, Platform 2, Sydney",
+      "disassembledName": "Martin Place Station, Platform 2",
+      "type": "platform",
+      "coord": [
+       -33.867803,
+       151.211822
+      ],
+      "niveau": -3,
+      "parent": {
+       "isGlobalId": true,
+       "id": "200030",
+       "name": "Martin Place Station, Platform 2, Sydney",
+       "disassembledName": "Martin Place Station, Platform 2",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95301001:1",
+        "name": "Sydney",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101106"
+       },
+       "coord": [
+        -33.867648,
+        151.210583
+       ],
+       "niveau": 0
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:49:18Z",
+      "departureTimePlanned": "2026-10-17T07:49:18Z",
+      "departureTimeEstimated": "2026-10-17T07:49:18Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-3",
+       "NumberOfCars": "8",
+       "TravelInCarsFrom": "1",
+       "TravelInCarsTo": "8",
+       "TravelInCarsMessage": "any",
+       "stoppingPointPlanned": "Platform 2",
+       "occupancy": "MANY_SEATS",
+       "area": "1",
+       "platform": "MPL2",
+       "platformName": "Platform 2",
+       "plannedPlatformName": "Platform 2",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0,
+          "stepFromStreet": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       2
+      ]
+     },
+     "destination": {
+      "isGlobalId": true,
+      "id": "202292",
+      "name": "Bondi Junction Station, Platform 2, Bondi Junction",
+      "disassembledName": "Bondi Junction Station, Platform 2",
+      "type": "platform",
+      "coord": [
+       -33.891083,
+       151.248295
+      ],
+      "niveau": -2,
+      "parent": {
+       "isGlobalId": true,
+       "id": "202210",
+       "name": "Bondi Junction Station, Platform 2, Bondi Junction",
+       "disassembledName": "Bondi Junction Station, Platform 2",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95361003:1",
+        "name": "Bondi Junction",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101109"
+       },
+       "coord": [
+        -33.891197,
+        151.248377
+       ],
+       "niveau": 0
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T08:00:06Z",
+      "arrivalTimePlanned": "2026-10-17T08:00:06Z",
+      "arrivalTimeEstimated": "2026-10-17T08:00:06Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-2",
+       "AREA_NIVEAU_GIS": "-2.00",
+       "stoppingPointPlanned": "Platform 2",
+       "occupancy": "MANY_SEATS",
+       "area": "1",
+       "platform": "BJN2",
+       "platformName": "Platform 2",
+       "plannedPlatformName": "Platform 2",
+       "callType": [
+        "NOBOARDING"
+       ],
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       5,
+       11
+      ]
+     },
+     "transportation": {
+      "id": "nsw:020T4: :R:sj2",
+      "name": "Sydney Trains Network T4 Eastern Suburbs & Illawarra Line",
+      "disassembledName": "T4",
+      "number": "T4 Eastern Suburbs & Illawarra Line",
+      "description": "Waterfall or Cronulla to Bondi Junction",
+      "product": {
+       "id": 1,
+       "class": 1,
+       "name": "Sydney Trains Network",
+       "iconId": 1
+      },
+      "operator": {
+       "id": "x0001",
+       "name": "Sydney Trains"
+      },
+      "destination": {
+       "id": "10101109",
+       "name": "Bondi Junction",
+       "type": "stop"
+      },
+      "properties": {
+       "isTTB": true,
+       "tripCode": 711,
+       "timetablePeriod": "NSW JP",
+       "lineDisplay": "LINE",
+       "globalId": "3001",
+       "AVMSTripID": "609L.2013.105.128.T.8.91899490",
+       "RealtimeTripId": "609L.2013.105.128.T.8.91899490",
+       "VehAccessRoutingIncomplete": "true",
+       "OperatorURL": "http://www.sydneytrains.info/",
+       "gtfsTripId": "3001.nsw-2-T4.1.TA.3710.sj2",
+       "attributes": [
+        "PLAN_LOWFLOORVEHICLE",
+        "PLAN_WHEELCHAIRACCESS"
+       ]
+      },
+      "iconId": 1
+     },
+     "stopSequence": [
+      {
+       "id": "2000362",
+       "name": "Martin Place Station, Platform 2, Sydney",
+       "coord": [
+        -33.867803,
+        151.211822
+       ]
+      },
+      {
+       "id": "201172",
+       "name": "Kings Cross Station, Platform 2, Potts Point",
+       "coord": [
+        -33.874254,
+        151.221828
+       ]
+      },
+      {
+       "id": "202762",
+       "name": "Edgecliff Station, Platform 2, Edgecliff",
+       "coord": [
+        -33.879282,
+        151.236497
+       ]
+      },
+      {
+       "id": "202292",
+       "name": "Bondi Junction Station, Platform 2, Bondi Junction",
+       "coord": [
+        -33.891083,
+        151.248295
+       ]
+      }
+     ],
+     "infos": [],
+     "coords": [
+      [
+       -33.867816,
+       151.21183
+      ],
+      [
+       -33.867907,
+       151.213312
+      ],
+      [
+       -33.868346,
+       151.215036
+      ],
+      [
+       -33.869621,
+       151.216911
+      ],
+      [
+       -33.871186,
+       151.218044
+      ],
+      [
+       -33.872647,
+       151.219119
+      ],
+      [
+       -33.873145,
+       151.219741
+      ],
+      [
+       -33.874211,
+       151.22185
+      ],
+      [
+       -33.876494,
+       151.226922
+      ],
+      [
+       -33.876884,
+       151.229611
+      ],
+      [
+       -33.877218,
+       151.231664
+      ],
+      [
+       -33.877546,
+       151.232527
+      ],
+      [
+       -33.878332,
+       151.233761
+      ],
+      [
+       -33.878801,
+       151.234601
+      ],
+      [
+       -33.879263,
+       151.236498
+      ],
+      [
+       -33.879759,
+       151.238499
+      ],
+      [
+       -33.881497,
+       151.240863
+      ],
+      [
+       -33.884026,
+       151.242858
+      ],
+      [
+       -33.885343,
+       151.243017
+      ],
+      [
+       -33.887452,
+       151.242929
+      ],
+      [
+       -33.888609,
+       151.243321
+      ],
+      [
+       -33.889667,
+       151.244218
+      ],
+      [
+       -33.890509,
+       151.245891
+      ],
+      [
+       -33.891063,
+       151.248299
+      ]
+     ],
+     "coupledTripsInfo": [
+      {
+       "positionInTrain": "-1",
+       "usableForLeg": true,
+       "infoOnCarLevel": true,
+       "transportation": {
+        "id": "nsw:020T4: :R:sj2",
+        "name": "Sydney Trains Network T4 Eastern Suburbs & Illawarra Line",
+        "disassembledName": "T4",
+        "number": "T4 Eastern Suburbs & Illawarra Line",
+        "product": {
+         "id": 1,
+         "class": 1,
+         "name": "Sydney Trains Network",
+         "iconId": 1
+        },
+        "destination": {
+         "name": "Bondi Junction",
+         "type": "stop"
+        },
+        "properties": {
+         "lineDisplay": "LINE",
+         "globalId": "3001"
+        }
+       },
+       "properties": {
+        "tripId": "711"
+       }
+      }
+     ],
+     "properties": {
+      "vehicleAccess": [
+       {
+        "height": 0,
+        "halfWidth": 0,
+        "doorWidth": 0,
+        "attributes": 1073741824,
+        "areaToStay": 0,
+        "areaToMove": 0,
+        "equipments": [
+         {
+          "vehicleEquipment": {
+           "equipmentType": 1,
+           "length": 0,
+           "width": 0,
+           "lengthAtPl": 0,
+           "widthAtPl": 0,
+           "maxWeight": 0
+          }
+         }
+        ]
+       }
+      ],
+      "PlanLowFloorVehicle": "1",
+      "PlanWheelChairAccess": "1"
+     }
+    },
+    {
+     "duration": 360,
+     "distance": 309,
+     "origin": {
+      "isGlobalId": true,
+      "id": "202292",
+      "name": "Bondi Junction Station, Bondi Junction",
+      "disassembledName": "Bondi Junction Station",
+      "type": "platform",
+      "coord": [
+       -33.891083,
+       151.248295
+      ],
+      "niveau": -2,
+      "parent": {
+       "isGlobalId": true,
+       "id": "202210",
+       "name": "Bondi Junction Station, Bondi Junction",
+       "disassembledName": "Bondi Junction Station",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95361003:1",
+        "name": "Bondi Junction",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101109"
+       },
+       "coord": [
+        -33.891197,
+        151.248377
+       ],
+       "niveau": 0
+      },
+      "departureTimeBaseTimetable": "2026-10-17T08:00:06Z",
+      "departureTimePlanned": "2026-10-17T08:00:06Z",
+      "departureTimeEstimated": "2026-10-17T08:00:06Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-2",
+       "AREA_NIVEAU_GIS": "-2.00",
+       "stoppingPointPlanned": "Platform 2",
+       "area": "1",
+       "platform": "BJN2",
+       "platformName": "Platform 2",
+       "plannedPlatformName": "Platform 2",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       5,
+       11
+      ]
+     },
+     "destination": {
+      "id": "coord:4892912:3758245:GDAV:408 Oxford St, Bondi Junction:0",
+      "name": "408 Oxford St, Bondi Junction",
+      "disassembledName": "408 Oxford St",
+      "type": "address",
+      "coord": [
+       -33.891397,
+       151.247814
+      ],
+      "parent": {
+       "id": "placeID:95361003:-1",
+       "name": "Bondi Junction",
+       "type": "locality",
+       "disassembledName": ""
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T08:06:06Z",
+      "arrivalTimePlanned": "2026-10-17T08:06:06Z",
+      "arrivalTimeEstimated": "2026-10-17T08:06:06Z",
+      "properties": {
+       "area": "0"
+      }
+     },
+     "transportation": {
+      "product": {
+       "class": 100,
+       "name": "footpath",
+       "iconId": 100
+      },
+      "properties": {
+       "tripCode": 0,
+       "lineDisplay": "LINE"
+      }
+     },
+     "footPathInfo": [
+      {
+       "position": "BEFORE",
+       "duration": 180,
+       "footPathElem": [
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": -2,
+         "levelTo": -1,
+         "level": "UP",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891083,
+            151.248295
+           ],
+           "properties": {
+            "area": "1",
+            "georef": "1003167901:22:GDAV:100",
+            "areaGid": "",
+            "areaType": 81
+           }
+          },
+          "area": "1",
+          "georef": "1003167901:22:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891261,
+            151.248337
+           ],
+           "properties": {
+            "area": "61",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -1,
+         "levelTo": -1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891261,
+            151.248337
+           ],
+           "properties": {
+            "area": "61",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "61",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891343,
+            151.24833
+           ],
+           "properties": {
+            "area": "55",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -1,
+         "levelTo": -1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891343,
+            151.24833
+           ],
+           "properties": {
+            "area": "55",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "55",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891206,
+            151.248107
+           ],
+           "properties": {
+            "area": "56",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 3,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": -1,
+         "levelTo": 1,
+         "level": "UP",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891206,
+            151.248107
+           ],
+           "properties": {
+            "area": "56",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "56",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891228,
+            151.248259
+           ],
+           "properties": {
+            "area": "43",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": 1,
+         "levelTo": 1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891228,
+            151.248259
+           ],
+           "properties": {
+            "area": "43",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "43",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891276,
+            151.248435
+           ],
+           "properties": {
+            "area": "41",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "RAMP",
+         "levelFrom": 1,
+         "levelTo": 0,
+         "level": "DOWN",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891276,
+            151.248435
+           ],
+           "properties": {
+            "area": "41",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "41",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.89152,
+            151.248404
+           ],
+           "properties": {
+            "area": "31",
+            "georef": "183419838:49:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        }
+       ]
+      }
+     ],
+     "footPathInfoRedundant": true,
+     "infos": [],
+     "coords": [
+      [
+       -33.89108,
+       151.248303
+      ],
+      [
+       -33.891093,
+       151.248358
+      ],
+      [
+       -33.89107,
+       151.24836
+      ],
+      [
+       -33.891049,
+       151.248662
+      ],
+      [
+       -33.890943,
+       151.248145
+      ],
+      [
+       -33.8914,
+       151.247808
+      ],
+      [
+       -33.891397,
+       151.247814
+      ]
+     ],
+     "pathDescriptions": [
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "LEAVE",
+       "name": "Leave Underground T4 Eastern Suburbs & Illawarra Line in direction of travel: low platform vehicle",
+       "coord": [
+        -33.891082,
+        151.248306
+       ],
+       "duration": 0,
+       "cumDuration": 0,
+       "distance": 0,
+       "cumDistance": 0,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 0,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "",
+       "coord": [
+        -33.891082,
+        151.248306
+       ],
+       "skyDirection": 105,
+       "duration": 26,
+       "cumDuration": 26,
+       "distance": 29,
+       "cumDistance": 29,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 4,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "UNKNOWN",
+       "name": "elevator upward to level -1",
+       "coord": [
+        -33.891264,
+        151.248272
+       ],
+       "duration": 120,
+       "cumDuration": 146,
+       "distance": 0,
+       "cumDistance": 29,
+       "fromCoordsIndex": 4,
+       "toCoordsIndex": 5,
+       "properties": {
+        "FLOOR_LEVEL_CHANGE_DIRECTION": "UP",
+        "FLOOR_LEVEL_DIFFERENCE": "1",
+        "INDOOR_TYPE": "LIFT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.891264,
+        151.248272
+       ],
+       "skyDirection": 98,
+       "duration": 102,
+       "cumDuration": 249,
+       "distance": 114,
+       "cumDistance": 143,
+       "fromCoordsIndex": 5,
+       "toCoordsIndex": 15,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "ENTER_BUILTUPAREA",
+       "name": "",
+       "coord": [
+        -33.890998,
+        151.248669
+       ],
+       "skyDirection": 276,
+       "duration": 81,
+       "cumDuration": 330,
+       "distance": 91,
+       "cumDistance": 234,
+       "fromCoordsIndex": 15,
+       "toCoordsIndex": 17,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.890887,
+        151.247692
+       ],
+       "skyDirection": 191,
+       "duration": 46,
+       "cumDuration": 377,
+       "distance": 51,
+       "cumDistance": 286,
+       "fromCoordsIndex": 17,
+       "toCoordsIndex": 19,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "CONTINUE",
+       "name": "",
+       "coord": [
+        -33.891341,
+        151.247606
+       ],
+       "skyDirection": 185,
+       "duration": 3,
+       "cumDuration": 380,
+       "distance": 4,
+       "cumDistance": 290,
+       "fromCoordsIndex": 19,
+       "toCoordsIndex": 20,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "Grosvenor Lane",
+       "coord": [
+        -33.891377,
+        151.247608
+       ],
+       "skyDirection": 96,
+       "duration": 17,
+       "cumDuration": 397,
+       "distance": 19,
+       "cumDistance": 309,
+       "fromCoordsIndex": 20,
+       "toCoordsIndex": 22,
+       "properties": {
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      }
+     ],
+     "properties": {
+      "PTWalkMinutes": "0"
+     }
+    }
+   ],
+   "daysOfService": {
+    "rvb": "00010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+   }
+  },
+  {
+   "rating": 0,
+   "isAdditional": false,
+   "interchanges": 1,
+   "legs": [
+    {
+     "duration": 420,
+     "distance": 126,
+     "origin": {
+      "id": "coord:4881426:3745088:GDAV:140 Herring Rd, Macquarie Park:0",
+      "name": "140 Herring Rd, Macquarie Park",
+      "disassembledName": "140 Herring Rd",
+      "type": "address",
+      "coord": [
+       -33.777256,
+       151.118233
+      ],
+      "parent": {
+       "id": "placeID:95352007:-1",
+       "name": "Macquarie Park",
+       "type": "locality",
+       "disassembledName": ""
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:18:54Z",
+      "departureTimePlanned": "2026-10-17T07:18:54Z",
+      "departureTimeEstimated": "2026-10-17T07:21:24Z",
+      "properties": {
+       "area": "0"
+      }
+     },
+     "destination": {
+      "isGlobalId": true,
+      "id": "2113351",
+      "name": "Macquarie University Station, Macquarie Park",
+      "disassembledName": "Macquarie University Station",
+      "type": "platform",
+      "coord": [
+       -33.777596,
+       151.118314
+      ],
+      "niveau": -3,
+      "parent": {
+       "isGlobalId": true,
+       "id": "211310",
+       "name": "Macquarie University Station, Macquarie Park",
+       "disassembledName": "Macquarie University Station",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95352007:1",
+        "name": "Macquarie Park",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101508"
+       },
+       "coord": [
+        -33.777282,
+        151.118267
+       ],
+       "niveau": 0
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T07:25:54Z",
+      "arrivalTimePlanned": "2026-10-17T07:25:54Z",
+      "arrivalTimeEstimated": "2026-10-17T07:28:24Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-3",
+       "stoppingPointPlanned": "Platform 1",
+       "area": "1",
+       "platform": "MCU1",
+       "platformName": "Platform 1",
+       "plannedPlatformName": "Platform 1",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0,
+          "stepFromStreet": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       2,
+       5,
+       11
+      ]
+     },
+     "transportation": {
+      "product": {
+       "class": 100,
+       "name": "footpath",
+       "iconId": 100
+      },
+      "properties": {
+       "tripCode": 0,
+       "lineDisplay": "LINE"
+      }
+     },
+     "footPathInfo": [
+      {
+       "position": "IDEST",
+       "duration": 240,
+       "footPathElem": [
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": 0,
+         "levelTo": -2,
+         "level": "DOWN",
+         "origin": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777162,
+            151.118089
+           ],
+           "properties": {
+            "area": "21",
+            "georef": "1003152783:4:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          },
+          "area": "21",
+          "georef": "1003152783:4:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777206,
+            151.118102
+           ],
+           "properties": {
+            "area": "24",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 15,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -2,
+         "levelTo": -2,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777206,
+            151.118102
+           ],
+           "properties": {
+            "area": "24",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "24",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777319,
+            151.118236
+           ],
+           "properties": {
+            "area": "27",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -2,
+         "levelTo": -2,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777319,
+            151.118236
+           ],
+           "properties": {
+            "area": "27",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "27",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777412,
+            151.118155
+           ],
+           "properties": {
+            "area": "28",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 3,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -2,
+         "levelTo": -2,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777412,
+            151.118155
+           ],
+           "properties": {
+            "area": "28",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "28",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.77753,
+            151.118139
+           ],
+           "properties": {
+            "area": "29",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": -2,
+         "levelTo": -3,
+         "level": "DOWN",
+         "origin": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.77753,
+            151.118139
+           ],
+           "properties": {
+            "area": "29",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "29",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777596,
+            151.118314
+           ],
+           "properties": {
+            "area": "1",
+            "georef": "1002368403:21:GDAV:100",
+            "areaGid": "",
+            "areaType": 65
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        }
+       ]
+      }
+     ],
+     "footPathInfoRedundant": true,
+     "infos": [],
+     "coords": [
+      [
+       -33.777257,
+       151.118232
+      ],
+      [
+       -33.777306,
+       151.118183
+      ],
+      [
+       -33.777139,
+       151.118057
+      ],
+      [
+       -33.77749,
+       151.118132
+      ],
+      [
+       -33.77748,
+       151.118132
+      ],
+      [
+       -33.777605,
+       151.118302
+      ]
+     ],
+     "pathDescriptions": [
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ORIGIN",
+       "name": "Herring Road",
+       "coord": [
+        -33.777256,
+        151.118233
+       ],
+       "duration": 0,
+       "cumDuration": 0,
+       "distance": 0,
+       "cumDistance": 0,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 0
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "Herring Road",
+       "coord": [
+        -33.777256,
+        151.118233
+       ],
+       "skyDirection": 220,
+       "duration": 6,
+       "cumDuration": 6,
+       "distance": 7,
+       "cumDistance": 7,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 1,
+       "properties": {
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "RIGHT",
+       "manoeuvre": "TURN",
+       "name": "secondary road",
+       "coord": [
+        -33.777303,
+        151.118182
+       ],
+       "skyDirection": 309,
+       "duration": 28,
+       "cumDuration": 34,
+       "distance": 10,
+       "cumDistance": 17,
+       "fromCoordsIndex": 1,
+       "toCoordsIndex": 2,
+       "properties": {
+        "OUTDOOR_TYPE": "TRAFFICLIGHT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "RIGHT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.777243,
+        151.118093
+       ],
+       "skyDirection": 44,
+       "duration": 5,
+       "cumDuration": 40,
+       "distance": 5,
+       "cumDistance": 23,
+       "fromCoordsIndex": 2,
+       "toCoordsIndex": 3,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.777205,
+        151.118134
+       ],
+       "skyDirection": 312,
+       "duration": 10,
+       "cumDuration": 50,
+       "distance": 12,
+       "cumDistance": 35,
+       "fromCoordsIndex": 3,
+       "toCoordsIndex": 5,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "UNKNOWN",
+       "name": "elevator downward to level -2",
+       "coord": [
+        -33.777136,
+        151.118044
+       ],
+       "duration": 100,
+       "cumDuration": 150,
+       "distance": 0,
+       "cumDistance": 35,
+       "fromCoordsIndex": 5,
+       "toCoordsIndex": 6,
+       "properties": {
+        "FLOOR_LEVEL_CHANGE_DIRECTION": "DOWN",
+        "FLOOR_LEVEL_DIFFERENCE": "-2",
+        "INDOOR_TYPE": "LIFT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "SLIGHT_LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.777136,
+        151.118044
+       ],
+       "skyDirection": 127,
+       "duration": 54,
+       "cumDuration": 205,
+       "distance": 61,
+       "cumDistance": 96,
+       "fromCoordsIndex": 6,
+       "toCoordsIndex": 13,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": [
+         "ASPHALTED",
+         "COBBLE"
+        ]
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "UNKNOWN",
+       "name": "elevator downward to level -3",
+       "coord": [
+        -33.777487,
+        151.118072
+       ],
+       "duration": 100,
+       "cumDuration": 305,
+       "distance": 0,
+       "cumDistance": 96,
+       "fromCoordsIndex": 13,
+       "toCoordsIndex": 14,
+       "properties": {
+        "FLOOR_LEVEL_CHANGE_DIRECTION": "DOWN",
+        "FLOOR_LEVEL_DIFFERENCE": "-1",
+        "INDOOR_TYPE": "LIFT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "SLIGHT_LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.777487,
+        151.118072
+       ],
+       "skyDirection": 142,
+       "duration": 26,
+       "cumDuration": 332,
+       "distance": 29,
+       "cumDistance": 126,
+       "fromCoordsIndex": 14,
+       "toCoordsIndex": 17,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ENTER",
+       "name": "Enter Commuter train M1 Metro North West & Bankstown Line: low platform vehicle",
+       "coord": [
+        -33.777605,
+        151.118304
+       ],
+       "duration": 0,
+       "cumDuration": 332,
+       "distance": 0,
+       "cumDistance": 126,
+       "fromCoordsIndex": 17,
+       "toCoordsIndex": 17,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      }
+     ],
+     "properties": {
+      "PTWalkMinutes": "2"
+     }
+    },
+    {
+     "duration": 1230,
+     "isRealtimeControlled": true,
+     "realtimeStatus": [
+      "MONITORED"
+     ],
+     "origin": {
+      "isGlobalId": true,
+      "id": "2113351",
+      "name": "Macquarie University Station, Platform 1, Macquarie Park",
+      "disassembledName": "Macquarie University Station, Platform 1",
+      "type": "platform",
+      "coord": [
+       -33.777596,
+       151.118314
+      ],
+      "niveau": -3,
+      "parent": {
+       "isGlobalId": true,
+       "id": "211310",
+       "name": "Macquarie University Station, Platform 1, Macquarie Park",
+       "disassembledName": "Macquarie University Station, Platform 1",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95352007:1",
+        "name": "Macquarie Park",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101508"
+       },
+       "coord": [
+        -33.777282,
+        151.118267
+       ],
+       "niveau": 0
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:25:54Z",
+      "departureTimePlanned": "2026-10-17T07:25:54Z",
+      "departureTimeEstimated": "2026-10-17T07:28:24Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-3",
+       "stoppingPointPlanned": "Platform 1",
+       "occupancy": "MANY_SEATS",
+       "area": "1",
+       "platform": "MCU1",
+       "platformName": "Platform 1",
+       "plannedPlatformName": "Platform 1",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0,
+          "stepFromStreet": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       2,
+       5,
+       11
+      ]
+     },
+     "destination": {
+      "isGlobalId": true,
+      "id": "2000463",
+      "name": "Martin Place Station, Platform 3, Sydney",
+      "disassembledName": "Martin Place Station, Platform 3",
+      "type": "platform",
+      "coord": [
+       -33.867135,
+       151.210568
+      ],
+      "niveau": -5,
+      "parent": {
+       "isGlobalId": true,
+       "id": "200030",
+       "name": "Martin Place Station, Platform 3, Sydney",
+       "disassembledName": "Martin Place Station, Platform 3",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95301001:1",
+        "name": "Sydney",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101106"
+       },
+       "coord": [
+        -33.867648,
+        151.210583
+       ],
+       "niveau": 0
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T07:46:24Z",
+      "arrivalTimePlanned": "2026-10-17T07:46:24Z",
+      "arrivalTimeEstimated": "2026-10-17T07:48:54Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-5",
+       "AREA_NIVEAU_GIS": "-5.00",
+       "stoppingPointPlanned": "Platform 3",
+       "occupancy": "MANY_SEATS",
+       "area": "2",
+       "platform": "MPL3",
+       "platformName": "Platform 3",
+       "plannedPlatformName": "Platform 3",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       2
+      ]
+     },
+     "transportation": {
+      "id": "nsw:030M1: :R:sj2",
+      "name": "Sydney Metro Network M1 Metro North West & Bankstown Line",
+      "disassembledName": "M1",
+      "number": "M1 Metro North West & Bankstown Line",
+      "description": "Tallawong to Bankstown",
+      "product": {
+       "id": 24,
+       "class": 2,
+       "name": "Sydney Metro Network",
+       "iconId": 2
+      },
+      "operator": {
+       "id": "SMNW",
+       "name": "Sydney Metro"
+      },
+      "destination": {
+       "id": "10101326",
+       "name": "Sydenham",
+       "type": "stop"
+      },
+      "properties": {
+       "isTTB": true,
+       "tripCode": 203,
+       "timetablePeriod": "NSW JP",
+       "lineDisplay": "LINE",
+       "globalId": "3001",
+       "AVMSTripID": "0250-003-106-014:1000",
+       "RealtimeTripId": "0250-003-106-014:1000",
+       "VehAccessRoutingIncomplete": "true",
+       "OperatorURL": "http://transportnsw.info",
+       "FrequencyLine": "1",
+       "gtfsTripId": "3001.nsw-3-M1.1.TA.871.sj2",
+       "attributes": [
+        "AVM_LOWFLOORVEHICLE",
+        "PLAN_LOWFLOORVEHICLE",
+        "PLAN_WHEELCHAIRACCESS"
+       ]
+      },
+      "iconId": 24
+     },
+     "stopSequence": [
+      {
+       "id": "2113351",
+       "name": "Macquarie University Station, Platform 1, Macquarie Park",
+       "coord": [
+        -33.777596,
+        151.118314
+       ]
+      },
+      {
+       "id": "2113341",
+       "name": "Macquarie Park Station, Platform 1, Macquarie Park",
+       "coord": [
+        -33.784982,
+        151.128337
+       ]
+      },
+      {
+       "id": "2113361",
+       "name": "North Ryde Station, Platform 1, North Ryde",
+       "coord": [
+        -33.794171,
+        151.13806
+       ]
+      },
+      {
+       "id": "2067142",
+       "name": "Chatswood Station, Platform 2, Chatswood",
+       "coord": [
+        -33.797469,
+        151.180988
+       ]
+      },
+      {
+       "id": "2065163",
+       "name": "Crows Nest Station, Platform 1, Crows Nest",
+       "coord": [
+        -33.825801,
+        151.199372
+       ]
+      },
+      {
+       "id": "2060115",
+       "name": "Victoria Cross Station, Platform 1, North Sydney",
+       "coord": [
+        -33.836219,
+        151.207494
+       ]
+      },
+      {
+       "id": "2000460",
+       "name": "Barangaroo Station, Platform 1, Barangaroo",
+       "coord": [
+        -33.859314,
+        151.202656
+       ]
+      },
+      {
+       "id": "2000463",
+       "name": "Martin Place Station, Platform 3, Sydney",
+       "coord": [
+        -33.867135,
+        151.210568
+       ]
+      }
+     ],
+     "footPathInfo": [
+      {
+       "position": "AFTER",
+       "duration": 240,
+       "footPathElem": [
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -5,
+         "levelTo": -5,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867135,
+            151.210568
+           ],
+           "properties": {
+            "area": "2",
+            "georef": "1003733472:12:GDAV:100",
+            "areaGid": "",
+            "areaType": 65
+           }
+          },
+          "area": "2",
+          "georef": "1003733472:12:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867922,
+            151.210207
+           ],
+           "properties": {
+            "area": "39",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 3,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": -5,
+         "levelTo": -3,
+         "level": "UP",
+         "origin": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867922,
+            151.210207
+           ],
+           "properties": {
+            "area": "39",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "39",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867928,
+            151.210294
+           ],
+           "properties": {
+            "area": "38",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -3,
+         "levelTo": -3,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867928,
+            151.210294
+           ],
+           "properties": {
+            "area": "38",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "38",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867842,
+            151.210441
+           ],
+           "properties": {
+            "area": "37",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 4,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -3,
+         "levelTo": -3,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867842,
+            151.210441
+           ],
+           "properties": {
+            "area": "37",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "37",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867838,
+            151.211067
+           ],
+           "properties": {
+            "area": "36",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 8,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -3,
+         "levelTo": -3,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867838,
+            151.211067
+           ],
+           "properties": {
+            "area": "36",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "36",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867803,
+            151.211822
+           ],
+           "properties": {
+            "area": "1",
+            "georef": "1003164050:3:GDAV:100",
+            "areaGid": "",
+            "areaType": 81
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        }
+       ]
+      }
+     ],
+     "footPathInfoRedundant": true,
+     "infos": [
+      {
+       "timestamps": {
+        "creation": "2026-10-15T04:19:00Z"
+       },
+       "priority": "normal",
+       "id": "ems-80229",
+       "version": 220,
+       "type": "lineInfo",
+       "properties": {
+        "publisher": "ems.comm.addinfo",
+        "infoType": "lineInfo",
+        "smsText": "Temporary timetable changes for testing",
+        "speechText": "Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.\nAllow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services."
+       },
+       "infoLinks": [
+        {
+         "urlText": "Temporary timetable changes for testing",
+         "url": "https://transportnsw.info/alerts/details#/ems-80229",
+         "content": "<ul>\n<li>Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.</li>\n<li>Allow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services.&nbsp;</li>\n</ul>",
+         "subtitle": "Temporary timetable changes for testing",
+         "smsText": "Temporary timetable changes for testing",
+         "speechText": "Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.\nAllow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services."
+        }
+       ],
+       "urlText": "Temporary timetable changes for testing",
+       "url": "https://transportnsw.info/alerts/details#/ems-80229",
+       "content": "<ul>\n<li>Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.</li>\n<li>Allow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services.&nbsp;</li>\n</ul>",
+       "subtitle": "Temporary timetable changes for testing"
+      }
+     ],
+     "coords": [
+      [
+       -33.777596,
+       151.118317
+      ],
+      [
+       -33.777952,
+       151.118805
+      ],
+      [
+       -33.784479,
+       151.127705
+      ],
+      [
+       -33.787101,
+       151.13106
+      ],
+      [
+       -33.790132,
+       151.132762
+      ],
+      [
+       -33.79241,
+       151.134397
+      ],
+      [
+       -33.793725,
+       151.136411
+      ],
+      [
+       -33.794894,
+       151.140805
+      ],
+      [
+       -33.796012,
+       151.147458
+      ],
+      [
+       -33.795054,
+       151.151751
+      ],
+      [
+       -33.79286,
+       151.155547
+      ],
+      [
+       -33.789225,
+       151.160052
+      ],
+      [
+       -33.785531,
+       151.162366
+      ],
+      [
+       -33.782693,
+       151.163487
+      ],
+      [
+       -33.780426,
+       151.165653
+      ],
+      [
+       -33.779111,
+       151.168498
+      ],
+      [
+       -33.778808,
+       151.17214
+      ],
+      [
+       -33.779452,
+       151.174927
+      ],
+      [
+       -33.781181,
+       151.177688
+      ],
+      [
+       -33.782838,
+       151.17902
+      ],
+      [
+       -33.784743,
+       151.179749
+      ],
+      [
+       -33.786649,
+       151.180011
+      ],
+      [
+       -33.788798,
+       151.180651
+      ],
+      [
+       -33.79002,
+       151.180854
+      ],
+      [
+       -33.793196,
+       151.180881
+      ],
+      [
+       -33.796111,
+       151.180938
+      ],
+      [
+       -33.801922,
+       151.181057
+      ],
+      [
+       -33.803421,
+       151.181099
+      ],
+      [
+       -33.8049,
+       151.180924
+      ],
+      [
+       -33.807141,
+       151.180466
+      ],
+      [
+       -33.809198,
+       151.180723
+      ],
+      [
+       -33.811089,
+       151.181762
+      ],
+      [
+       -33.815851,
+       151.187494
+      ],
+      [
+       -33.823306,
+       151.19686
+      ],
+      [
+       -33.825706,
+       151.199343
+      ],
+      [
+       -33.827235,
+       151.200806
+      ],
+      [
+       -33.827998,
+       151.201978
+      ],
+      [
+       -33.829165,
+       151.204964
+      ],
+      [
+       -33.829984,
+       151.206336
+      ],
+      [
+       -33.830881,
+       151.207193
+      ],
+      [
+       -33.832065,
+       151.20781
+      ],
+      [
+       -33.833268,
+       151.208014
+      ],
+      [
+       -33.835354,
+       151.207699
+      ],
+      [
+       -33.838454,
+       151.207048
+      ],
+      [
+       -33.840613,
+       151.205929
+      ],
+      [
+       -33.842852,
+       151.203742
+      ],
+      [
+       -33.843803,
+       151.203166
+      ],
+      [
+       -33.845411,
+       151.202983
+      ],
+      [
+       -33.846741,
+       151.203433
+      ],
+      [
+       -33.848144,
+       151.203958
+      ],
+      [
+       -33.84935,
+       151.204104
+      ],
+      [
+       -33.850778,
+       151.203864
+      ],
+      [
+       -33.854478,
+       151.202735
+      ],
+      [
+       -33.856585,
+       151.202505
+      ],
+      [
+       -33.859315,
+       151.202682
+      ],
+      [
+       -33.861575,
+       151.202978
+      ],
+      [
+       -33.862354,
+       151.203544
+      ],
+      [
+       -33.862989,
+       151.20473
+      ],
+      [
+       -33.863104,
+       151.205614
+      ],
+      [
+       -33.862885,
+       151.207267
+      ],
+      [
+       -33.862849,
+       151.207965
+      ],
+      [
+       -33.86294,
+       151.208654
+      ],
+      [
+       -33.863263,
+       151.20949
+      ],
+      [
+       -33.86366,
+       151.210049
+      ],
+      [
+       -33.864288,
+       151.210556
+      ],
+      [
+       -33.864942,
+       151.210804
+      ],
+      [
+       -33.866513,
+       151.210702
+      ],
+      [
+       -33.867142,
+       151.21062
+      ]
+     ],
+     "pathDescriptions": [
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "LEAVE",
+       "name": "Leave Commuter train M1 Metro North West & Bankstown Line in direction of travel: low platform vehicle",
+       "coord": [
+        -33.867143,
+        151.210601
+       ],
+       "duration": 0,
+       "cumDuration": 0,
+       "distance": 0,
+       "cumDistance": 0,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 0,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "",
+       "coord": [
+        -33.867143,
+        151.210601
+       ],
+       "skyDirection": 186,
+       "duration": 179,
+       "cumDuration": 179,
+       "distance": 199,
+       "cumDistance": 199,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 7,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ENTER",
+       "name": "Enter Underground T4 Eastern Suburbs & Illawarra Line: low platform vehicle",
+       "coord": [
+        -33.867821,
+        151.211823
+       ],
+       "duration": 0,
+       "cumDuration": 179,
+       "distance": 0,
+       "cumDistance": 199,
+       "fromCoordsIndex": 7,
+       "toCoordsIndex": 7,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      }
+     ],
+     "interchange": {
+      "desc": "Fussweg",
+      "type": 100,
+      "coords": [
+       [
+        -33.867141,
+        151.210596
+       ],
+       [
+        -33.867801,
+        151.210509
+       ],
+       [
+        -33.867801,
+        151.210517
+       ],
+       [
+        -33.86779,
+        151.210539
+       ],
+       [
+        -33.867781,
+        151.210568
+       ],
+       [
+        -33.867781,
+        151.210596
+       ],
+       [
+        -33.867748,
+        151.210599
+       ],
+       [
+        -33.867824,
+        151.211826
+       ]
+      ]
+     },
+     "properties": {
+      "vehicleAccess": [
+       {
+        "height": 0,
+        "halfWidth": 0,
+        "doorWidth": 0,
+        "attributes": 1342177280,
+        "areaToStay": 0,
+        "areaToMove": 0,
+        "equipments": [
+         {
+          "vehicleEquipment": {
+           "equipmentType": 1,
+           "length": 0,
+           "width": 0,
+           "lengthAtPl": 0,
+           "widthAtPl": 0,
+           "maxWeight": 0
+          }
+         }
+        ]
+       }
+      ],
+      "AVMLowFloorVeh": "1",
+      "PlanLowFloorVehicle": "1",
+      "PlanWheelChairAccess": "1"
+     }
+    },
+    {
+     "duration": 492,
+     "isRealtimeControlled": true,
+     "realtimeStatus": [
+      "MONITORED"
+     ],
+     "origin": {
+      "isGlobalId": true,
+      "id": "2000362",
+      "name": "Martin Place Station, Platform 2, Sydney",
+      "disassembledName": "Martin Place Station, Platform 2",
+      "type": "platform",
+      "coord": [
+       -33.867803,
+       151.211822
+      ],
+      "niveau": -3,
+      "parent": {
+       "isGlobalId": true,
+       "id": "200030",
+       "name": "Martin Place Station, Platform 2, Sydney",
+       "disassembledName": "Martin Place Station, Platform 2",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95301001:1",
+        "name": "Sydney",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101106"
+       },
+       "coord": [
+        -33.867648,
+        151.210583
+       ],
+       "niveau": 0
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:58:06Z",
+      "departureTimePlanned": "2026-10-17T07:58:06Z",
+      "departureTimeEstimated": "2026-10-17T07:58:06Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-3",
+       "NumberOfCars": "8",
+       "TravelInCarsFrom": "1",
+       "TravelInCarsTo": "8",
+       "TravelInCarsMessage": "any",
+       "stoppingPointPlanned": "Platform 2",
+       "occupancy": "MANY_SEATS",
+       "area": "1",
+       "platform": "MPL2",
+       "platformName": "Platform 2",
+       "plannedPlatformName": "Platform 2",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0,
+          "stepFromStreet": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       2
+      ]
+     },
+     "destination": {
+      "isGlobalId": true,
+      "id": "202291",
+      "name": "Bondi Junction Station, Platform 1, Bondi Junction",
+      "disassembledName": "Bondi Junction Station, Platform 1",
+      "type": "platform",
+      "coord": [
+       -33.891274,
+       151.24824
+      ],
+      "niveau": -2,
+      "parent": {
+       "isGlobalId": true,
+       "id": "202210",
+       "name": "Bondi Junction Station, Platform 1, Bondi Junction",
+       "disassembledName": "Bondi Junction Station, Platform 1",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95361003:1",
+        "name": "Bondi Junction",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101109"
+       },
+       "coord": [
+        -33.891197,
+        151.248377
+       ],
+       "niveau": 0
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T08:06:18Z",
+      "arrivalTimePlanned": "2026-10-17T08:06:18Z",
+      "arrivalTimeEstimated": "2026-10-17T08:06:18Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-2",
+       "AREA_NIVEAU_GIS": "-2.00",
+       "stoppingPointPlanned": "Platform 1",
+       "occupancy": "MANY_SEATS",
+       "area": "1",
+       "platform": "BJN1",
+       "platformName": "Platform 1",
+       "plannedPlatformName": "Platform 1",
+       "callType": [
+        "NOBOARDING"
+       ],
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       5,
+       11
+      ]
+     },
+     "transportation": {
+      "id": "nsw:020T4: :R:sj2",
+      "name": "Sydney Trains Network T4 Eastern Suburbs & Illawarra Line",
+      "disassembledName": "T4",
+      "number": "T4 Eastern Suburbs & Illawarra Line",
+      "description": "Waterfall or Cronulla to Bondi Junction",
+      "product": {
+       "id": 1,
+       "class": 1,
+       "name": "Sydney Trains Network",
+       "iconId": 1
+      },
+      "operator": {
+       "id": "x0001",
+       "name": "Sydney Trains"
+      },
+      "destination": {
+       "id": "10101109",
+       "name": "Bondi Junction",
+       "type": "stop"
+      },
+      "properties": {
+       "isTTB": true,
+       "tripCode": 558,
+       "timetablePeriod": "NSW JP",
+       "lineDisplay": "LINE",
+       "globalId": "3001",
+       "AVMSTripID": "604J.2013.105.128.T.8.91898973",
+       "RealtimeTripId": "604J.2013.105.128.T.8.91898973",
+       "VehAccessRoutingIncomplete": "true",
+       "OperatorURL": "http://www.sydneytrains.info/",
+       "gtfsTripId": "3001.nsw-2-T4.1.TA.3268.sj2",
+       "attributes": [
+        "PLAN_LOWFLOORVEHICLE",
+        "PLAN_WHEELCHAIRACCESS"
+       ]
+      },
+      "iconId": 1
+     },
+     "stopSequence": [
+      {
+       "id": "2000362",
+       "name": "Martin Place Station, Platform 2, Sydney",
+       "coord": [
+        -33.867803,
+        151.211822
+       ]
+      },
+      {
+       "id": "201172",
+       "name": "Kings Cross Station, Platform 2, Potts Point",
+       "coord": [
+        -33.874254,
+        151.221828
+       ]
+      },
+      {
+       "id": "202762",
+       "name": "Edgecliff Station, Platform 2, Edgecliff",
+       "coord": [
+        -33.879282,
+        151.236497
+       ]
+      },
+      {
+       "id": "202291",
+       "name": "Bondi Junction Station, Platform 1, Bondi Junction",
+       "coord": [
+        -33.891274,
+        151.24824
+       ]
+      }
+     ],
+     "infos": [],
+     "coords": [
+      [
+       -33.867816,
+       151.21183
+      ],
+      [
+       -33.867907,
+       151.213312
+      ],
+      [
+       -33.868346,
+       151.215036
+      ],
+      [
+       -33.869621,
+       151.216911
+      ],
+      [
+       -33.871186,
+       151.218044
+      ],
+      [
+       -33.872647,
+       151.219119
+      ],
+      [
+       -33.873145,
+       151.219741
+      ],
+      [
+       -33.874211,
+       151.22185
+      ],
+      [
+       -33.876494,
+       151.226922
+      ],
+      [
+       -33.876884,
+       151.229611
+      ],
+      [
+       -33.877218,
+       151.231664
+      ],
+      [
+       -33.877546,
+       151.232527
+      ],
+      [
+       -33.878332,
+       151.233761
+      ],
+      [
+       -33.878801,
+       151.234601
+      ],
+      [
+       -33.879263,
+       151.236498
+      ],
+      [
+       -33.879759,
+       151.238499
+      ],
+      [
+       -33.881497,
+       151.240863
+      ],
+      [
+       -33.884026,
+       151.242858
+      ],
+      [
+       -33.885343,
+       151.243017
+      ],
+      [
+       -33.887452,
+       151.242929
+      ],
+      [
+       -33.888609,
+       151.243321
+      ],
+      [
+       -33.889667,
+       151.244218
+      ],
+      [
+       -33.890926,
+       151.246806
+      ],
+      [
+       -33.891298,
+       151.248231
+      ]
+     ],
+     "coupledTripsInfo": [
+      {
+       "positionInTrain": "-1",
+       "usableForLeg": true,
+       "infoOnCarLevel": true,
+       "transportation": {
+        "id": "nsw:020T4: :R:sj2",
+        "name": "Sydney Trains Network T4 Eastern Suburbs & Illawarra Line",
+        "disassembledName": "T4",
+        "number": "T4 Eastern Suburbs & Illawarra Line",
+        "product": {
+         "id": 1,
+         "class": 1,
+         "name": "Sydney Trains Network",
+         "iconId": 1
+        },
+        "destination": {
+         "name": "Bondi Junction",
+         "type": "stop"
+        },
+        "properties": {
+         "lineDisplay": "LINE",
+         "globalId": "3001"
+        }
+       },
+       "properties": {
+        "tripId": "558"
+       }
+      }
+     ],
+     "properties": {
+      "vehicleAccess": [
+       {
+        "height": 0,
+        "halfWidth": 0,
+        "doorWidth": 0,
+        "attributes": 1073741824,
+        "areaToStay": 0,
+        "areaToMove": 0,
+        "equipments": [
+         {
+          "vehicleEquipment": {
+           "equipmentType": 1,
+           "length": 0,
+           "width": 0,
+           "lengthAtPl": 0,
+           "widthAtPl": 0,
+           "maxWeight": 0
+          }
+         }
+        ]
+       }
+      ],
+      "PlanLowFloorVehicle": "1",
+      "PlanWheelChairAccess": "1"
+     }
+    },
+    {
+     "duration": 360,
+     "distance": 290,
+     "origin": {
+      "isGlobalId": true,
+      "id": "202291",
+      "name": "Bondi Junction Station, Bondi Junction",
+      "disassembledName": "Bondi Junction Station",
+      "type": "platform",
+      "coord": [
+       -33.891274,
+       151.24824
+      ],
+      "niveau": -2,
+      "parent": {
+       "isGlobalId": true,
+       "id": "202210",
+       "name": "Bondi Junction Station, Bondi Junction",
+       "disassembledName": "Bondi Junction Station",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95361003:1",
+        "name": "Bondi Junction",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101109"
+       },
+       "coord": [
+        -33.891197,
+        151.248377
+       ],
+       "niveau": 0
+      },
+      "departureTimeBaseTimetable": "2026-10-17T08:06:18Z",
+      "departureTimePlanned": "2026-10-17T08:06:18Z",
+      "departureTimeEstimated": "2026-10-17T08:06:18Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-2",
+       "AREA_NIVEAU_GIS": "-2.00",
+       "stoppingPointPlanned": "Platform 1",
+       "area": "1",
+       "platform": "BJN1",
+       "platformName": "Platform 1",
+       "plannedPlatformName": "Platform 1",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       5,
+       11
+      ]
+     },
+     "destination": {
+      "id": "coord:4892912:3758245:GDAV:408 Oxford St, Bondi Junction:0",
+      "name": "408 Oxford St, Bondi Junction",
+      "disassembledName": "408 Oxford St",
+      "type": "address",
+      "coord": [
+       -33.891397,
+       151.247814
+      ],
+      "parent": {
+       "id": "placeID:95361003:-1",
+       "name": "Bondi Junction",
+       "type": "locality",
+       "disassembledName": ""
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T08:12:18Z",
+      "arrivalTimePlanned": "2026-10-17T08:12:18Z",
+      "arrivalTimeEstimated": "2026-10-17T08:12:18Z",
+      "properties": {
+       "area": "0"
+      }
+     },
+     "transportation": {
+      "product": {
+       "class": 100,
+       "name": "footpath",
+       "iconId": 100
+      },
+      "properties": {
+       "tripCode": 0,
+       "lineDisplay": "LINE"
+      }
+     },
+     "footPathInfo": [
+      {
+       "position": "BEFORE",
+       "duration": 180,
+       "footPathElem": [
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": -2,
+         "levelTo": -1,
+         "level": "UP",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891274,
+            151.24824
+           ],
+           "properties": {
+            "area": "1",
+            "georef": "1003167905:5:GDAV:100",
+            "areaGid": "",
+            "areaType": 81
+           }
+          },
+          "area": "1",
+          "georef": "1003167905:5:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891261,
+            151.248337
+           ],
+           "properties": {
+            "area": "61",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -1,
+         "levelTo": -1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891261,
+            151.248337
+           ],
+           "properties": {
+            "area": "61",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "61",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891343,
+            151.24833
+           ],
+           "properties": {
+            "area": "55",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -1,
+         "levelTo": -1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891343,
+            151.24833
+           ],
+           "properties": {
+            "area": "55",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "55",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891206,
+            151.248107
+           ],
+           "properties": {
+            "area": "56",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 3,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": -1,
+         "levelTo": 1,
+         "level": "UP",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891206,
+            151.248107
+           ],
+           "properties": {
+            "area": "56",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "56",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891228,
+            151.248259
+           ],
+           "properties": {
+            "area": "43",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": 1,
+         "levelTo": 1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891228,
+            151.248259
+           ],
+           "properties": {
+            "area": "43",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "43",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891276,
+            151.248435
+           ],
+           "properties": {
+            "area": "41",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "RAMP",
+         "levelFrom": 1,
+         "levelTo": 0,
+         "level": "DOWN",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891276,
+            151.248435
+           ],
+           "properties": {
+            "area": "41",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "41",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.89152,
+            151.248404
+           ],
+           "properties": {
+            "area": "31",
+            "georef": "183419838:49:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        }
+       ]
+      }
+     ],
+     "footPathInfoRedundant": true,
+     "infos": [],
+     "coords": [
+      [
+       -33.89128,
+       151.248243
+      ],
+      [
+       -33.891292,
+       151.248295
+      ],
+      [
+       -33.89107,
+       151.24836
+      ],
+      [
+       -33.891049,
+       151.248662
+      ],
+      [
+       -33.890943,
+       151.248145
+      ],
+      [
+       -33.8914,
+       151.247808
+      ],
+      [
+       -33.891397,
+       151.247814
+      ]
+     ],
+     "pathDescriptions": [
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "LEAVE",
+       "name": "Leave Underground T4 Eastern Suburbs & Illawarra Line: low platform vehicle",
+       "coord": [
+        -33.891283,
+        151.248241
+       ],
+       "duration": 0,
+       "cumDuration": 0,
+       "distance": 0,
+       "cumDistance": 0,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 0,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "",
+       "coord": [
+        -33.891283,
+        151.248241
+       ],
+       "skyDirection": 105,
+       "duration": 9,
+       "cumDuration": 9,
+       "distance": 10,
+       "cumDistance": 10,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 4,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "UNKNOWN",
+       "name": "elevator upward to level -1",
+       "coord": [
+        -33.891264,
+        151.248272
+       ],
+       "duration": 120,
+       "cumDuration": 129,
+       "distance": 0,
+       "cumDistance": 10,
+       "fromCoordsIndex": 4,
+       "toCoordsIndex": 5,
+       "properties": {
+        "FLOOR_LEVEL_CHANGE_DIRECTION": "UP",
+        "FLOOR_LEVEL_DIFFERENCE": "1",
+        "INDOOR_TYPE": "LIFT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.891264,
+        151.248272
+       ],
+       "skyDirection": 98,
+       "duration": 102,
+       "cumDuration": 231,
+       "distance": 114,
+       "cumDistance": 124,
+       "fromCoordsIndex": 5,
+       "toCoordsIndex": 15,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "ENTER_BUILTUPAREA",
+       "name": "",
+       "coord": [
+        -33.890998,
+        151.248669
+       ],
+       "skyDirection": 276,
+       "duration": 81,
+       "cumDuration": 313,
+       "distance": 91,
+       "cumDistance": 215,
+       "fromCoordsIndex": 15,
+       "toCoordsIndex": 17,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.890887,
+        151.247692
+       ],
+       "skyDirection": 191,
+       "duration": 46,
+       "cumDuration": 359,
+       "distance": 51,
+       "cumDistance": 267,
+       "fromCoordsIndex": 17,
+       "toCoordsIndex": 19,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "CONTINUE",
+       "name": "",
+       "coord": [
+        -33.891341,
+        151.247606
+       ],
+       "skyDirection": 185,
+       "duration": 3,
+       "cumDuration": 363,
+       "distance": 4,
+       "cumDistance": 271,
+       "fromCoordsIndex": 19,
+       "toCoordsIndex": 20,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "Grosvenor Lane",
+       "coord": [
+        -33.891377,
+        151.247608
+       ],
+       "skyDirection": 96,
+       "duration": 17,
+       "cumDuration": 380,
+       "distance": 19,
+       "cumDistance": 290,
+       "fromCoordsIndex": 20,
+       "toCoordsIndex": 22,
+       "properties": {
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      }
+     ],
+     "properties": {
+      "PTWalkMinutes": "0"
+     }
+    }
+   ],
+   "daysOfService": {
+    "rvb": "00010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+   }
+  },
+  {
+   "rating": 0,
+   "isAdditional": false,
+   "interchanges": 1,
+   "legs": [
+    {
+     "duration": 420,
+     "distance": 126,
+     "origin": {
+      "id": "coord:4881426:3745088:GDAV:140 Herring Rd, Macquarie Park:0",
+      "name": "140 Herring Rd, Macquarie Park",
+      "disassembledName": "140 Herring Rd",
+      "type": "address",
+      "coord": [
+       -33.777256,
+       151.118233
+      ],
+      "parent": {
+       "id": "placeID:95352007:-1",
+       "name": "Macquarie Park",
+       "type": "locality",
+       "disassembledName": ""
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:28:54Z",
+      "departureTimePlanned": "2026-10-17T07:28:54Z",
+      "departureTimeEstimated": "2026-10-17T07:28:54Z",
+      "properties": {
+       "area": "0"
+      }
+     },
+     "destination": {
+      "isGlobalId": true,
+      "id": "2113351",
+      "name": "Macquarie University Station, Macquarie Park",
+      "disassembledName": "Macquarie University Station",
+      "type": "platform",
+      "coord": [
+       -33.777596,
+       151.118314
+      ],
+      "niveau": -3,
+      "parent": {
+       "isGlobalId": true,
+       "id": "211310",
+       "name": "Macquarie University Station, Macquarie Park",
+       "disassembledName": "Macquarie University Station",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95352007:1",
+        "name": "Macquarie Park",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101508"
+       },
+       "coord": [
+        -33.777282,
+        151.118267
+       ],
+       "niveau": 0
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T07:35:54Z",
+      "arrivalTimePlanned": "2026-10-17T07:35:54Z",
+      "arrivalTimeEstimated": "2026-10-17T07:35:54Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-3",
+       "stoppingPointPlanned": "Platform 1",
+       "area": "1",
+       "platform": "MCU1",
+       "platformName": "Platform 1",
+       "plannedPlatformName": "Platform 1",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0,
+          "stepFromStreet": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       2,
+       5,
+       11
+      ]
+     },
+     "transportation": {
+      "product": {
+       "class": 100,
+       "name": "footpath",
+       "iconId": 100
+      },
+      "properties": {
+       "tripCode": 0,
+       "lineDisplay": "LINE"
+      }
+     },
+     "footPathInfo": [
+      {
+       "position": "IDEST",
+       "duration": 240,
+       "footPathElem": [
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": 0,
+         "levelTo": -2,
+         "level": "DOWN",
+         "origin": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777162,
+            151.118089
+           ],
+           "properties": {
+            "area": "21",
+            "georef": "1003152783:4:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          },
+          "area": "21",
+          "georef": "1003152783:4:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777206,
+            151.118102
+           ],
+           "properties": {
+            "area": "24",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 15,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -2,
+         "levelTo": -2,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777206,
+            151.118102
+           ],
+           "properties": {
+            "area": "24",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "24",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777319,
+            151.118236
+           ],
+           "properties": {
+            "area": "27",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -2,
+         "levelTo": -2,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777319,
+            151.118236
+           ],
+           "properties": {
+            "area": "27",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "27",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777412,
+            151.118155
+           ],
+           "properties": {
+            "area": "28",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 3,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -2,
+         "levelTo": -2,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777412,
+            151.118155
+           ],
+           "properties": {
+            "area": "28",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "28",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.77753,
+            151.118139
+           ],
+           "properties": {
+            "area": "29",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": -2,
+         "levelTo": -3,
+         "level": "DOWN",
+         "origin": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.77753,
+            151.118139
+           ],
+           "properties": {
+            "area": "29",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "29",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "211310",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Macquarie University Station",
+           "coord": [
+            -33.777596,
+            151.118314
+           ],
+           "properties": {
+            "area": "1",
+            "georef": "1002368403:21:GDAV:100",
+            "areaGid": "",
+            "areaType": 65
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        }
+       ]
+      }
+     ],
+     "footPathInfoRedundant": true,
+     "infos": [],
+     "coords": [
+      [
+       -33.777257,
+       151.118232
+      ],
+      [
+       -33.777306,
+       151.118183
+      ],
+      [
+       -33.777139,
+       151.118057
+      ],
+      [
+       -33.77749,
+       151.118132
+      ],
+      [
+       -33.77748,
+       151.118132
+      ],
+      [
+       -33.777605,
+       151.118302
+      ]
+     ],
+     "pathDescriptions": [
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ORIGIN",
+       "name": "Herring Road",
+       "coord": [
+        -33.777256,
+        151.118233
+       ],
+       "duration": 0,
+       "cumDuration": 0,
+       "distance": 0,
+       "cumDistance": 0,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 0
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "Herring Road",
+       "coord": [
+        -33.777256,
+        151.118233
+       ],
+       "skyDirection": 220,
+       "duration": 6,
+       "cumDuration": 6,
+       "distance": 7,
+       "cumDistance": 7,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 1,
+       "properties": {
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "RIGHT",
+       "manoeuvre": "TURN",
+       "name": "secondary road",
+       "coord": [
+        -33.777303,
+        151.118182
+       ],
+       "skyDirection": 309,
+       "duration": 28,
+       "cumDuration": 34,
+       "distance": 10,
+       "cumDistance": 17,
+       "fromCoordsIndex": 1,
+       "toCoordsIndex": 2,
+       "properties": {
+        "OUTDOOR_TYPE": "TRAFFICLIGHT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "RIGHT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.777243,
+        151.118093
+       ],
+       "skyDirection": 44,
+       "duration": 5,
+       "cumDuration": 40,
+       "distance": 5,
+       "cumDistance": 23,
+       "fromCoordsIndex": 2,
+       "toCoordsIndex": 3,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.777205,
+        151.118134
+       ],
+       "skyDirection": 312,
+       "duration": 10,
+       "cumDuration": 50,
+       "distance": 12,
+       "cumDistance": 35,
+       "fromCoordsIndex": 3,
+       "toCoordsIndex": 5,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "UNKNOWN",
+       "name": "elevator downward to level -2",
+       "coord": [
+        -33.777136,
+        151.118044
+       ],
+       "duration": 100,
+       "cumDuration": 150,
+       "distance": 0,
+       "cumDistance": 35,
+       "fromCoordsIndex": 5,
+       "toCoordsIndex": 6,
+       "properties": {
+        "FLOOR_LEVEL_CHANGE_DIRECTION": "DOWN",
+        "FLOOR_LEVEL_DIFFERENCE": "-2",
+        "INDOOR_TYPE": "LIFT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "SLIGHT_LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.777136,
+        151.118044
+       ],
+       "skyDirection": 127,
+       "duration": 54,
+       "cumDuration": 205,
+       "distance": 61,
+       "cumDistance": 96,
+       "fromCoordsIndex": 6,
+       "toCoordsIndex": 13,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": [
+         "ASPHALTED",
+         "COBBLE"
+        ]
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "UNKNOWN",
+       "name": "elevator downward to level -3",
+       "coord": [
+        -33.777487,
+        151.118072
+       ],
+       "duration": 100,
+       "cumDuration": 305,
+       "distance": 0,
+       "cumDistance": 96,
+       "fromCoordsIndex": 13,
+       "toCoordsIndex": 14,
+       "properties": {
+        "FLOOR_LEVEL_CHANGE_DIRECTION": "DOWN",
+        "FLOOR_LEVEL_DIFFERENCE": "-1",
+        "INDOOR_TYPE": "LIFT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "SLIGHT_LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.777487,
+        151.118072
+       ],
+       "skyDirection": 142,
+       "duration": 26,
+       "cumDuration": 332,
+       "distance": 29,
+       "cumDistance": 126,
+       "fromCoordsIndex": 14,
+       "toCoordsIndex": 17,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ENTER",
+       "name": "Enter Commuter train M1 Metro North West & Bankstown Line: low platform vehicle",
+       "coord": [
+        -33.777605,
+        151.118304
+       ],
+       "duration": 0,
+       "cumDuration": 332,
+       "distance": 0,
+       "cumDistance": 126,
+       "fromCoordsIndex": 17,
+       "toCoordsIndex": 17,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      }
+     ],
+     "properties": {
+      "PTWalkMinutes": "1"
+     }
+    },
+    {
+     "duration": 1230,
+     "isRealtimeControlled": true,
+     "realtimeStatus": [
+      "MONITORED"
+     ],
+     "origin": {
+      "isGlobalId": true,
+      "id": "2113351",
+      "name": "Macquarie University Station, Platform 1, Macquarie Park",
+      "disassembledName": "Macquarie University Station, Platform 1",
+      "type": "platform",
+      "coord": [
+       -33.777596,
+       151.118314
+      ],
+      "niveau": -3,
+      "parent": {
+       "isGlobalId": true,
+       "id": "211310",
+       "name": "Macquarie University Station, Platform 1, Macquarie Park",
+       "disassembledName": "Macquarie University Station, Platform 1",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95352007:1",
+        "name": "Macquarie Park",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101508"
+       },
+       "coord": [
+        -33.777282,
+        151.118267
+       ],
+       "niveau": 0
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:35:54Z",
+      "departureTimePlanned": "2026-10-17T07:35:54Z",
+      "departureTimeEstimated": "2026-10-17T07:35:54Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-3",
+       "stoppingPointPlanned": "Platform 1",
+       "occupancy": "FEW_SEATS",
+       "area": "1",
+       "platform": "MCU1",
+       "platformName": "Platform 1",
+       "plannedPlatformName": "Platform 1",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0,
+          "stepFromStreet": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       2,
+       5,
+       11
+      ]
+     },
+     "destination": {
+      "isGlobalId": true,
+      "id": "2000463",
+      "name": "Martin Place Station, Platform 3, Sydney",
+      "disassembledName": "Martin Place Station, Platform 3",
+      "type": "platform",
+      "coord": [
+       -33.867135,
+       151.210568
+      ],
+      "niveau": -5,
+      "parent": {
+       "isGlobalId": true,
+       "id": "200030",
+       "name": "Martin Place Station, Platform 3, Sydney",
+       "disassembledName": "Martin Place Station, Platform 3",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95301001:1",
+        "name": "Sydney",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101106"
+       },
+       "coord": [
+        -33.867648,
+        151.210583
+       ],
+       "niveau": 0
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T07:56:24Z",
+      "arrivalTimePlanned": "2026-10-17T07:56:24Z",
+      "arrivalTimeEstimated": "2026-10-17T07:56:24Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-5",
+       "AREA_NIVEAU_GIS": "-5.00",
+       "stoppingPointPlanned": "Platform 3",
+       "occupancy": "FEW_SEATS",
+       "area": "2",
+       "platform": "MPL3",
+       "platformName": "Platform 3",
+       "plannedPlatformName": "Platform 3",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       2
+      ]
+     },
+     "transportation": {
+      "id": "nsw:030M1: :R:sj2",
+      "name": "Sydney Metro Network M1 Metro North West & Bankstown Line",
+      "disassembledName": "M1",
+      "number": "M1 Metro North West & Bankstown Line",
+      "description": "Tallawong to Bankstown",
+      "product": {
+       "id": 24,
+       "class": 2,
+       "name": "Sydney Metro Network",
+       "iconId": 2
+      },
+      "operator": {
+       "id": "SMNW",
+       "name": "Sydney Metro"
+      },
+      "destination": {
+       "id": "10101326",
+       "name": "Sydenham",
+       "type": "stop"
+      },
+      "properties": {
+       "isTTB": true,
+       "tripCode": 206,
+       "timetablePeriod": "NSW JP",
+       "lineDisplay": "LINE",
+       "globalId": "3001",
+       "AVMSTripID": "0250-003-107-014:1000",
+       "RealtimeTripId": "0250-003-107-014:1000",
+       "VehAccessRoutingIncomplete": "true",
+       "OperatorURL": "http://transportnsw.info",
+       "FrequencyLine": "1",
+       "gtfsTripId": "3001.nsw-3-M1.1.TA.883.sj2",
+       "attributes": [
+        "AVM_LOWFLOORVEHICLE",
+        "PLAN_LOWFLOORVEHICLE",
+        "PLAN_WHEELCHAIRACCESS"
+       ]
+      },
+      "iconId": 24
+     },
+     "stopSequence": [
+      {
+       "id": "2113351",
+       "name": "Macquarie University Station, Platform 1, Macquarie Park",
+       "coord": [
+        -33.777596,
+        151.118314
+       ]
+      },
+      {
+       "id": "2113341",
+       "name": "Macquarie Park Station, Platform 1, Macquarie Park",
+       "coord": [
+        -33.784982,
+        151.128337
+       ]
+      },
+      {
+       "id": "2113361",
+       "name": "North Ryde Station, Platform 1, North Ryde",
+       "coord": [
+        -33.794171,
+        151.13806
+       ]
+      },
+      {
+       "id": "2067142",
+       "name": "Chatswood Station, Platform 2, Chatswood",
+       "coord": [
+        -33.797469,
+        151.180988
+       ]
+      },
+      {
+       "id": "2065163",
+       "name": "Crows Nest Station, Platform 1, Crows Nest",
+       "coord": [
+        -33.825801,
+        151.199372
+       ]
+      },
+      {
+       "id": "2060115",
+       "name": "Victoria Cross Station, Platform 1, North Sydney",
+       "coord": [
+        -33.836219,
+        151.207494
+       ]
+      },
+      {
+       "id": "2000460",
+       "name": "Barangaroo Station, Platform 1, Barangaroo",
+       "coord": [
+        -33.859314,
+        151.202656
+       ]
+      },
+      {
+       "id": "2000463",
+       "name": "Martin Place Station, Platform 3, Sydney",
+       "coord": [
+        -33.867135,
+        151.210568
+       ]
+      }
+     ],
+     "footPathInfo": [
+      {
+       "position": "AFTER",
+       "duration": 240,
+       "footPathElem": [
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -5,
+         "levelTo": -5,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867135,
+            151.210568
+           ],
+           "properties": {
+            "area": "2",
+            "georef": "1003733472:12:GDAV:100",
+            "areaGid": "",
+            "areaType": 65
+           }
+          },
+          "area": "2",
+          "georef": "1003733472:12:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867922,
+            151.210207
+           ],
+           "properties": {
+            "area": "39",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 3,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": -5,
+         "levelTo": -3,
+         "level": "UP",
+         "origin": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867922,
+            151.210207
+           ],
+           "properties": {
+            "area": "39",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "39",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867928,
+            151.210294
+           ],
+           "properties": {
+            "area": "38",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -3,
+         "levelTo": -3,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867928,
+            151.210294
+           ],
+           "properties": {
+            "area": "38",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "38",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867842,
+            151.210441
+           ],
+           "properties": {
+            "area": "37",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 4,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -3,
+         "levelTo": -3,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867842,
+            151.210441
+           ],
+           "properties": {
+            "area": "37",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "37",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867838,
+            151.211067
+           ],
+           "properties": {
+            "area": "36",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 8,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -3,
+         "levelTo": -3,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867838,
+            151.211067
+           ],
+           "properties": {
+            "area": "36",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "36",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200030",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Martin Place Station",
+           "coord": [
+            -33.867803,
+            151.211822
+           ],
+           "properties": {
+            "area": "1",
+            "georef": "1003164050:3:GDAV:100",
+            "areaGid": "",
+            "areaType": 81
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        }
+       ]
+      }
+     ],
+     "footPathInfoRedundant": true,
+     "infos": [
+      {
+       "timestamps": {
+        "creation": "2026-10-15T04:19:00Z"
+       },
+       "priority": "normal",
+       "id": "ems-80229",
+       "version": 220,
+       "type": "lineInfo",
+       "properties": {
+        "publisher": "ems.comm.addinfo",
+        "infoType": "lineInfo",
+        "smsText": "Temporary timetable changes for testing",
+        "speechText": "Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.\nAllow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services."
+       },
+       "infoLinks": [
+        {
+         "urlText": "Temporary timetable changes for testing",
+         "url": "https://transportnsw.info/alerts/details#/ems-80229",
+         "content": "<ul>\n<li>Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.</li>\n<li>Allow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services.&nbsp;</li>\n</ul>",
+         "subtitle": "Temporary timetable changes for testing",
+         "smsText": "Temporary timetable changes for testing",
+         "speechText": "Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.\nAllow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services."
+        }
+       ],
+       "urlText": "Temporary timetable changes for testing",
+       "url": "https://transportnsw.info/alerts/details#/ems-80229",
+       "content": "<ul>\n<li>Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.</li>\n<li>Allow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services.&nbsp;</li>\n</ul>",
+       "subtitle": "Temporary timetable changes for testing"
+      }
+     ],
+     "coords": [
+      [
+       -33.777596,
+       151.118317
+      ],
+      [
+       -33.777952,
+       151.118805
+      ],
+      [
+       -33.784479,
+       151.127705
+      ],
+      [
+       -33.787101,
+       151.13106
+      ],
+      [
+       -33.790132,
+       151.132762
+      ],
+      [
+       -33.79241,
+       151.134397
+      ],
+      [
+       -33.793725,
+       151.136411
+      ],
+      [
+       -33.794894,
+       151.140805
+      ],
+      [
+       -33.796012,
+       151.147458
+      ],
+      [
+       -33.795054,
+       151.151751
+      ],
+      [
+       -33.79286,
+       151.155547
+      ],
+      [
+       -33.789225,
+       151.160052
+      ],
+      [
+       -33.785531,
+       151.162366
+      ],
+      [
+       -33.782693,
+       151.163487
+      ],
+      [
+       -33.780426,
+       151.165653
+      ],
+      [
+       -33.779111,
+       151.168498
+      ],
+      [
+       -33.778808,
+       151.17214
+      ],
+      [
+       -33.779452,
+       151.174927
+      ],
+      [
+       -33.781181,
+       151.177688
+      ],
+      [
+       -33.782838,
+       151.17902
+      ],
+      [
+       -33.784743,
+       151.179749
+      ],
+      [
+       -33.786649,
+       151.180011
+      ],
+      [
+       -33.788798,
+       151.180651
+      ],
+      [
+       -33.79002,
+       151.180854
+      ],
+      [
+       -33.793196,
+       151.180881
+      ],
+      [
+       -33.796111,
+       151.180938
+      ],
+      [
+       -33.801922,
+       151.181057
+      ],
+      [
+       -33.803421,
+       151.181099
+      ],
+      [
+       -33.8049,
+       151.180924
+      ],
+      [
+       -33.807141,
+       151.180466
+      ],
+      [
+       -33.809198,
+       151.180723
+      ],
+      [
+       -33.811089,
+       151.181762
+      ],
+      [
+       -33.815851,
+       151.187494
+      ],
+      [
+       -33.823306,
+       151.19686
+      ],
+      [
+       -33.825706,
+       151.199343
+      ],
+      [
+       -33.827235,
+       151.200806
+      ],
+      [
+       -33.827998,
+       151.201978
+      ],
+      [
+       -33.829165,
+       151.204964
+      ],
+      [
+       -33.829984,
+       151.206336
+      ],
+      [
+       -33.830881,
+       151.207193
+      ],
+      [
+       -33.832065,
+       151.20781
+      ],
+      [
+       -33.833268,
+       151.208014
+      ],
+      [
+       -33.835354,
+       151.207699
+      ],
+      [
+       -33.838454,
+       151.207048
+      ],
+      [
+       -33.840613,
+       151.205929
+      ],
+      [
+       -33.842852,
+       151.203742
+      ],
+      [
+       -33.843803,
+       151.203166
+      ],
+      [
+       -33.845411,
+       151.202983
+      ],
+      [
+       -33.846741,
+       151.203433
+      ],
+      [
+       -33.848144,
+       151.203958
+      ],
+      [
+       -33.84935,
+       151.204104
+      ],
+      [
+       -33.850778,
+       151.203864
+      ],
+      [
+       -33.854478,
+       151.202735
+      ],
+      [
+       -33.856585,
+       151.202505
+      ],
+      [
+       -33.859315,
+       151.202682
+      ],
+      [
+       -33.861575,
+       151.202978
+      ],
+      [
+       -33.862354,
+       151.203544
+      ],
+      [
+       -33.862989,
+       151.20473
+      ],
+      [
+       -33.863104,
+       151.205614
+      ],
+      [
+       -33.862885,
+       151.207267
+      ],
+      [
+       -33.862849,
+       151.207965
+      ],
+      [
+       -33.86294,
+       151.208654
+      ],
+      [
+       -33.863263,
+       151.20949
+      ],
+      [
+       -33.86366,
+       151.210049
+      ],
+      [
+       -33.864288,
+       151.210556
+      ],
+      [
+       -33.864942,
+       151.210804
+      ],
+      [
+       -33.866513,
+       151.210702
+      ],
+      [
+       -33.867142,
+       151.21062
+      ]
+     ],
+     "pathDescriptions": [
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "LEAVE",
+       "name": "Leave Commuter train M1 Metro North West & Bankstown Line in direction of travel: low platform vehicle",
+       "coord": [
+        -33.867143,
+        151.210601
+       ],
+       "duration": 0,
+       "cumDuration": 0,
+       "distance": 0,
+       "cumDistance": 0,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 0,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "",
+       "coord": [
+        -33.867143,
+        151.210601
+       ],
+       "skyDirection": 186,
+       "duration": 179,
+       "cumDuration": 179,
+       "distance": 199,
+       "cumDistance": 199,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 7,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ENTER",
+       "name": "Enter Underground T4 Eastern Suburbs & Illawarra Line: low platform vehicle",
+       "coord": [
+        -33.867821,
+        151.211823
+       ],
+       "duration": 0,
+       "cumDuration": 179,
+       "distance": 0,
+       "cumDistance": 199,
+       "fromCoordsIndex": 7,
+       "toCoordsIndex": 7,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      }
+     ],
+     "interchange": {
+      "desc": "Fussweg",
+      "type": 100,
+      "coords": [
+       [
+        -33.867141,
+        151.210596
+       ],
+       [
+        -33.867801,
+        151.210509
+       ],
+       [
+        -33.867801,
+        151.210517
+       ],
+       [
+        -33.86779,
+        151.210539
+       ],
+       [
+        -33.867781,
+        151.210568
+       ],
+       [
+        -33.867781,
+        151.210596
+       ],
+       [
+        -33.867748,
+        151.210599
+       ],
+       [
+        -33.867824,
+        151.211826
+       ]
+      ]
+     },
+     "properties": {
+      "vehicleAccess": [
+       {
+        "height": 0,
+        "halfWidth": 0,
+        "doorWidth": 0,
+        "attributes": 1342177280,
+        "areaToStay": 0,
+        "areaToMove": 0,
+        "equipments": [
+         {
+          "vehicleEquipment": {
+           "equipmentType": 1,
+           "length": 0,
+           "width": 0,
+           "lengthAtPl": 0,
+           "widthAtPl": 0,
+           "maxWeight": 0
+          }
+         }
+        ]
+       }
+      ],
+      "AVMLowFloorVeh": "1",
+      "PlanLowFloorVehicle": "1",
+      "PlanWheelChairAccess": "1"
+     }
+    },
+    {
+     "duration": 468,
+     "isRealtimeControlled": true,
+     "realtimeStatus": [
+      "MONITORED"
+     ],
+     "origin": {
+      "isGlobalId": true,
+      "id": "2000362",
+      "name": "Martin Place Station, Platform 2, Sydney",
+      "disassembledName": "Martin Place Station, Platform 2",
+      "type": "platform",
+      "coord": [
+       -33.867803,
+       151.211822
+      ],
+      "niveau": -3,
+      "parent": {
+       "isGlobalId": true,
+       "id": "200030",
+       "name": "Martin Place Station, Platform 2, Sydney",
+       "disassembledName": "Martin Place Station, Platform 2",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95301001:1",
+        "name": "Sydney",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101106"
+       },
+       "coord": [
+        -33.867648,
+        151.210583
+       ],
+       "niveau": 0
+      },
+      "departureTimeBaseTimetable": "2026-10-17T08:08:18Z",
+      "departureTimePlanned": "2026-10-17T08:08:18Z",
+      "departureTimeEstimated": "2026-10-17T08:08:18Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-3",
+       "NumberOfCars": "8",
+       "TravelInCarsFrom": "1",
+       "TravelInCarsTo": "8",
+       "TravelInCarsMessage": "any",
+       "stoppingPointPlanned": "Platform 2",
+       "occupancy": "MANY_SEATS",
+       "area": "1",
+       "platform": "MPL2",
+       "platformName": "Platform 2",
+       "plannedPlatformName": "Platform 2",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0,
+          "stepFromStreet": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       2
+      ]
+     },
+     "destination": {
+      "isGlobalId": true,
+      "id": "202292",
+      "name": "Bondi Junction Station, Platform 2, Bondi Junction",
+      "disassembledName": "Bondi Junction Station, Platform 2",
+      "type": "platform",
+      "coord": [
+       -33.891083,
+       151.248295
+      ],
+      "niveau": -2,
+      "parent": {
+       "isGlobalId": true,
+       "id": "202210",
+       "name": "Bondi Junction Station, Platform 2, Bondi Junction",
+       "disassembledName": "Bondi Junction Station, Platform 2",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95361003:1",
+        "name": "Bondi Junction",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101109"
+       },
+       "coord": [
+        -33.891197,
+        151.248377
+       ],
+       "niveau": 0
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T08:16:06Z",
+      "arrivalTimePlanned": "2026-10-17T08:16:06Z",
+      "arrivalTimeEstimated": "2026-10-17T08:16:06Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-2",
+       "AREA_NIVEAU_GIS": "-2.00",
+       "stoppingPointPlanned": "Platform 2",
+       "occupancy": "MANY_SEATS",
+       "area": "1",
+       "platform": "BJN2",
+       "platformName": "Platform 2",
+       "plannedPlatformName": "Platform 2",
+       "callType": [
+        "NOBOARDING"
+       ],
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       5,
+       11
+      ]
+     },
+     "transportation": {
+      "id": "nsw:020T4: :R:sj2",
+      "name": "Sydney Trains Network T4 Eastern Suburbs & Illawarra Line",
+      "disassembledName": "T4",
+      "number": "T4 Eastern Suburbs & Illawarra Line",
+      "description": "Waterfall or Cronulla to Bondi Junction",
+      "product": {
+       "id": 1,
+       "class": 1,
+       "name": "Sydney Trains Network",
+       "iconId": 1
+      },
+      "operator": {
+       "id": "x0001",
+       "name": "Sydney Trains"
+      },
+      "destination": {
+       "id": "10101109",
+       "name": "Bondi Junction",
+       "type": "stop"
+      },
+      "properties": {
+       "isTTB": true,
+       "tripCode": 376,
+       "timetablePeriod": "NSW JP",
+       "lineDisplay": "LINE",
+       "globalId": "3001",
+       "AVMSTripID": "653L.2013.105.128.T.8.91901205",
+       "RealtimeTripId": "653L.2013.105.128.T.8.91901205",
+       "VehAccessRoutingIncomplete": "true",
+       "OperatorURL": "http://www.sydneytrains.info/",
+       "gtfsTripId": "3001.nsw-2-T4.1.TA.1965.sj2",
+       "attributes": [
+        "PLAN_LOWFLOORVEHICLE",
+        "PLAN_WHEELCHAIRACCESS"
+       ]
+      },
+      "iconId": 1
+     },
+     "stopSequence": [
+      {
+       "id": "2000362",
+       "name": "Martin Place Station, Platform 2, Sydney",
+       "coord": [
+        -33.867803,
+        151.211822
+       ]
+      },
+      {
+       "id": "201172",
+       "name": "Kings Cross Station, Platform 2, Potts Point",
+       "coord": [
+        -33.874254,
+        151.221828
+       ]
+      },
+      {
+       "id": "202762",
+       "name": "Edgecliff Station, Platform 2, Edgecliff",
+       "coord": [
+        -33.879282,
+        151.236497
+       ]
+      },
+      {
+       "id": "202292",
+       "name": "Bondi Junction Station, Platform 2, Bondi Junction",
+       "coord": [
+        -33.891083,
+        151.248295
+       ]
+      }
+     ],
+     "infos": [],
+     "coords": [
+      [
+       -33.867816,
+       151.21183
+      ],
+      [
+       -33.867907,
+       151.213312
+      ],
+      [
+       -33.868346,
+       151.215036
+      ],
+      [
+       -33.869621,
+       151.216911
+      ],
+      [
+       -33.871186,
+       151.218044
+      ],
+      [
+       -33.872647,
+       151.219119
+      ],
+      [
+       -33.873145,
+       151.219741
+      ],
+      [
+       -33.874211,
+       151.22185
+      ],
+      [
+       -33.876494,
+       151.226922
+      ],
+      [
+       -33.876884,
+       151.229611
+      ],
+      [
+       -33.877218,
+       151.231664
+      ],
+      [
+       -33.877546,
+       151.232527
+      ],
+      [
+       -33.878332,
+       151.233761
+      ],
+      [
+       -33.878801,
+       151.234601
+      ],
+      [
+       -33.879263,
+       151.236498
+      ],
+      [
+       -33.879759,
+       151.238499
+      ],
+      [
+       -33.881497,
+       151.240863
+      ],
+      [
+       -33.884026,
+       151.242858
+      ],
+      [
+       -33.885343,
+       151.243017
+      ],
+      [
+       -33.887452,
+       151.242929
+      ],
+      [
+       -33.888609,
+       151.243321
+      ],
+      [
+       -33.889667,
+       151.244218
+      ],
+      [
+       -33.890509,
+       151.245891
+      ],
+      [
+       -33.891063,
+       151.248299
+      ]
+     ],
+     "coupledTripsInfo": [
+      {
+       "positionInTrain": "-1",
+       "usableForLeg": true,
+       "infoOnCarLevel": true,
+       "transportation": {
+        "id": "nsw:020T4: :R:sj2",
+        "name": "Sydney Trains Network T4 Eastern Suburbs & Illawarra Line",
+        "disassembledName": "T4",
+        "number": "T4 Eastern Suburbs & Illawarra Line",
+        "product": {
+         "id": 1,
+         "class": 1,
+         "name": "Sydney Trains Network",
+         "iconId": 1
+        },
+        "destination": {
+         "name": "Bondi Junction",
+         "type": "stop"
+        },
+        "properties": {
+         "lineDisplay": "LINE",
+         "globalId": "3001"
+        }
+       },
+       "properties": {
+        "tripId": "376"
+       }
+      }
+     ],
+     "properties": {
+      "vehicleAccess": [
+       {
+        "height": 0,
+        "halfWidth": 0,
+        "doorWidth": 0,
+        "attributes": 1073741824,
+        "areaToStay": 0,
+        "areaToMove": 0,
+        "equipments": [
+         {
+          "vehicleEquipment": {
+           "equipmentType": 1,
+           "length": 0,
+           "width": 0,
+           "lengthAtPl": 0,
+           "widthAtPl": 0,
+           "maxWeight": 0
+          }
+         }
+        ]
+       }
+      ],
+      "PlanLowFloorVehicle": "1",
+      "PlanWheelChairAccess": "1"
+     }
+    },
+    {
+     "duration": 360,
+     "distance": 309,
+     "origin": {
+      "isGlobalId": true,
+      "id": "202292",
+      "name": "Bondi Junction Station, Bondi Junction",
+      "disassembledName": "Bondi Junction Station",
+      "type": "platform",
+      "coord": [
+       -33.891083,
+       151.248295
+      ],
+      "niveau": -2,
+      "parent": {
+       "isGlobalId": true,
+       "id": "202210",
+       "name": "Bondi Junction Station, Bondi Junction",
+       "disassembledName": "Bondi Junction Station",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95361003:1",
+        "name": "Bondi Junction",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101109"
+       },
+       "coord": [
+        -33.891197,
+        151.248377
+       ],
+       "niveau": 0
+      },
+      "departureTimeBaseTimetable": "2026-10-17T08:16:06Z",
+      "departureTimePlanned": "2026-10-17T08:16:06Z",
+      "departureTimeEstimated": "2026-10-17T08:16:06Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-2",
+       "AREA_NIVEAU_GIS": "-2.00",
+       "stoppingPointPlanned": "Platform 2",
+       "area": "1",
+       "platform": "BJN2",
+       "platformName": "Platform 2",
+       "plannedPlatformName": "Platform 2",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       5,
+       11
+      ]
+     },
+     "destination": {
+      "id": "coord:4892912:3758245:GDAV:408 Oxford St, Bondi Junction:0",
+      "name": "408 Oxford St, Bondi Junction",
+      "disassembledName": "408 Oxford St",
+      "type": "address",
+      "coord": [
+       -33.891397,
+       151.247814
+      ],
+      "parent": {
+       "id": "placeID:95361003:-1",
+       "name": "Bondi Junction",
+       "type": "locality",
+       "disassembledName": ""
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T08:22:06Z",
+      "arrivalTimePlanned": "2026-10-17T08:22:06Z",
+      "arrivalTimeEstimated": "2026-10-17T08:22:06Z",
+      "properties": {
+       "area": "0"
+      }
+     },
+     "transportation": {
+      "product": {
+       "class": 100,
+       "name": "footpath",
+       "iconId": 100
+      },
+      "properties": {
+       "tripCode": 0,
+       "lineDisplay": "LINE"
+      }
+     },
+     "footPathInfo": [
+      {
+       "position": "BEFORE",
+       "duration": 180,
+       "footPathElem": [
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": -2,
+         "levelTo": -1,
+         "level": "UP",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891083,
+            151.248295
+           ],
+           "properties": {
+            "area": "1",
+            "georef": "1003167901:22:GDAV:100",
+            "areaGid": "",
+            "areaType": 81
+           }
+          },
+          "area": "1",
+          "georef": "1003167901:22:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891261,
+            151.248337
+           ],
+           "properties": {
+            "area": "61",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -1,
+         "levelTo": -1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891261,
+            151.248337
+           ],
+           "properties": {
+            "area": "61",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "61",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891343,
+            151.24833
+           ],
+           "properties": {
+            "area": "55",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -1,
+         "levelTo": -1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891343,
+            151.24833
+           ],
+           "properties": {
+            "area": "55",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "55",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891206,
+            151.248107
+           ],
+           "properties": {
+            "area": "56",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 3,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": -1,
+         "levelTo": 1,
+         "level": "UP",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891206,
+            151.248107
+           ],
+           "properties": {
+            "area": "56",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "56",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891228,
+            151.248259
+           ],
+           "properties": {
+            "area": "43",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": 1,
+         "levelTo": 1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891228,
+            151.248259
+           ],
+           "properties": {
+            "area": "43",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "43",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891276,
+            151.248435
+           ],
+           "properties": {
+            "area": "41",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "RAMP",
+         "levelFrom": 1,
+         "levelTo": 0,
+         "level": "DOWN",
+         "origin": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.891276,
+            151.248435
+           ],
+           "properties": {
+            "area": "41",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "41",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "202210",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Bondi Junction Station",
+           "coord": [
+            -33.89152,
+            151.248404
+           ],
+           "properties": {
+            "area": "31",
+            "georef": "183419838:49:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        }
+       ]
+      }
+     ],
+     "footPathInfoRedundant": true,
+     "infos": [],
+     "coords": [
+      [
+       -33.89108,
+       151.248303
+      ],
+      [
+       -33.891093,
+       151.248358
+      ],
+      [
+       -33.89107,
+       151.24836
+      ],
+      [
+       -33.891049,
+       151.248662
+      ],
+      [
+       -33.890943,
+       151.248145
+      ],
+      [
+       -33.8914,
+       151.247808
+      ],
+      [
+       -33.891397,
+       151.247814
+      ]
+     ],
+     "pathDescriptions": [
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "LEAVE",
+       "name": "Leave Underground T4 Eastern Suburbs & Illawarra Line in direction of travel: low platform vehicle",
+       "coord": [
+        -33.891082,
+        151.248306
+       ],
+       "duration": 0,
+       "cumDuration": 0,
+       "distance": 0,
+       "cumDistance": 0,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 0,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "",
+       "coord": [
+        -33.891082,
+        151.248306
+       ],
+       "skyDirection": 105,
+       "duration": 26,
+       "cumDuration": 26,
+       "distance": 29,
+       "cumDistance": 29,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 4,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "UNKNOWN",
+       "name": "elevator upward to level -1",
+       "coord": [
+        -33.891264,
+        151.248272
+       ],
+       "duration": 120,
+       "cumDuration": 146,
+       "distance": 0,
+       "cumDistance": 29,
+       "fromCoordsIndex": 4,
+       "toCoordsIndex": 5,
+       "properties": {
+        "FLOOR_LEVEL_CHANGE_DIRECTION": "UP",
+        "FLOOR_LEVEL_DIFFERENCE": "1",
+        "INDOOR_TYPE": "LIFT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.891264,
+        151.248272
+       ],
+       "skyDirection": 98,
+       "duration": 102,
+       "cumDuration": 249,
+       "distance": 114,
+       "cumDistance": 143,
+       "fromCoordsIndex": 5,
+       "toCoordsIndex": 15,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "ENTER_BUILTUPAREA",
+       "name": "",
+       "coord": [
+        -33.890998,
+        151.248669
+       ],
+       "skyDirection": 276,
+       "duration": 81,
+       "cumDuration": 330,
+       "distance": 91,
+       "cumDistance": 234,
+       "fromCoordsIndex": 15,
+       "toCoordsIndex": 17,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.890887,
+        151.247692
+       ],
+       "skyDirection": 191,
+       "duration": 46,
+       "cumDuration": 377,
+       "distance": 51,
+       "cumDistance": 286,
+       "fromCoordsIndex": 17,
+       "toCoordsIndex": 19,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "CONTINUE",
+       "name": "",
+       "coord": [
+        -33.891341,
+        151.247606
+       ],
+       "skyDirection": 185,
+       "duration": 3,
+       "cumDuration": 380,
+       "distance": 4,
+       "cumDistance": 290,
+       "fromCoordsIndex": 19,
+       "toCoordsIndex": 20,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "Grosvenor Lane",
+       "coord": [
+        -33.891377,
+        151.247608
+       ],
+       "skyDirection": 96,
+       "duration": 17,
+       "cumDuration": 397,
+       "distance": 19,
+       "cumDistance": 309,
+       "fromCoordsIndex": 20,
+       "toCoordsIndex": 22,
+       "properties": {
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      }
+     ],
+     "properties": {
+      "PTWalkMinutes": "0"
+     }
+    }
+   ],
+   "daysOfService": {
+    "rvb": "41830000000020C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+   }
+  }
+ ]
+}

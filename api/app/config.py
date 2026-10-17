@@ -22,3 +22,8 @@ class Settings(BaseSettings):
     overpass_url: str = "https://overpass-api.de/api/interpreter"
     coverage_bbox: str = "149.97,-34.33,151.63,-32.99"  # west,south,east,north
     max_leg_km: float = 10
+    # Transport for NSW (cycle 3): public transport trips and live lift alerts. Empty key turns both off.
+    tfnsw_api_key: str = ""
+    tfnsw_url: str = "https://api.transport.nsw.gov.au"
+    transit_min_km: float = 1
+    lift_poll_seconds: int = 300  # 0 = no background polling (tests poll on demand)

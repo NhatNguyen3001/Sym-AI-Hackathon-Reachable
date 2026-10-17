@@ -1,0 +1,5330 @@
+{
+ "version": "10.6.21.17",
+ "journeys": [
+  {
+   "rating": 0,
+   "isAdditional": false,
+   "interchanges": 0,
+   "legs": [
+    {
+     "duration": 420,
+     "distance": 354,
+     "origin": {
+      "id": "coord:4889217:3756059:GDAV:500 George St, Sydney:0",
+      "name": "500 George St, Sydney",
+      "disassembledName": "500 George St",
+      "type": "address",
+      "coord": [
+       -33.873104,
+       151.206995
+      ],
+      "parent": {
+       "id": "placeID:95301001:-1",
+       "name": "Sydney",
+       "type": "locality",
+       "disassembledName": ""
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:15:00Z",
+      "departureTimePlanned": "2026-10-17T07:15:00Z",
+      "departureTimeEstimated": "2026-10-17T07:15:00Z",
+      "properties": {
+       "area": "0"
+      }
+     },
+     "destination": {
+      "isGlobalId": true,
+      "id": "2000465",
+      "name": "Gadigal Station, Sydney",
+      "disassembledName": "Gadigal Station",
+      "type": "platform",
+      "coord": [
+       -33.873814,
+       151.208121
+      ],
+      "niveau": -5,
+      "parent": {
+       "isGlobalId": true,
+       "id": "200066",
+       "name": "Gadigal Station, Sydney",
+       "disassembledName": "Gadigal Station",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95301001:1",
+        "name": "Sydney",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101514"
+       },
+       "coord": [
+        -33.873081,
+        151.208722
+       ],
+       "niveau": 0
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T07:22:00Z",
+      "arrivalTimePlanned": "2026-10-17T07:22:00Z",
+      "arrivalTimeEstimated": "2026-10-17T07:22:00Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-5",
+       "AREA_NIVEAU_GIS": "-5.00",
+       "stoppingPointPlanned": "Platform 2",
+       "area": "2",
+       "platform": "GDL2",
+       "platformName": "Platform 2",
+       "plannedPlatformName": "Platform 2",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       2
+      ]
+     },
+     "transportation": {
+      "product": {
+       "class": 100,
+       "name": "footpath",
+       "iconId": 100
+      },
+      "properties": {
+       "tripCode": 0,
+       "lineDisplay": "LINE"
+      }
+     },
+     "footPathInfo": [
+      {
+       "position": "IDEST",
+       "duration": 360,
+       "footPathElem": [
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": 0,
+         "levelTo": 0,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200070",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Town Hall Station",
+           "coord": [
+            -33.873208,
+            151.207119
+           ],
+           "properties": {
+            "area": "22",
+            "georef": "1003717352:1:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          },
+          "area": "22",
+          "georef": "1003717352:1:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873045,
+            151.208742
+           ],
+           "properties": {
+            "area": "21",
+            "georef": "503663641:3:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          }
+         },
+         "attributes": {
+          "duration": 20,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": 0,
+         "levelTo": 0,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873045,
+            151.208742
+           ],
+           "properties": {
+            "area": "21",
+            "georef": "503663641:3:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          },
+          "area": "21",
+          "georef": "503663641:3:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873009,
+            151.20874
+           ],
+           "properties": {
+            "area": "22",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": 0,
+         "levelTo": 0,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873009,
+            151.20874
+           ],
+           "properties": {
+            "area": "22",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "22",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.87293,
+            151.208661
+           ],
+           "properties": {
+            "area": "23",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": 0,
+         "levelTo": -5,
+         "level": "DOWN",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.87293,
+            151.208661
+           ],
+           "properties": {
+            "area": "23",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "23",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.872913,
+            151.208627
+           ],
+           "properties": {
+            "area": "25",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 20,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -5,
+         "levelTo": -5,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.872913,
+            151.208627
+           ],
+           "properties": {
+            "area": "25",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "25",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873054,
+            151.208732
+           ],
+           "properties": {
+            "area": "26",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 3,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -5,
+         "levelTo": -5,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873054,
+            151.208732
+           ],
+           "properties": {
+            "area": "26",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "26",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873217,
+            151.208707
+           ],
+           "properties": {
+            "area": "27",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -5,
+         "levelTo": -5,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873217,
+            151.208707
+           ],
+           "properties": {
+            "area": "27",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "27",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873814,
+            151.208121
+           ],
+           "properties": {
+            "area": "2",
+            "georef": "503618184:85:GDAV:100",
+            "areaGid": "",
+            "areaType": 65
+           }
+          }
+         },
+         "attributes": {
+          "duration": 8,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        }
+       ]
+      }
+     ],
+     "footPathInfoRedundant": true,
+     "infos": [],
+     "coords": [
+      [
+       -33.873107,
+       151.206995
+      ],
+      [
+       -33.873112,
+       151.207046
+      ],
+      [
+       -33.873106,
+       151.208216
+      ],
+      [
+       -33.872918,
+       151.208647
+      ],
+      [
+       -33.873044,
+       151.208742
+      ],
+      [
+       -33.873784,
+       151.208046
+      ]
+     ],
+     "pathDescriptions": [
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ORIGIN",
+       "name": "",
+       "coord": [
+        -33.873104,
+        151.206995
+       ],
+       "duration": 0,
+       "cumDuration": 0,
+       "distance": 0,
+       "cumDistance": 0,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 0
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "traffic light",
+       "coord": [
+        -33.873104,
+        151.206995
+       ],
+       "skyDirection": 95,
+       "duration": 43,
+       "cumDuration": 43,
+       "distance": 4,
+       "cumDistance": 4,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 1,
+       "properties": {
+        "OUTDOOR_TYPE": "TRAFFICLIGHT",
+        "TRACK_ILLUMINATED": "true"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "CONTINUE",
+       "name": "",
+       "coord": [
+        -33.873111,
+        151.207049
+       ],
+       "skyDirection": 95,
+       "duration": 22,
+       "cumDuration": 65,
+       "distance": 24,
+       "cumDistance": 29,
+       "fromCoordsIndex": 1,
+       "toCoordsIndex": 4,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "RIGHT",
+       "manoeuvre": "TURN",
+       "name": "Park Street",
+       "coord": [
+        -33.872973,
+        151.207151
+       ],
+       "skyDirection": 98,
+       "duration": 89,
+       "cumDuration": 155,
+       "distance": 100,
+       "cumDistance": 129,
+       "fromCoordsIndex": 4,
+       "toCoordsIndex": 6,
+       "properties": {
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "traffic light",
+       "coord": [
+        -33.873108,
+        151.208216
+       ],
+       "skyDirection": 4,
+       "duration": 27,
+       "cumDuration": 182,
+       "distance": 9,
+       "cumDistance": 138,
+       "fromCoordsIndex": 6,
+       "toCoordsIndex": 7,
+       "properties": {
+        "OUTDOOR_TYPE": "TRAFFICLIGHT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "RIGHT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.873026,
+        151.208222
+       ],
+       "skyDirection": 96,
+       "duration": 43,
+       "cumDuration": 225,
+       "distance": 48,
+       "cumDistance": 187,
+       "fromCoordsIndex": 7,
+       "toCoordsIndex": 8,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.87308,
+        151.208744
+       ],
+       "skyDirection": 4,
+       "duration": 3,
+       "cumDuration": 229,
+       "distance": 3,
+       "cumDistance": 190,
+       "fromCoordsIndex": 8,
+       "toCoordsIndex": 9,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.873044,
+        151.208753
+       ],
+       "skyDirection": 4,
+       "duration": 17,
+       "cumDuration": 246,
+       "distance": 19,
+       "cumDistance": 209,
+       "fromCoordsIndex": 9,
+       "toCoordsIndex": 11,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      },
+      {
+       "turnDirection": "SLIGHT_RIGHT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.872922,
+        151.208649
+       ],
+       "skyDirection": 6,
+       "duration": 3,
+       "cumDuration": 249,
+       "distance": 3,
+       "cumDistance": 213,
+       "fromCoordsIndex": 11,
+       "toCoordsIndex": 13,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "UNKNOWN",
+       "name": "elevator downward to level -5",
+       "coord": [
+        -33.872886,
+        151.208648
+       ],
+       "duration": 100,
+       "cumDuration": 349,
+       "distance": 0,
+       "cumDistance": 213,
+       "fromCoordsIndex": 13,
+       "toCoordsIndex": 14,
+       "properties": {
+        "FLOOR_LEVEL_CHANGE_DIRECTION": "DOWN",
+        "FLOOR_LEVEL_DIFFERENCE": "-5",
+        "INDOOR_TYPE": "LIFT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "SLIGHT_RIGHT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.872886,
+        151.208648
+       ],
+       "skyDirection": 211,
+       "duration": 126,
+       "cumDuration": 475,
+       "distance": 140,
+       "cumDistance": 354,
+       "fromCoordsIndex": 14,
+       "toCoordsIndex": 19,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ENTER",
+       "name": "Enter Commuter train M1 Metro North West & Bankstown Line: low platform vehicle",
+       "coord": [
+        -33.873813,
+        151.208132
+       ],
+       "duration": 0,
+       "cumDuration": 475,
+       "distance": 0,
+       "cumDistance": 354,
+       "fromCoordsIndex": 19,
+       "toCoordsIndex": 19,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      }
+     ],
+     "properties": {
+      "PTWalkMinutes": "0"
+     }
+    },
+    {
+     "duration": 738,
+     "isRealtimeControlled": true,
+     "realtimeStatus": [
+      "MONITORED"
+     ],
+     "origin": {
+      "isGlobalId": true,
+      "id": "2000465",
+      "name": "Gadigal Station, Platform 2, Sydney",
+      "disassembledName": "Gadigal Station, Platform 2",
+      "type": "platform",
+      "coord": [
+       -33.873814,
+       151.208121
+      ],
+      "niveau": -5,
+      "parent": {
+       "isGlobalId": true,
+       "id": "200066",
+       "name": "Gadigal Station, Platform 2, Sydney",
+       "disassembledName": "Gadigal Station, Platform 2",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95301001:1",
+        "name": "Sydney",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101514"
+       },
+       "coord": [
+        -33.873081,
+        151.208722
+       ],
+       "niveau": 0
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:22:00Z",
+      "departureTimePlanned": "2026-10-17T07:22:00Z",
+      "departureTimeEstimated": "2026-10-17T07:22:00Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-5",
+       "AREA_NIVEAU_GIS": "-5.00",
+       "stoppingPointPlanned": "Platform 2",
+       "area": "2",
+       "platform": "GDL2",
+       "platformName": "Platform 2",
+       "plannedPlatformName": "Platform 2",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       2
+      ]
+     },
+     "destination": {
+      "isGlobalId": true,
+      "id": "2067143",
+      "name": "Chatswood Station, Platform 3, Chatswood",
+      "disassembledName": "Chatswood Station, Platform 3",
+      "type": "platform",
+      "coord": [
+       -33.797473,
+       151.18088
+      ],
+      "niveau": 0,
+      "parent": {
+       "isGlobalId": true,
+       "id": "206710",
+       "name": "Chatswood Station, Platform 3, Chatswood",
+       "disassembledName": "Chatswood Station, Platform 3",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95362004:1",
+        "name": "Chatswood",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101117"
+       },
+       "coord": [
+        -33.797237,
+        151.180934
+       ],
+       "niveau": 0
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T07:34:18Z",
+      "arrivalTimePlanned": "2026-10-17T07:34:18Z",
+      "arrivalTimeEstimated": "2026-10-17T07:34:18Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "0",
+       "AREA_NIVEAU_GIS": "0.00",
+       "stoppingPointPlanned": "Platform 3",
+       "area": "2",
+       "platform": "CWD3",
+       "platformName": "Platform 3",
+       "plannedPlatformName": "Platform 3",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       2,
+       5,
+       11
+      ]
+     },
+     "transportation": {
+      "id": "nsw:030M1: :H:sj2",
+      "name": "Sydney Metro Network M1 Metro North West & Bankstown Line",
+      "disassembledName": "M1",
+      "number": "M1 Metro North West & Bankstown Line",
+      "description": "Bankstown to Tallawong",
+      "product": {
+       "id": 24,
+       "class": 2,
+       "name": "Sydney Metro Network",
+       "iconId": 2
+      },
+      "operator": {
+       "id": "SMNW",
+       "name": "Sydney Metro"
+      },
+      "destination": {
+       "id": "10101500",
+       "name": "Tallawong",
+       "type": "stop"
+      },
+      "properties": {
+       "isTTB": true,
+       "tripCode": 526,
+       "timetablePeriod": "NSW JP",
+       "lineDisplay": "LINE",
+       "globalId": "3001",
+       "AVMSTripID": "0250-003-101-015:1000",
+       "RealtimeTripId": "0250-003-101-015:1000",
+       "VehAccessRoutingIncomplete": "true",
+       "OperatorURL": "http://transportnsw.info",
+       "FrequencyLine": "1",
+       "gtfsTripId": "3001.nsw-3-M1.1.TA.2203.sj2",
+       "attributes": [
+        "PLAN_LOWFLOORVEHICLE",
+        "PLAN_WHEELCHAIRACCESS"
+       ]
+      },
+      "iconId": 24
+     },
+     "stopSequence": [
+      {
+       "id": "2000465",
+       "name": "Gadigal Station, Platform 2, Sydney",
+       "coord": [
+        -33.873814,
+        151.208121
+       ]
+      },
+      {
+       "id": "2000462",
+       "name": "Martin Place Station, Platform 4, Sydney",
+       "coord": [
+        -33.867083,
+        151.209982
+       ]
+      },
+      {
+       "id": "2000461",
+       "name": "Barangaroo Station, Platform 2, Barangaroo",
+       "coord": [
+        -33.859309,
+        151.202548
+       ]
+      },
+      {
+       "id": "2060114",
+       "name": "Victoria Cross Station, Platform 2, North Sydney",
+       "coord": [
+        -33.836205,
+        151.207375
+       ]
+      },
+      {
+       "id": "2065164",
+       "name": "Crows Nest Station, Platform 2, Crows Nest",
+       "coord": [
+        -33.825849,
+        151.199299
+       ]
+      },
+      {
+       "id": "2067143",
+       "name": "Chatswood Station, Platform 3, Chatswood",
+       "coord": [
+        -33.797473,
+        151.18088
+       ]
+      }
+     ],
+     "infos": [
+      {
+       "timestamps": {
+        "creation": "2026-10-15T04:19:00Z"
+       },
+       "priority": "normal",
+       "id": "ems-80229",
+       "version": 220,
+       "type": "lineInfo",
+       "properties": {
+        "publisher": "ems.comm.addinfo",
+        "infoType": "lineInfo",
+        "smsText": "Temporary timetable changes for testing",
+        "speechText": "Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.\nAllow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services."
+       },
+       "infoLinks": [
+        {
+         "urlText": "Temporary timetable changes for testing",
+         "url": "https://transportnsw.info/alerts/details#/ems-80229",
+         "content": "<ul>\n<li>Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.</li>\n<li>Allow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services.&nbsp;</li>\n</ul>",
+         "subtitle": "Temporary timetable changes for testing",
+         "smsText": "Temporary timetable changes for testing",
+         "speechText": "Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.\nAllow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services."
+        }
+       ],
+       "urlText": "Temporary timetable changes for testing",
+       "url": "https://transportnsw.info/alerts/details#/ems-80229",
+       "content": "<ul>\n<li>Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.</li>\n<li>Allow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services.&nbsp;</li>\n</ul>",
+       "subtitle": "Temporary timetable changes for testing"
+      }
+     ],
+     "coords": [
+      [
+       -33.873784,
+       151.208046
+      ],
+      [
+       -33.871593,
+       151.208214
+      ],
+      [
+       -33.870796,
+       151.208423
+      ],
+      [
+       -33.870371,
+       151.208705
+      ],
+      [
+       -33.869503,
+       151.209376
+      ],
+      [
+       -33.867975,
+       151.209786
+      ],
+      [
+       -33.86511,
+       151.210091
+      ],
+      [
+       -33.864393,
+       151.209869
+      ],
+      [
+       -33.86384,
+       151.209445
+      ],
+      [
+       -33.863433,
+       151.20889
+      ],
+      [
+       -33.863107,
+       151.207947
+      ],
+      [
+       -33.863063,
+       151.207289
+      ],
+      [
+       -33.863228,
+       151.205639
+      ],
+      [
+       -33.863181,
+       151.205034
+      ],
+      [
+       -33.862982,
+       151.204324
+      ],
+      [
+       -33.862612,
+       151.203655
+      ],
+      [
+       -33.862064,
+       151.203099
+      ],
+      [
+       -33.861424,
+       151.202762
+      ],
+      [
+       -33.860518,
+       151.202624
+      ],
+      [
+       -33.858724,
+       151.202505
+      ],
+      [
+       -33.856461,
+       151.202347
+      ],
+      [
+       -33.855161,
+       151.202408
+      ],
+      [
+       -33.850296,
+       151.203843
+      ],
+      [
+       -33.848523,
+       151.203891
+      ],
+      [
+       -33.846311,
+       151.203096
+      ],
+      [
+       -33.845214,
+       151.202808
+      ],
+      [
+       -33.843688,
+       151.20305
+      ],
+      [
+       -33.842064,
+       151.204315
+      ],
+      [
+       -33.839701,
+       151.206369
+      ],
+      [
+       -33.836909,
+       151.207231
+      ],
+      [
+       -33.83332,
+       151.207838
+      ],
+      [
+       -33.831794,
+       151.207519
+      ],
+      [
+       -33.830789,
+       151.206917
+      ],
+      [
+       -33.830086,
+       151.206224
+      ],
+      [
+       -33.829418,
+       151.20519
+      ],
+      [
+       -33.828153,
+       151.201978
+      ],
+      [
+       -33.827552,
+       151.200976
+      ],
+      [
+       -33.825856,
+       151.199274
+      ],
+      [
+       -33.823971,
+       151.197471
+      ],
+      [
+       -33.823358,
+       151.196718
+      ],
+      [
+       -33.811751,
+       151.182175
+      ],
+      [
+       -33.809587,
+       151.18065
+      ],
+      [
+       -33.807125,
+       151.18027
+      ],
+      [
+       -33.805536,
+       151.180598
+      ],
+      [
+       -33.803865,
+       151.180955
+      ],
+      [
+       -33.802835,
+       151.181041
+      ],
+      [
+       -33.79932,
+       151.180947
+      ],
+      [
+       -33.797469,
+       151.18092
+      ]
+     ],
+     "properties": {
+      "vehicleAccess": [
+       {
+        "height": 0,
+        "halfWidth": 0,
+        "doorWidth": 0,
+        "attributes": 1073741824,
+        "areaToStay": 0,
+        "areaToMove": 0,
+        "equipments": [
+         {
+          "vehicleEquipment": {
+           "equipmentType": 1,
+           "length": 0,
+           "width": 0,
+           "lengthAtPl": 0,
+           "widthAtPl": 0,
+           "maxWeight": 0
+          }
+         }
+        ]
+       }
+      ],
+      "PlanLowFloorVehicle": "1",
+      "PlanWheelChairAccess": "1"
+     }
+    },
+    {
+     "duration": 180,
+     "distance": 126,
+     "origin": {
+      "isGlobalId": true,
+      "id": "2067143",
+      "name": "Chatswood Station, Chatswood",
+      "disassembledName": "Chatswood Station",
+      "type": "platform",
+      "coord": [
+       -33.797473,
+       151.18088
+      ],
+      "niveau": 0,
+      "parent": {
+       "isGlobalId": true,
+       "id": "206710",
+       "name": "Chatswood Station, Chatswood",
+       "disassembledName": "Chatswood Station",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95362004:1",
+        "name": "Chatswood",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101117"
+       },
+       "coord": [
+        -33.797237,
+        151.180934
+       ],
+       "niveau": 0
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:34:18Z",
+      "departureTimePlanned": "2026-10-17T07:34:18Z",
+      "departureTimeEstimated": "2026-10-17T07:34:18Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "0",
+       "AREA_NIVEAU_GIS": "0.00",
+       "stoppingPointPlanned": "Platform 3",
+       "area": "2",
+       "platform": "CWD3",
+       "platformName": "Platform 3",
+       "plannedPlatformName": "Platform 3",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       2,
+       5,
+       11
+      ]
+     },
+     "destination": {
+      "id": "coord:4887155:3747503:GDAV:436 Victoria Av, Chatswood:-1",
+      "name": "436 Victoria Av, Chatswood",
+      "disassembledName": "436 Victoria Av",
+      "type": "address",
+      "coord": [
+       -33.796901,
+       151.181004
+      ],
+      "parent": {
+       "id": "placeID:95362004:-1",
+       "name": "Chatswood",
+       "type": "locality",
+       "disassembledName": ""
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T07:37:18Z",
+      "arrivalTimePlanned": "2026-10-17T07:37:18Z",
+      "arrivalTimeEstimated": "2026-10-17T07:37:18Z",
+      "properties": {
+       "area": "0"
+      }
+     },
+     "transportation": {
+      "product": {
+       "class": 100,
+       "name": "footpath",
+       "iconId": 100
+      },
+      "properties": {
+       "tripCode": 0,
+       "lineDisplay": "LINE"
+      }
+     },
+     "footPathInfo": [
+      {
+       "position": "BEFORE",
+       "duration": 120,
+       "footPathElem": [
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": 0,
+         "levelTo": -1,
+         "level": "DOWN",
+         "origin": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797473,
+            151.18088
+           ],
+           "properties": {
+            "area": "2",
+            "georef": "1001951997:6:GDAV:100",
+            "areaGid": "",
+            "areaType": 81
+           }
+          },
+          "area": "2",
+          "georef": "1001951997:6:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797429,
+            151.180846
+           ],
+           "properties": {
+            "area": "25",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -1,
+         "levelTo": -1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797429,
+            151.180846
+           ],
+           "properties": {
+            "area": "25",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "25",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797435,
+            151.180933
+           ],
+           "properties": {
+            "area": "23",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 1,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -1,
+         "levelTo": -1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797435,
+            151.180933
+           ],
+           "properties": {
+            "area": "23",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "23",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.7973,
+            151.180937
+           ],
+           "properties": {
+            "area": "22",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -1,
+         "levelTo": -1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.7973,
+            151.180937
+           ],
+           "properties": {
+            "area": "22",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "22",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797302,
+            151.181142
+           ],
+           "properties": {
+            "area": "21",
+            "georef": "447643243:18:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        }
+       ]
+      }
+     ],
+     "infos": [],
+     "coords": [
+      [
+       -33.797472,
+       151.180895
+      ],
+      [
+       -33.797418,
+       151.180894
+      ],
+      [
+       -33.797439,
+       151.180939
+      ],
+      [
+       -33.797139,
+       151.181156
+      ],
+      [
+       -33.79688,
+       151.181089
+      ],
+      [
+       -33.796901,
+       151.181004
+      ]
+     ],
+     "pathDescriptions": [
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "LEAVE",
+       "name": "Leave Commuter train M1 Metro North West & Bankstown Line in direction of travel: low platform vehicle",
+       "coord": [
+        -33.797472,
+        151.180891
+       ],
+       "duration": 0,
+       "cumDuration": 0,
+       "distance": 0,
+       "cumDistance": 0,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 0,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "",
+       "coord": [
+        -33.797472,
+        151.180891
+       ],
+       "skyDirection": 358,
+       "duration": 13,
+       "cumDuration": 13,
+       "distance": 14,
+       "cumDistance": 14,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 3,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "UNKNOWN",
+       "name": "elevator downward to level -1",
+       "coord": [
+        -33.797384,
+        151.180833
+       ],
+       "duration": 100,
+       "cumDuration": 113,
+       "distance": 0,
+       "cumDistance": 14,
+       "fromCoordsIndex": 3,
+       "toCoordsIndex": 4,
+       "properties": {
+        "FLOOR_LEVEL_CHANGE_DIRECTION": "DOWN",
+        "FLOOR_LEVEL_DIFFERENCE": "-1",
+        "INDOOR_TYPE": "LIFT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "",
+       "coord": [
+        -33.797384,
+        151.180833
+       ],
+       "skyDirection": 175,
+       "duration": 42,
+       "cumDuration": 156,
+       "distance": 47,
+       "cumDistance": 62,
+       "fromCoordsIndex": 4,
+       "toCoordsIndex": 8,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ORIGIN",
+       "name": "",
+       "coord": [
+        -33.797302,
+        151.181131
+       ],
+       "duration": 0,
+       "cumDuration": 156,
+       "distance": 0,
+       "cumDistance": 62,
+       "fromCoordsIndex": 8,
+       "toCoordsIndex": 8
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "",
+       "coord": [
+        -33.797302,
+        151.181131
+       ],
+       "skyDirection": 89,
+       "duration": 37,
+       "cumDuration": 193,
+       "distance": 42,
+       "cumDistance": 104,
+       "fromCoordsIndex": 8,
+       "toCoordsIndex": 13,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      },
+      {
+       "turnDirection": "SLIGHT_RIGHT",
+       "manoeuvre": "TURN",
+       "name": "footpath",
+       "coord": [
+        -33.796978,
+        151.181115
+       ],
+       "skyDirection": 357,
+       "duration": 19,
+       "cumDuration": 213,
+       "distance": 21,
+       "cumDistance": 126,
+       "fromCoordsIndex": 13,
+       "toCoordsIndex": 16
+      }
+     ],
+     "properties": {
+      "PTWalkMinutes": "2"
+     }
+    }
+   ],
+   "daysOfService": {
+    "rvb": "41830000183060C1060C183000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+   }
+  },
+  {
+   "rating": 0,
+   "isAdditional": false,
+   "interchanges": 0,
+   "legs": [
+    {
+     "duration": 420,
+     "distance": 354,
+     "origin": {
+      "id": "coord:4889217:3756059:GDAV:500 George St, Sydney:0",
+      "name": "500 George St, Sydney",
+      "disassembledName": "500 George St",
+      "type": "address",
+      "coord": [
+       -33.873104,
+       151.206995
+      ],
+      "parent": {
+       "id": "placeID:95301001:-1",
+       "name": "Sydney",
+       "type": "locality",
+       "disassembledName": ""
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:25:00Z",
+      "departureTimePlanned": "2026-10-17T07:25:00Z",
+      "departureTimeEstimated": "2026-10-17T07:25:00Z",
+      "properties": {
+       "area": "0"
+      }
+     },
+     "destination": {
+      "isGlobalId": true,
+      "id": "2000465",
+      "name": "Gadigal Station, Sydney",
+      "disassembledName": "Gadigal Station",
+      "type": "platform",
+      "coord": [
+       -33.873814,
+       151.208121
+      ],
+      "niveau": -5,
+      "parent": {
+       "isGlobalId": true,
+       "id": "200066",
+       "name": "Gadigal Station, Sydney",
+       "disassembledName": "Gadigal Station",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95301001:1",
+        "name": "Sydney",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101514"
+       },
+       "coord": [
+        -33.873081,
+        151.208722
+       ],
+       "niveau": 0
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T07:32:00Z",
+      "arrivalTimePlanned": "2026-10-17T07:32:00Z",
+      "arrivalTimeEstimated": "2026-10-17T07:32:00Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-5",
+       "AREA_NIVEAU_GIS": "-5.00",
+       "stoppingPointPlanned": "Platform 2",
+       "area": "2",
+       "platform": "GDL2",
+       "platformName": "Platform 2",
+       "plannedPlatformName": "Platform 2",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       2
+      ]
+     },
+     "transportation": {
+      "product": {
+       "class": 100,
+       "name": "footpath",
+       "iconId": 100
+      },
+      "properties": {
+       "tripCode": 0,
+       "lineDisplay": "LINE"
+      }
+     },
+     "footPathInfo": [
+      {
+       "position": "IDEST",
+       "duration": 360,
+       "footPathElem": [
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": 0,
+         "levelTo": 0,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200070",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Town Hall Station",
+           "coord": [
+            -33.873208,
+            151.207119
+           ],
+           "properties": {
+            "area": "22",
+            "georef": "1003717352:1:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          },
+          "area": "22",
+          "georef": "1003717352:1:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873045,
+            151.208742
+           ],
+           "properties": {
+            "area": "21",
+            "georef": "503663641:3:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          }
+         },
+         "attributes": {
+          "duration": 20,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": 0,
+         "levelTo": 0,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873045,
+            151.208742
+           ],
+           "properties": {
+            "area": "21",
+            "georef": "503663641:3:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          },
+          "area": "21",
+          "georef": "503663641:3:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873009,
+            151.20874
+           ],
+           "properties": {
+            "area": "22",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": 0,
+         "levelTo": 0,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873009,
+            151.20874
+           ],
+           "properties": {
+            "area": "22",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "22",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.87293,
+            151.208661
+           ],
+           "properties": {
+            "area": "23",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": 0,
+         "levelTo": -5,
+         "level": "DOWN",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.87293,
+            151.208661
+           ],
+           "properties": {
+            "area": "23",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "23",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.872913,
+            151.208627
+           ],
+           "properties": {
+            "area": "25",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 20,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -5,
+         "levelTo": -5,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.872913,
+            151.208627
+           ],
+           "properties": {
+            "area": "25",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "25",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873054,
+            151.208732
+           ],
+           "properties": {
+            "area": "26",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 3,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -5,
+         "levelTo": -5,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873054,
+            151.208732
+           ],
+           "properties": {
+            "area": "26",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "26",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873217,
+            151.208707
+           ],
+           "properties": {
+            "area": "27",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -5,
+         "levelTo": -5,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873217,
+            151.208707
+           ],
+           "properties": {
+            "area": "27",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "27",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873814,
+            151.208121
+           ],
+           "properties": {
+            "area": "2",
+            "georef": "503618184:85:GDAV:100",
+            "areaGid": "",
+            "areaType": 65
+           }
+          }
+         },
+         "attributes": {
+          "duration": 8,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        }
+       ]
+      }
+     ],
+     "footPathInfoRedundant": true,
+     "infos": [],
+     "coords": [
+      [
+       -33.873107,
+       151.206995
+      ],
+      [
+       -33.873112,
+       151.207046
+      ],
+      [
+       -33.873106,
+       151.208216
+      ],
+      [
+       -33.872918,
+       151.208647
+      ],
+      [
+       -33.873044,
+       151.208742
+      ],
+      [
+       -33.873784,
+       151.208046
+      ]
+     ],
+     "pathDescriptions": [
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ORIGIN",
+       "name": "",
+       "coord": [
+        -33.873104,
+        151.206995
+       ],
+       "duration": 0,
+       "cumDuration": 0,
+       "distance": 0,
+       "cumDistance": 0,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 0
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "traffic light",
+       "coord": [
+        -33.873104,
+        151.206995
+       ],
+       "skyDirection": 95,
+       "duration": 43,
+       "cumDuration": 43,
+       "distance": 4,
+       "cumDistance": 4,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 1,
+       "properties": {
+        "OUTDOOR_TYPE": "TRAFFICLIGHT",
+        "TRACK_ILLUMINATED": "true"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "CONTINUE",
+       "name": "",
+       "coord": [
+        -33.873111,
+        151.207049
+       ],
+       "skyDirection": 95,
+       "duration": 22,
+       "cumDuration": 65,
+       "distance": 24,
+       "cumDistance": 29,
+       "fromCoordsIndex": 1,
+       "toCoordsIndex": 4,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "RIGHT",
+       "manoeuvre": "TURN",
+       "name": "Park Street",
+       "coord": [
+        -33.872973,
+        151.207151
+       ],
+       "skyDirection": 98,
+       "duration": 89,
+       "cumDuration": 155,
+       "distance": 100,
+       "cumDistance": 129,
+       "fromCoordsIndex": 4,
+       "toCoordsIndex": 6,
+       "properties": {
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "traffic light",
+       "coord": [
+        -33.873108,
+        151.208216
+       ],
+       "skyDirection": 4,
+       "duration": 27,
+       "cumDuration": 182,
+       "distance": 9,
+       "cumDistance": 138,
+       "fromCoordsIndex": 6,
+       "toCoordsIndex": 7,
+       "properties": {
+        "OUTDOOR_TYPE": "TRAFFICLIGHT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "RIGHT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.873026,
+        151.208222
+       ],
+       "skyDirection": 96,
+       "duration": 43,
+       "cumDuration": 225,
+       "distance": 48,
+       "cumDistance": 187,
+       "fromCoordsIndex": 7,
+       "toCoordsIndex": 8,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.87308,
+        151.208744
+       ],
+       "skyDirection": 4,
+       "duration": 3,
+       "cumDuration": 229,
+       "distance": 3,
+       "cumDistance": 190,
+       "fromCoordsIndex": 8,
+       "toCoordsIndex": 9,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.873044,
+        151.208753
+       ],
+       "skyDirection": 4,
+       "duration": 17,
+       "cumDuration": 246,
+       "distance": 19,
+       "cumDistance": 209,
+       "fromCoordsIndex": 9,
+       "toCoordsIndex": 11,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      },
+      {
+       "turnDirection": "SLIGHT_RIGHT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.872922,
+        151.208649
+       ],
+       "skyDirection": 6,
+       "duration": 3,
+       "cumDuration": 249,
+       "distance": 3,
+       "cumDistance": 213,
+       "fromCoordsIndex": 11,
+       "toCoordsIndex": 13,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "UNKNOWN",
+       "name": "elevator downward to level -5",
+       "coord": [
+        -33.872886,
+        151.208648
+       ],
+       "duration": 100,
+       "cumDuration": 349,
+       "distance": 0,
+       "cumDistance": 213,
+       "fromCoordsIndex": 13,
+       "toCoordsIndex": 14,
+       "properties": {
+        "FLOOR_LEVEL_CHANGE_DIRECTION": "DOWN",
+        "FLOOR_LEVEL_DIFFERENCE": "-5",
+        "INDOOR_TYPE": "LIFT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "SLIGHT_RIGHT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.872886,
+        151.208648
+       ],
+       "skyDirection": 211,
+       "duration": 126,
+       "cumDuration": 475,
+       "distance": 140,
+       "cumDistance": 354,
+       "fromCoordsIndex": 14,
+       "toCoordsIndex": 19,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ENTER",
+       "name": "Enter Commuter train M1 Metro North West & Bankstown Line: low platform vehicle",
+       "coord": [
+        -33.873813,
+        151.208132
+       ],
+       "duration": 0,
+       "cumDuration": 475,
+       "distance": 0,
+       "cumDistance": 354,
+       "fromCoordsIndex": 19,
+       "toCoordsIndex": 19,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      }
+     ],
+     "properties": {
+      "PTWalkMinutes": "0"
+     }
+    },
+    {
+     "duration": 738,
+     "isRealtimeControlled": true,
+     "realtimeStatus": [
+      "MONITORED"
+     ],
+     "origin": {
+      "isGlobalId": true,
+      "id": "2000465",
+      "name": "Gadigal Station, Platform 2, Sydney",
+      "disassembledName": "Gadigal Station, Platform 2",
+      "type": "platform",
+      "coord": [
+       -33.873814,
+       151.208121
+      ],
+      "niveau": -5,
+      "parent": {
+       "isGlobalId": true,
+       "id": "200066",
+       "name": "Gadigal Station, Platform 2, Sydney",
+       "disassembledName": "Gadigal Station, Platform 2",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95301001:1",
+        "name": "Sydney",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101514"
+       },
+       "coord": [
+        -33.873081,
+        151.208722
+       ],
+       "niveau": 0
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:32:00Z",
+      "departureTimePlanned": "2026-10-17T07:32:00Z",
+      "departureTimeEstimated": "2026-10-17T07:32:00Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-5",
+       "AREA_NIVEAU_GIS": "-5.00",
+       "stoppingPointPlanned": "Platform 2",
+       "area": "2",
+       "platform": "GDL2",
+       "platformName": "Platform 2",
+       "plannedPlatformName": "Platform 2",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       2
+      ]
+     },
+     "destination": {
+      "isGlobalId": true,
+      "id": "2067143",
+      "name": "Chatswood Station, Platform 3, Chatswood",
+      "disassembledName": "Chatswood Station, Platform 3",
+      "type": "platform",
+      "coord": [
+       -33.797473,
+       151.18088
+      ],
+      "niveau": 0,
+      "parent": {
+       "isGlobalId": true,
+       "id": "206710",
+       "name": "Chatswood Station, Platform 3, Chatswood",
+       "disassembledName": "Chatswood Station, Platform 3",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95362004:1",
+        "name": "Chatswood",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101117"
+       },
+       "coord": [
+        -33.797237,
+        151.180934
+       ],
+       "niveau": 0
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T07:44:18Z",
+      "arrivalTimePlanned": "2026-10-17T07:44:18Z",
+      "arrivalTimeEstimated": "2026-10-17T07:44:18Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "0",
+       "AREA_NIVEAU_GIS": "0.00",
+       "stoppingPointPlanned": "Platform 3",
+       "area": "2",
+       "platform": "CWD3",
+       "platformName": "Platform 3",
+       "plannedPlatformName": "Platform 3",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       2,
+       5,
+       11
+      ]
+     },
+     "transportation": {
+      "id": "nsw:030M1: :H:sj2",
+      "name": "Sydney Metro Network M1 Metro North West & Bankstown Line",
+      "disassembledName": "M1",
+      "number": "M1 Metro North West & Bankstown Line",
+      "description": "Bankstown to Tallawong",
+      "product": {
+       "id": 24,
+       "class": 2,
+       "name": "Sydney Metro Network",
+       "iconId": 2
+      },
+      "operator": {
+       "id": "SMNW",
+       "name": "Sydney Metro"
+      },
+      "destination": {
+       "id": "10101500",
+       "name": "Tallawong",
+       "type": "stop"
+      },
+      "properties": {
+       "isTTB": true,
+       "tripCode": 528,
+       "timetablePeriod": "NSW JP",
+       "lineDisplay": "LINE",
+       "globalId": "3001",
+       "AVMSTripID": "0250-003-102-015:1000",
+       "RealtimeTripId": "0250-003-102-015:1000",
+       "VehAccessRoutingIncomplete": "true",
+       "OperatorURL": "http://transportnsw.info",
+       "FrequencyLine": "1",
+       "gtfsTripId": "3001.nsw-3-M1.1.TA.2209.sj2",
+       "attributes": [
+        "PLAN_LOWFLOORVEHICLE",
+        "PLAN_WHEELCHAIRACCESS"
+       ]
+      },
+      "iconId": 24
+     },
+     "stopSequence": [
+      {
+       "id": "2000465",
+       "name": "Gadigal Station, Platform 2, Sydney",
+       "coord": [
+        -33.873814,
+        151.208121
+       ]
+      },
+      {
+       "id": "2000462",
+       "name": "Martin Place Station, Platform 4, Sydney",
+       "coord": [
+        -33.867083,
+        151.209982
+       ]
+      },
+      {
+       "id": "2000461",
+       "name": "Barangaroo Station, Platform 2, Barangaroo",
+       "coord": [
+        -33.859309,
+        151.202548
+       ]
+      },
+      {
+       "id": "2060114",
+       "name": "Victoria Cross Station, Platform 2, North Sydney",
+       "coord": [
+        -33.836205,
+        151.207375
+       ]
+      },
+      {
+       "id": "2065164",
+       "name": "Crows Nest Station, Platform 2, Crows Nest",
+       "coord": [
+        -33.825849,
+        151.199299
+       ]
+      },
+      {
+       "id": "2067143",
+       "name": "Chatswood Station, Platform 3, Chatswood",
+       "coord": [
+        -33.797473,
+        151.18088
+       ]
+      }
+     ],
+     "infos": [
+      {
+       "timestamps": {
+        "creation": "2026-10-15T04:19:00Z"
+       },
+       "priority": "normal",
+       "id": "ems-80229",
+       "version": 220,
+       "type": "lineInfo",
+       "properties": {
+        "publisher": "ems.comm.addinfo",
+        "infoType": "lineInfo",
+        "smsText": "Temporary timetable changes for testing",
+        "speechText": "Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.\nAllow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services."
+       },
+       "infoLinks": [
+        {
+         "urlText": "Temporary timetable changes for testing",
+         "url": "https://transportnsw.info/alerts/details#/ems-80229",
+         "content": "<ul>\n<li>Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.</li>\n<li>Allow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services.&nbsp;</li>\n</ul>",
+         "subtitle": "Temporary timetable changes for testing",
+         "smsText": "Temporary timetable changes for testing",
+         "speechText": "Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.\nAllow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services."
+        }
+       ],
+       "urlText": "Temporary timetable changes for testing",
+       "url": "https://transportnsw.info/alerts/details#/ems-80229",
+       "content": "<ul>\n<li>Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.</li>\n<li>Allow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services.&nbsp;</li>\n</ul>",
+       "subtitle": "Temporary timetable changes for testing"
+      }
+     ],
+     "coords": [
+      [
+       -33.873784,
+       151.208046
+      ],
+      [
+       -33.871593,
+       151.208214
+      ],
+      [
+       -33.870796,
+       151.208423
+      ],
+      [
+       -33.870371,
+       151.208705
+      ],
+      [
+       -33.869503,
+       151.209376
+      ],
+      [
+       -33.867975,
+       151.209786
+      ],
+      [
+       -33.86511,
+       151.210091
+      ],
+      [
+       -33.864393,
+       151.209869
+      ],
+      [
+       -33.86384,
+       151.209445
+      ],
+      [
+       -33.863433,
+       151.20889
+      ],
+      [
+       -33.863107,
+       151.207947
+      ],
+      [
+       -33.863063,
+       151.207289
+      ],
+      [
+       -33.863228,
+       151.205639
+      ],
+      [
+       -33.863181,
+       151.205034
+      ],
+      [
+       -33.862982,
+       151.204324
+      ],
+      [
+       -33.862612,
+       151.203655
+      ],
+      [
+       -33.862064,
+       151.203099
+      ],
+      [
+       -33.861424,
+       151.202762
+      ],
+      [
+       -33.860518,
+       151.202624
+      ],
+      [
+       -33.858724,
+       151.202505
+      ],
+      [
+       -33.856461,
+       151.202347
+      ],
+      [
+       -33.855161,
+       151.202408
+      ],
+      [
+       -33.850296,
+       151.203843
+      ],
+      [
+       -33.848523,
+       151.203891
+      ],
+      [
+       -33.846311,
+       151.203096
+      ],
+      [
+       -33.845214,
+       151.202808
+      ],
+      [
+       -33.843688,
+       151.20305
+      ],
+      [
+       -33.842064,
+       151.204315
+      ],
+      [
+       -33.839701,
+       151.206369
+      ],
+      [
+       -33.836909,
+       151.207231
+      ],
+      [
+       -33.83332,
+       151.207838
+      ],
+      [
+       -33.831794,
+       151.207519
+      ],
+      [
+       -33.830789,
+       151.206917
+      ],
+      [
+       -33.830086,
+       151.206224
+      ],
+      [
+       -33.829418,
+       151.20519
+      ],
+      [
+       -33.828153,
+       151.201978
+      ],
+      [
+       -33.827552,
+       151.200976
+      ],
+      [
+       -33.825856,
+       151.199274
+      ],
+      [
+       -33.823971,
+       151.197471
+      ],
+      [
+       -33.823358,
+       151.196718
+      ],
+      [
+       -33.811751,
+       151.182175
+      ],
+      [
+       -33.809587,
+       151.18065
+      ],
+      [
+       -33.807125,
+       151.18027
+      ],
+      [
+       -33.805536,
+       151.180598
+      ],
+      [
+       -33.803865,
+       151.180955
+      ],
+      [
+       -33.802835,
+       151.181041
+      ],
+      [
+       -33.79932,
+       151.180947
+      ],
+      [
+       -33.797469,
+       151.18092
+      ]
+     ],
+     "properties": {
+      "vehicleAccess": [
+       {
+        "height": 0,
+        "halfWidth": 0,
+        "doorWidth": 0,
+        "attributes": 1073741824,
+        "areaToStay": 0,
+        "areaToMove": 0,
+        "equipments": [
+         {
+          "vehicleEquipment": {
+           "equipmentType": 1,
+           "length": 0,
+           "width": 0,
+           "lengthAtPl": 0,
+           "widthAtPl": 0,
+           "maxWeight": 0
+          }
+         }
+        ]
+       }
+      ],
+      "PlanLowFloorVehicle": "1",
+      "PlanWheelChairAccess": "1"
+     }
+    },
+    {
+     "duration": 180,
+     "distance": 126,
+     "origin": {
+      "isGlobalId": true,
+      "id": "2067143",
+      "name": "Chatswood Station, Chatswood",
+      "disassembledName": "Chatswood Station",
+      "type": "platform",
+      "coord": [
+       -33.797473,
+       151.18088
+      ],
+      "niveau": 0,
+      "parent": {
+       "isGlobalId": true,
+       "id": "206710",
+       "name": "Chatswood Station, Chatswood",
+       "disassembledName": "Chatswood Station",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95362004:1",
+        "name": "Chatswood",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101117"
+       },
+       "coord": [
+        -33.797237,
+        151.180934
+       ],
+       "niveau": 0
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:44:18Z",
+      "departureTimePlanned": "2026-10-17T07:44:18Z",
+      "departureTimeEstimated": "2026-10-17T07:44:18Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "0",
+       "AREA_NIVEAU_GIS": "0.00",
+       "stoppingPointPlanned": "Platform 3",
+       "area": "2",
+       "platform": "CWD3",
+       "platformName": "Platform 3",
+       "plannedPlatformName": "Platform 3",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       2,
+       5,
+       11
+      ]
+     },
+     "destination": {
+      "id": "coord:4887155:3747503:GDAV:436 Victoria Av, Chatswood:-1",
+      "name": "436 Victoria Av, Chatswood",
+      "disassembledName": "436 Victoria Av",
+      "type": "address",
+      "coord": [
+       -33.796901,
+       151.181004
+      ],
+      "parent": {
+       "id": "placeID:95362004:-1",
+       "name": "Chatswood",
+       "type": "locality",
+       "disassembledName": ""
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T07:47:18Z",
+      "arrivalTimePlanned": "2026-10-17T07:47:18Z",
+      "arrivalTimeEstimated": "2026-10-17T07:47:18Z",
+      "properties": {
+       "area": "0"
+      }
+     },
+     "transportation": {
+      "product": {
+       "class": 100,
+       "name": "footpath",
+       "iconId": 100
+      },
+      "properties": {
+       "tripCode": 0,
+       "lineDisplay": "LINE"
+      }
+     },
+     "footPathInfo": [
+      {
+       "position": "BEFORE",
+       "duration": 120,
+       "footPathElem": [
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": 0,
+         "levelTo": -1,
+         "level": "DOWN",
+         "origin": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797473,
+            151.18088
+           ],
+           "properties": {
+            "area": "2",
+            "georef": "1001951997:6:GDAV:100",
+            "areaGid": "",
+            "areaType": 81
+           }
+          },
+          "area": "2",
+          "georef": "1001951997:6:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797429,
+            151.180846
+           ],
+           "properties": {
+            "area": "25",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -1,
+         "levelTo": -1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797429,
+            151.180846
+           ],
+           "properties": {
+            "area": "25",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "25",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797435,
+            151.180933
+           ],
+           "properties": {
+            "area": "23",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 1,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -1,
+         "levelTo": -1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797435,
+            151.180933
+           ],
+           "properties": {
+            "area": "23",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "23",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.7973,
+            151.180937
+           ],
+           "properties": {
+            "area": "22",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -1,
+         "levelTo": -1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.7973,
+            151.180937
+           ],
+           "properties": {
+            "area": "22",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "22",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797302,
+            151.181142
+           ],
+           "properties": {
+            "area": "21",
+            "georef": "447643243:18:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        }
+       ]
+      }
+     ],
+     "infos": [],
+     "coords": [
+      [
+       -33.797472,
+       151.180895
+      ],
+      [
+       -33.797418,
+       151.180894
+      ],
+      [
+       -33.797439,
+       151.180939
+      ],
+      [
+       -33.797139,
+       151.181156
+      ],
+      [
+       -33.79688,
+       151.181089
+      ],
+      [
+       -33.796901,
+       151.181004
+      ]
+     ],
+     "pathDescriptions": [
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "LEAVE",
+       "name": "Leave Commuter train M1 Metro North West & Bankstown Line in direction of travel: low platform vehicle",
+       "coord": [
+        -33.797472,
+        151.180891
+       ],
+       "duration": 0,
+       "cumDuration": 0,
+       "distance": 0,
+       "cumDistance": 0,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 0,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "",
+       "coord": [
+        -33.797472,
+        151.180891
+       ],
+       "skyDirection": 358,
+       "duration": 13,
+       "cumDuration": 13,
+       "distance": 14,
+       "cumDistance": 14,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 3,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "UNKNOWN",
+       "name": "elevator downward to level -1",
+       "coord": [
+        -33.797384,
+        151.180833
+       ],
+       "duration": 100,
+       "cumDuration": 113,
+       "distance": 0,
+       "cumDistance": 14,
+       "fromCoordsIndex": 3,
+       "toCoordsIndex": 4,
+       "properties": {
+        "FLOOR_LEVEL_CHANGE_DIRECTION": "DOWN",
+        "FLOOR_LEVEL_DIFFERENCE": "-1",
+        "INDOOR_TYPE": "LIFT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "",
+       "coord": [
+        -33.797384,
+        151.180833
+       ],
+       "skyDirection": 175,
+       "duration": 42,
+       "cumDuration": 156,
+       "distance": 47,
+       "cumDistance": 62,
+       "fromCoordsIndex": 4,
+       "toCoordsIndex": 8,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ORIGIN",
+       "name": "",
+       "coord": [
+        -33.797302,
+        151.181131
+       ],
+       "duration": 0,
+       "cumDuration": 156,
+       "distance": 0,
+       "cumDistance": 62,
+       "fromCoordsIndex": 8,
+       "toCoordsIndex": 8
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "",
+       "coord": [
+        -33.797302,
+        151.181131
+       ],
+       "skyDirection": 89,
+       "duration": 37,
+       "cumDuration": 193,
+       "distance": 42,
+       "cumDistance": 104,
+       "fromCoordsIndex": 8,
+       "toCoordsIndex": 13,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      },
+      {
+       "turnDirection": "SLIGHT_RIGHT",
+       "manoeuvre": "TURN",
+       "name": "footpath",
+       "coord": [
+        -33.796978,
+        151.181115
+       ],
+       "skyDirection": 357,
+       "duration": 19,
+       "cumDuration": 213,
+       "distance": 21,
+       "cumDistance": 126,
+       "fromCoordsIndex": 13,
+       "toCoordsIndex": 16
+      }
+     ],
+     "properties": {
+      "PTWalkMinutes": "2"
+     }
+    }
+   ],
+   "daysOfService": {
+    "rvb": "41830000183060C1060C183000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+   }
+  },
+  {
+   "rating": 0,
+   "isAdditional": false,
+   "interchanges": 0,
+   "legs": [
+    {
+     "duration": 420,
+     "distance": 354,
+     "origin": {
+      "id": "coord:4889217:3756059:GDAV:500 George St, Sydney:0",
+      "name": "500 George St, Sydney",
+      "disassembledName": "500 George St",
+      "type": "address",
+      "coord": [
+       -33.873104,
+       151.206995
+      ],
+      "parent": {
+       "id": "placeID:95301001:-1",
+       "name": "Sydney",
+       "type": "locality",
+       "disassembledName": ""
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:35:00Z",
+      "departureTimePlanned": "2026-10-17T07:35:00Z",
+      "departureTimeEstimated": "2026-10-17T07:35:00Z",
+      "properties": {
+       "area": "0"
+      }
+     },
+     "destination": {
+      "isGlobalId": true,
+      "id": "2000465",
+      "name": "Gadigal Station, Sydney",
+      "disassembledName": "Gadigal Station",
+      "type": "platform",
+      "coord": [
+       -33.873814,
+       151.208121
+      ],
+      "niveau": -5,
+      "parent": {
+       "isGlobalId": true,
+       "id": "200066",
+       "name": "Gadigal Station, Sydney",
+       "disassembledName": "Gadigal Station",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95301001:1",
+        "name": "Sydney",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101514"
+       },
+       "coord": [
+        -33.873081,
+        151.208722
+       ],
+       "niveau": 0
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T07:42:00Z",
+      "arrivalTimePlanned": "2026-10-17T07:42:00Z",
+      "arrivalTimeEstimated": "2026-10-17T07:42:00Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-5",
+       "AREA_NIVEAU_GIS": "-5.00",
+       "stoppingPointPlanned": "Platform 2",
+       "area": "2",
+       "platform": "GDL2",
+       "platformName": "Platform 2",
+       "plannedPlatformName": "Platform 2",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       2
+      ]
+     },
+     "transportation": {
+      "product": {
+       "class": 100,
+       "name": "footpath",
+       "iconId": 100
+      },
+      "properties": {
+       "tripCode": 0,
+       "lineDisplay": "LINE"
+      }
+     },
+     "footPathInfo": [
+      {
+       "position": "IDEST",
+       "duration": 360,
+       "footPathElem": [
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": 0,
+         "levelTo": 0,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200070",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Town Hall Station",
+           "coord": [
+            -33.873208,
+            151.207119
+           ],
+           "properties": {
+            "area": "22",
+            "georef": "1003717352:1:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          },
+          "area": "22",
+          "georef": "1003717352:1:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873045,
+            151.208742
+           ],
+           "properties": {
+            "area": "21",
+            "georef": "503663641:3:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          }
+         },
+         "attributes": {
+          "duration": 20,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": 0,
+         "levelTo": 0,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873045,
+            151.208742
+           ],
+           "properties": {
+            "area": "21",
+            "georef": "503663641:3:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          },
+          "area": "21",
+          "georef": "503663641:3:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873009,
+            151.20874
+           ],
+           "properties": {
+            "area": "22",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": 0,
+         "levelTo": 0,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873009,
+            151.20874
+           ],
+           "properties": {
+            "area": "22",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "22",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.87293,
+            151.208661
+           ],
+           "properties": {
+            "area": "23",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": 0,
+         "levelTo": -5,
+         "level": "DOWN",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.87293,
+            151.208661
+           ],
+           "properties": {
+            "area": "23",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "23",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.872913,
+            151.208627
+           ],
+           "properties": {
+            "area": "25",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 20,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -5,
+         "levelTo": -5,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.872913,
+            151.208627
+           ],
+           "properties": {
+            "area": "25",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "25",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873054,
+            151.208732
+           ],
+           "properties": {
+            "area": "26",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 3,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -5,
+         "levelTo": -5,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873054,
+            151.208732
+           ],
+           "properties": {
+            "area": "26",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "26",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873217,
+            151.208707
+           ],
+           "properties": {
+            "area": "27",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -5,
+         "levelTo": -5,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873217,
+            151.208707
+           ],
+           "properties": {
+            "area": "27",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "27",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "200066",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Gadigal Station",
+           "coord": [
+            -33.873814,
+            151.208121
+           ],
+           "properties": {
+            "area": "2",
+            "georef": "503618184:85:GDAV:100",
+            "areaGid": "",
+            "areaType": 65
+           }
+          }
+         },
+         "attributes": {
+          "duration": 8,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        }
+       ]
+      }
+     ],
+     "footPathInfoRedundant": true,
+     "infos": [],
+     "coords": [
+      [
+       -33.873107,
+       151.206995
+      ],
+      [
+       -33.873112,
+       151.207046
+      ],
+      [
+       -33.873106,
+       151.208216
+      ],
+      [
+       -33.872918,
+       151.208647
+      ],
+      [
+       -33.873044,
+       151.208742
+      ],
+      [
+       -33.873784,
+       151.208046
+      ]
+     ],
+     "pathDescriptions": [
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ORIGIN",
+       "name": "",
+       "coord": [
+        -33.873104,
+        151.206995
+       ],
+       "duration": 0,
+       "cumDuration": 0,
+       "distance": 0,
+       "cumDistance": 0,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 0
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "traffic light",
+       "coord": [
+        -33.873104,
+        151.206995
+       ],
+       "skyDirection": 95,
+       "duration": 43,
+       "cumDuration": 43,
+       "distance": 4,
+       "cumDistance": 4,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 1,
+       "properties": {
+        "OUTDOOR_TYPE": "TRAFFICLIGHT",
+        "TRACK_ILLUMINATED": "true"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "CONTINUE",
+       "name": "",
+       "coord": [
+        -33.873111,
+        151.207049
+       ],
+       "skyDirection": 95,
+       "duration": 22,
+       "cumDuration": 65,
+       "distance": 24,
+       "cumDistance": 29,
+       "fromCoordsIndex": 1,
+       "toCoordsIndex": 4,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY",
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "RIGHT",
+       "manoeuvre": "TURN",
+       "name": "Park Street",
+       "coord": [
+        -33.872973,
+        151.207151
+       ],
+       "skyDirection": 98,
+       "duration": 89,
+       "cumDuration": 155,
+       "distance": 100,
+       "cumDistance": 129,
+       "fromCoordsIndex": 4,
+       "toCoordsIndex": 6,
+       "properties": {
+        "TRACK_ILLUMINATED": "true",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "traffic light",
+       "coord": [
+        -33.873108,
+        151.208216
+       ],
+       "skyDirection": 4,
+       "duration": 27,
+       "cumDuration": 182,
+       "distance": 9,
+       "cumDistance": 138,
+       "fromCoordsIndex": 6,
+       "toCoordsIndex": 7,
+       "properties": {
+        "OUTDOOR_TYPE": "TRAFFICLIGHT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "RIGHT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.873026,
+        151.208222
+       ],
+       "skyDirection": 96,
+       "duration": 43,
+       "cumDuration": 225,
+       "distance": 48,
+       "cumDistance": 187,
+       "fromCoordsIndex": 7,
+       "toCoordsIndex": 8,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_SURFACE": "COBBLE"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.87308,
+        151.208744
+       ],
+       "skyDirection": 4,
+       "duration": 3,
+       "cumDuration": 229,
+       "distance": 3,
+       "cumDistance": 190,
+       "fromCoordsIndex": 8,
+       "toCoordsIndex": 9,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL"
+       }
+      },
+      {
+       "turnDirection": "LEFT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.873044,
+        151.208753
+       ],
+       "skyDirection": 4,
+       "duration": 17,
+       "cumDuration": 246,
+       "distance": 19,
+       "cumDistance": 209,
+       "fromCoordsIndex": 9,
+       "toCoordsIndex": 11,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      },
+      {
+       "turnDirection": "SLIGHT_RIGHT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.872922,
+        151.208649
+       ],
+       "skyDirection": 6,
+       "duration": 3,
+       "cumDuration": 249,
+       "distance": 3,
+       "cumDistance": 213,
+       "fromCoordsIndex": 11,
+       "toCoordsIndex": 13,
+       "properties": {
+        "OUTDOOR_TYPE": "HIKING_TRAIL",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "UNKNOWN",
+       "name": "elevator downward to level -5",
+       "coord": [
+        -33.872886,
+        151.208648
+       ],
+       "duration": 100,
+       "cumDuration": 349,
+       "distance": 0,
+       "cumDistance": 213,
+       "fromCoordsIndex": 13,
+       "toCoordsIndex": 14,
+       "properties": {
+        "FLOOR_LEVEL_CHANGE_DIRECTION": "DOWN",
+        "FLOOR_LEVEL_DIFFERENCE": "-5",
+        "INDOOR_TYPE": "LIFT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "SLIGHT_RIGHT",
+       "manoeuvre": "TURN",
+       "name": "",
+       "coord": [
+        -33.872886,
+        151.208648
+       ],
+       "skyDirection": 211,
+       "duration": 126,
+       "cumDuration": 475,
+       "distance": 140,
+       "cumDistance": 354,
+       "fromCoordsIndex": 14,
+       "toCoordsIndex": 19,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ENTER",
+       "name": "Enter Commuter train M1 Metro North West & Bankstown Line: low platform vehicle",
+       "coord": [
+        -33.873813,
+        151.208132
+       ],
+       "duration": 0,
+       "cumDuration": 475,
+       "distance": 0,
+       "cumDistance": 354,
+       "fromCoordsIndex": 19,
+       "toCoordsIndex": 19,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      }
+     ],
+     "properties": {
+      "PTWalkMinutes": "0"
+     }
+    },
+    {
+     "duration": 738,
+     "isRealtimeControlled": true,
+     "realtimeStatus": [
+      "MONITORED"
+     ],
+     "origin": {
+      "isGlobalId": true,
+      "id": "2000465",
+      "name": "Gadigal Station, Platform 2, Sydney",
+      "disassembledName": "Gadigal Station, Platform 2",
+      "type": "platform",
+      "coord": [
+       -33.873814,
+       151.208121
+      ],
+      "niveau": -5,
+      "parent": {
+       "isGlobalId": true,
+       "id": "200066",
+       "name": "Gadigal Station, Platform 2, Sydney",
+       "disassembledName": "Gadigal Station, Platform 2",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95301001:1",
+        "name": "Sydney",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101514"
+       },
+       "coord": [
+        -33.873081,
+        151.208722
+       ],
+       "niveau": 0
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:42:00Z",
+      "departureTimePlanned": "2026-10-17T07:42:00Z",
+      "departureTimeEstimated": "2026-10-17T07:42:00Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "-5",
+       "AREA_NIVEAU_GIS": "-5.00",
+       "stoppingPointPlanned": "Platform 2",
+       "area": "2",
+       "platform": "GDL2",
+       "platformName": "Platform 2",
+       "plannedPlatformName": "Platform 2",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       2
+      ]
+     },
+     "destination": {
+      "isGlobalId": true,
+      "id": "2067143",
+      "name": "Chatswood Station, Platform 3, Chatswood",
+      "disassembledName": "Chatswood Station, Platform 3",
+      "type": "platform",
+      "coord": [
+       -33.797473,
+       151.18088
+      ],
+      "niveau": 0,
+      "parent": {
+       "isGlobalId": true,
+       "id": "206710",
+       "name": "Chatswood Station, Platform 3, Chatswood",
+       "disassembledName": "Chatswood Station, Platform 3",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95362004:1",
+        "name": "Chatswood",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101117"
+       },
+       "coord": [
+        -33.797237,
+        151.180934
+       ],
+       "niveau": 0
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T07:54:18Z",
+      "arrivalTimePlanned": "2026-10-17T07:54:18Z",
+      "arrivalTimeEstimated": "2026-10-17T07:54:18Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "0",
+       "AREA_NIVEAU_GIS": "0.00",
+       "stoppingPointPlanned": "Platform 3",
+       "area": "2",
+       "platform": "CWD3",
+       "platformName": "Platform 3",
+       "plannedPlatformName": "Platform 3",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       2,
+       5,
+       11
+      ]
+     },
+     "transportation": {
+      "id": "nsw:030M1: :H:sj2",
+      "name": "Sydney Metro Network M1 Metro North West & Bankstown Line",
+      "disassembledName": "M1",
+      "number": "M1 Metro North West & Bankstown Line",
+      "description": "Bankstown to Tallawong",
+      "product": {
+       "id": 24,
+       "class": 2,
+       "name": "Sydney Metro Network",
+       "iconId": 2
+      },
+      "operator": {
+       "id": "SMNW",
+       "name": "Sydney Metro"
+      },
+      "destination": {
+       "id": "10101500",
+       "name": "Tallawong",
+       "type": "stop"
+      },
+      "properties": {
+       "isTTB": true,
+       "tripCode": 530,
+       "timetablePeriod": "NSW JP",
+       "lineDisplay": "LINE",
+       "globalId": "3001",
+       "AVMSTripID": "0250-003-103-015:1000",
+       "RealtimeTripId": "0250-003-103-015:1000",
+       "VehAccessRoutingIncomplete": "true",
+       "OperatorURL": "http://transportnsw.info",
+       "FrequencyLine": "1",
+       "gtfsTripId": "3001.nsw-3-M1.1.TA.2215.sj2",
+       "attributes": [
+        "PLAN_LOWFLOORVEHICLE",
+        "PLAN_WHEELCHAIRACCESS"
+       ]
+      },
+      "iconId": 24
+     },
+     "stopSequence": [
+      {
+       "id": "2000465",
+       "name": "Gadigal Station, Platform 2, Sydney",
+       "coord": [
+        -33.873814,
+        151.208121
+       ]
+      },
+      {
+       "id": "2000462",
+       "name": "Martin Place Station, Platform 4, Sydney",
+       "coord": [
+        -33.867083,
+        151.209982
+       ]
+      },
+      {
+       "id": "2000461",
+       "name": "Barangaroo Station, Platform 2, Barangaroo",
+       "coord": [
+        -33.859309,
+        151.202548
+       ]
+      },
+      {
+       "id": "2060114",
+       "name": "Victoria Cross Station, Platform 2, North Sydney",
+       "coord": [
+        -33.836205,
+        151.207375
+       ]
+      },
+      {
+       "id": "2065164",
+       "name": "Crows Nest Station, Platform 2, Crows Nest",
+       "coord": [
+        -33.825849,
+        151.199299
+       ]
+      },
+      {
+       "id": "2067143",
+       "name": "Chatswood Station, Platform 3, Chatswood",
+       "coord": [
+        -33.797473,
+        151.18088
+       ]
+      }
+     ],
+     "infos": [
+      {
+       "timestamps": {
+        "creation": "2026-10-15T04:19:00Z"
+       },
+       "priority": "normal",
+       "id": "ems-80229",
+       "version": 220,
+       "type": "lineInfo",
+       "properties": {
+        "publisher": "ems.comm.addinfo",
+        "infoType": "lineInfo",
+        "smsText": "Temporary timetable changes for testing",
+        "speechText": "Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.\nAllow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services."
+       },
+       "infoLinks": [
+        {
+         "urlText": "Temporary timetable changes for testing",
+         "url": "https://transportnsw.info/alerts/details#/ems-80229",
+         "content": "<ul>\n<li>Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.</li>\n<li>Allow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services.&nbsp;</li>\n</ul>",
+         "subtitle": "Temporary timetable changes for testing",
+         "smsText": "Temporary timetable changes for testing",
+         "speechText": "Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.\nAllow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services."
+        }
+       ],
+       "urlText": "Temporary timetable changes for testing",
+       "url": "https://transportnsw.info/alerts/details#/ems-80229",
+       "content": "<ul>\n<li>Some Metro services may not run to timetable due to Southwest testing and may be delayed or run early by up to 2 minutes.</li>\n<li>Allow additional time for your journey and arrive earlier where possible, particularly if you are connecting with other transport services.&nbsp;</li>\n</ul>",
+       "subtitle": "Temporary timetable changes for testing"
+      }
+     ],
+     "coords": [
+      [
+       -33.873784,
+       151.208046
+      ],
+      [
+       -33.871593,
+       151.208214
+      ],
+      [
+       -33.870796,
+       151.208423
+      ],
+      [
+       -33.870371,
+       151.208705
+      ],
+      [
+       -33.869503,
+       151.209376
+      ],
+      [
+       -33.867975,
+       151.209786
+      ],
+      [
+       -33.86511,
+       151.210091
+      ],
+      [
+       -33.864393,
+       151.209869
+      ],
+      [
+       -33.86384,
+       151.209445
+      ],
+      [
+       -33.863433,
+       151.20889
+      ],
+      [
+       -33.863107,
+       151.207947
+      ],
+      [
+       -33.863063,
+       151.207289
+      ],
+      [
+       -33.863228,
+       151.205639
+      ],
+      [
+       -33.863181,
+       151.205034
+      ],
+      [
+       -33.862982,
+       151.204324
+      ],
+      [
+       -33.862612,
+       151.203655
+      ],
+      [
+       -33.862064,
+       151.203099
+      ],
+      [
+       -33.861424,
+       151.202762
+      ],
+      [
+       -33.860518,
+       151.202624
+      ],
+      [
+       -33.858724,
+       151.202505
+      ],
+      [
+       -33.856461,
+       151.202347
+      ],
+      [
+       -33.855161,
+       151.202408
+      ],
+      [
+       -33.850296,
+       151.203843
+      ],
+      [
+       -33.848523,
+       151.203891
+      ],
+      [
+       -33.846311,
+       151.203096
+      ],
+      [
+       -33.845214,
+       151.202808
+      ],
+      [
+       -33.843688,
+       151.20305
+      ],
+      [
+       -33.842064,
+       151.204315
+      ],
+      [
+       -33.839701,
+       151.206369
+      ],
+      [
+       -33.836909,
+       151.207231
+      ],
+      [
+       -33.83332,
+       151.207838
+      ],
+      [
+       -33.831794,
+       151.207519
+      ],
+      [
+       -33.830789,
+       151.206917
+      ],
+      [
+       -33.830086,
+       151.206224
+      ],
+      [
+       -33.829418,
+       151.20519
+      ],
+      [
+       -33.828153,
+       151.201978
+      ],
+      [
+       -33.827552,
+       151.200976
+      ],
+      [
+       -33.825856,
+       151.199274
+      ],
+      [
+       -33.823971,
+       151.197471
+      ],
+      [
+       -33.823358,
+       151.196718
+      ],
+      [
+       -33.811751,
+       151.182175
+      ],
+      [
+       -33.809587,
+       151.18065
+      ],
+      [
+       -33.807125,
+       151.18027
+      ],
+      [
+       -33.805536,
+       151.180598
+      ],
+      [
+       -33.803865,
+       151.180955
+      ],
+      [
+       -33.802835,
+       151.181041
+      ],
+      [
+       -33.79932,
+       151.180947
+      ],
+      [
+       -33.797469,
+       151.18092
+      ]
+     ],
+     "properties": {
+      "vehicleAccess": [
+       {
+        "height": 0,
+        "halfWidth": 0,
+        "doorWidth": 0,
+        "attributes": 1073741824,
+        "areaToStay": 0,
+        "areaToMove": 0,
+        "equipments": [
+         {
+          "vehicleEquipment": {
+           "equipmentType": 1,
+           "length": 0,
+           "width": 0,
+           "lengthAtPl": 0,
+           "widthAtPl": 0,
+           "maxWeight": 0
+          }
+         }
+        ]
+       }
+      ],
+      "PlanLowFloorVehicle": "1",
+      "PlanWheelChairAccess": "1"
+     }
+    },
+    {
+     "duration": 180,
+     "distance": 126,
+     "origin": {
+      "isGlobalId": true,
+      "id": "2067143",
+      "name": "Chatswood Station, Chatswood",
+      "disassembledName": "Chatswood Station",
+      "type": "platform",
+      "coord": [
+       -33.797473,
+       151.18088
+      ],
+      "niveau": 0,
+      "parent": {
+       "isGlobalId": true,
+       "id": "206710",
+       "name": "Chatswood Station, Chatswood",
+       "disassembledName": "Chatswood Station",
+       "type": "stop",
+       "parent": {
+        "id": "placeID:95362004:1",
+        "name": "Chatswood",
+        "type": "locality"
+       },
+       "properties": {
+        "stopId": "10101117"
+       },
+       "coord": [
+        -33.797237,
+        151.180934
+       ],
+       "niveau": 0
+      },
+      "departureTimeBaseTimetable": "2026-10-17T07:54:18Z",
+      "departureTimePlanned": "2026-10-17T07:54:18Z",
+      "departureTimeEstimated": "2026-10-17T07:54:18Z",
+      "properties": {
+       "WheelchairAccess": "true",
+       "StopAccessRoutingIncomplete": "true",
+       "AREA_NIVEAU_DIVA": "0",
+       "AREA_NIVEAU_GIS": "0.00",
+       "stoppingPointPlanned": "Platform 3",
+       "area": "2",
+       "platform": "CWD3",
+       "platformName": "Platform 3",
+       "plannedPlatformName": "Platform 3",
+       "accessArray": [
+        {
+         "stoppointAccess": {
+          "height": 780,
+          "equipment": 0,
+          "maxWeight": 0,
+          "distanceTrack": 0,
+          "lengthAvail": 0,
+          "widthAvail": 0,
+          "attributes": 0
+         }
+        }
+       ]
+      },
+      "modes": [
+       1,
+       2,
+       5,
+       11
+      ]
+     },
+     "destination": {
+      "id": "coord:4887155:3747503:GDAV:436 Victoria Av, Chatswood:-1",
+      "name": "436 Victoria Av, Chatswood",
+      "disassembledName": "436 Victoria Av",
+      "type": "address",
+      "coord": [
+       -33.796901,
+       151.181004
+      ],
+      "parent": {
+       "id": "placeID:95362004:-1",
+       "name": "Chatswood",
+       "type": "locality",
+       "disassembledName": ""
+      },
+      "arrivalTimeBaseTimetable": "2026-10-17T07:57:18Z",
+      "arrivalTimePlanned": "2026-10-17T07:57:18Z",
+      "arrivalTimeEstimated": "2026-10-17T07:57:18Z",
+      "properties": {
+       "area": "0"
+      }
+     },
+     "transportation": {
+      "product": {
+       "class": 100,
+       "name": "footpath",
+       "iconId": 100
+      },
+      "properties": {
+       "tripCode": 0,
+       "lineDisplay": "LINE"
+      }
+     },
+     "footPathInfo": [
+      {
+       "position": "BEFORE",
+       "duration": 120,
+       "footPathElem": [
+        {
+         "description": "",
+         "type": "ELEVATOR",
+         "levelFrom": 0,
+         "levelTo": -1,
+         "level": "DOWN",
+         "origin": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797473,
+            151.18088
+           ],
+           "properties": {
+            "area": "2",
+            "georef": "1001951997:6:GDAV:100",
+            "areaGid": "",
+            "areaType": 81
+           }
+          },
+          "area": "2",
+          "georef": "1001951997:6:GDAV:100"
+         },
+         "destination": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797429,
+            151.180846
+           ],
+           "properties": {
+            "area": "25",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 10,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -1,
+         "levelTo": -1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797429,
+            151.180846
+           ],
+           "properties": {
+            "area": "25",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "25",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797435,
+            151.180933
+           ],
+           "properties": {
+            "area": "23",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 1,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -1,
+         "levelTo": -1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797435,
+            151.180933
+           ],
+           "properties": {
+            "area": "23",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "23",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.7973,
+            151.180937
+           ],
+           "properties": {
+            "area": "22",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        },
+        {
+         "description": "",
+         "type": "LEVEL",
+         "levelFrom": -1,
+         "levelTo": -1,
+         "level": "LEVEL",
+         "origin": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.7973,
+            151.180937
+           ],
+           "properties": {
+            "area": "22",
+            "georef": "0:0::100",
+            "areaGid": "",
+            "areaType": 4096
+           }
+          },
+          "area": "22",
+          "georef": "0:0::100"
+         },
+         "destination": {
+          "location": {
+           "id": "206710",
+           "isGlobalId": true,
+           "type": "stop",
+           "name": "Chatswood Station",
+           "coord": [
+            -33.797302,
+            151.181142
+           ],
+           "properties": {
+            "area": "21",
+            "georef": "447643243:18:GDAV:100",
+            "areaGid": "",
+            "areaType": 32
+           }
+          }
+         },
+         "attributes": {
+          "duration": 2,
+          "distance": 0,
+          "narrowestWidth": -1,
+          "elevLength": 0,
+          "elevWidth": 0,
+          "elevDoorWidth": 0,
+          "rampLength": 0,
+          "rampWidth": 0,
+          "rampInclination": 0,
+          "numberSteps": 0,
+          "maxStepHeight": 0
+         },
+         "openingHours": []
+        }
+       ]
+      }
+     ],
+     "infos": [],
+     "coords": [
+      [
+       -33.797472,
+       151.180895
+      ],
+      [
+       -33.797418,
+       151.180894
+      ],
+      [
+       -33.797439,
+       151.180939
+      ],
+      [
+       -33.797139,
+       151.181156
+      ],
+      [
+       -33.79688,
+       151.181089
+      ],
+      [
+       -33.796901,
+       151.181004
+      ]
+     ],
+     "pathDescriptions": [
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "LEAVE",
+       "name": "Leave Commuter train M1 Metro North West & Bankstown Line in direction of travel: low platform vehicle",
+       "coord": [
+        -33.797472,
+        151.180891
+       ],
+       "duration": 0,
+       "cumDuration": 0,
+       "distance": 0,
+       "cumDistance": 0,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 0,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "",
+       "coord": [
+        -33.797472,
+        151.180891
+       ],
+       "skyDirection": 358,
+       "duration": 13,
+       "cumDuration": 13,
+       "distance": 14,
+       "cumDistance": 14,
+       "fromCoordsIndex": 0,
+       "toCoordsIndex": 3,
+       "properties": {
+        "INDOOR_TYPE": "PLATFORM_WAY"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "UNKNOWN",
+       "name": "elevator downward to level -1",
+       "coord": [
+        -33.797384,
+        151.180833
+       ],
+       "duration": 100,
+       "cumDuration": 113,
+       "distance": 0,
+       "cumDistance": 14,
+       "fromCoordsIndex": 3,
+       "toCoordsIndex": 4,
+       "properties": {
+        "FLOOR_LEVEL_CHANGE_DIRECTION": "DOWN",
+        "FLOOR_LEVEL_DIFFERENCE": "-1",
+        "INDOOR_TYPE": "LIFT",
+        "TRACK_SURFACE": "ASPHALTED"
+       }
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "",
+       "coord": [
+        -33.797384,
+        151.180833
+       ],
+       "skyDirection": 175,
+       "duration": 42,
+       "cumDuration": 156,
+       "distance": 47,
+       "cumDistance": 62,
+       "fromCoordsIndex": 4,
+       "toCoordsIndex": 8,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      },
+      {
+       "turnDirection": "UNKNOWN",
+       "manoeuvre": "ORIGIN",
+       "name": "",
+       "coord": [
+        -33.797302,
+        151.181131
+       ],
+       "duration": 0,
+       "cumDuration": 156,
+       "distance": 0,
+       "cumDistance": 62,
+       "fromCoordsIndex": 8,
+       "toCoordsIndex": 8
+      },
+      {
+       "turnDirection": "STRAIGHT",
+       "manoeuvre": "KEEP",
+       "name": "",
+       "coord": [
+        -33.797302,
+        151.181131
+       ],
+       "skyDirection": 89,
+       "duration": 37,
+       "cumDuration": 193,
+       "distance": 42,
+       "cumDistance": 104,
+       "fromCoordsIndex": 8,
+       "toCoordsIndex": 13,
+       "properties": {
+        "INDOOR_TYPE": "BUILDING_WAY"
+       }
+      },
+      {
+       "turnDirection": "SLIGHT_RIGHT",
+       "manoeuvre": "TURN",
+       "name": "footpath",
+       "coord": [
+        -33.796978,
+        151.181115
+       ],
+       "skyDirection": 357,
+       "duration": 19,
+       "cumDuration": 213,
+       "distance": 21,
+       "cumDistance": 126,
+       "fromCoordsIndex": 13,
+       "toCoordsIndex": 16
+      }
+     ],
+     "properties": {
+      "PTWalkMinutes": "2"
+     }
+    }
+   ],
+   "daysOfService": {
+    "rvb": "41830000183060C1060C183000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+   }
+  }
+ ]
+}
