@@ -25,6 +25,8 @@ from app.places.overpass import OverpassClient
 from app.places.photon import PhotonClient
 from app.places.resolver import PlaceResolver
 from app.seed import seed
+from app.mapdata.agent import MapAgent
+from app.mapdata.snapshot import load_snapshot
 from app.transit.lifts import LiftAlertSync, LiftFeed, LiftPoller
 from app.transit.plan import TransitPlanner
 from app.transit.tfnsw import TfnswClient
@@ -100,6 +102,10 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
                                      st.broadcaster, settings.lift_poll_seconds) if st.tfnsw else None)
         st.transit = (TransitPlanner(st.tfnsw, st.places.station_stop_id, frozenset(st.places.lift_osm_ids))
                       if st.tfnsw else None)
+        # Map agent (cycle 5): runs only when the owner asks. The snapshot fills a map that was never updated.
+        load_snapshot(st.engine, settings.osm_snapshot_path)
+        st.map_agent = MapAgent(st.engine, OverpassClient(settings.overpass_url) if settings.overpass_url else None,
+                                st.tfnsw, st.llm, st.graph, quiet=lambda: _quiet(st))
         task = asyncio.create_task(st.lift_poller.run()) if st.lift_poller and settings.lift_poll_seconds > 0 else None
         yield
         for t in (task, sync_task):

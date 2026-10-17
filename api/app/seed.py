@@ -21,8 +21,20 @@ def retire_demo_lifts(session: Session) -> None:
     session.commit()
 
 
+DEMO_ROADWORKS = "Footpath works, detour in place"
+
+
+def retire_demo_roadworks(session: Session) -> None:
+    """Databases seeded before cycle 5 hold a made-up roadworks notice; real ones come from the map agent now."""
+    for b in session.exec(select(Barrier).where(Barrier.title == DEMO_ROADWORKS)).all():
+        if any("(demo data)" in src.get("label", "") for src in b.sources):
+            session.delete(b)
+    session.commit()
+
+
 def seed(session: Session, G, places) -> None:
     retire_demo_lifts(session)
+    retire_demo_roadworks(session)
     if session.exec(select(Barrier)).first():
         return
     t = now()
@@ -33,9 +45,6 @@ def seed(session: Session, G, places) -> None:
         return Barrier(lat=lat, lng=lng, edge_id=edge, first_seen=t - ago, last_confirmed=t - ago, **kw)
 
     session.add_all([
-        barrier(-33.77215, 151.11590, 2 * h, type="blocked", title="Footpath works, detour in place", place="Management Drive",
-                status="confirmed", confidence=0.9, update_type="roadworks",
-                sources=[_src("feed", "Live Traffic NSW (demo data)", 2 * h)]),
         barrier(-33.77830, 151.11950, 25 * m, type="broken_ramp", title="Kerb ramp may be damaged", place="Herring Road crossing",
                 status="needs_checking", confidence=0.4, update_type="report",
                 sources=[_src("user", "One user report, no photo yet", 25 * m)]),
@@ -69,7 +78,6 @@ def seed(session: Session, G, places) -> None:
     session.add_all([
         AgentRun(agent="updates", started_at=t - 3 * m, finished_at=t - 3 * m, summary="Checked the weather."),
         AgentRun(agent="report_checker", started_at=t - h, finished_at=t - h, summary="Rechecked 1 report."),
-        AgentRun(agent="venue", started_at=t - 2 * m, finished_at=t - 2 * m, summary="Checked Waranara Library using 3 sources."),
         AgentRun(agent="route", started_at=t - h, finished_at=t - h, summary="Planned Macquarie University station to Waranara Library."),
     ])
     session.commit()

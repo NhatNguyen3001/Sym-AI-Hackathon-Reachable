@@ -65,7 +65,7 @@ def roadworks(client):
     return client.get("/updates", params={"type": "roadworks"}).json()[0]
 
 
-def test_report_without_ai_label_needs_checking(client):
+def test_report_without_ai_label_needs_checking(client, campus_roadwork):
     rw = roadworks(client)
     url = upload(client).json()["photoUrl"]
     r = client.post("/reports", json={"photoUrl": url, "lat": rw["lat"], "lng": rw["lng"], "userLabel": "blocked", "note": ""})
@@ -74,7 +74,7 @@ def test_report_without_ai_label_needs_checking(client):
     assert items[0]["status"] == "Needs checking" and items[0]["title"] == "Footpath blocked"
 
 
-def test_report_matching_roadworks_is_confirmed(client):
+def test_report_matching_roadworks_is_confirmed(client, campus_roadwork):
     client.app.state.llm = FakeVision("blocked")
     rw = roadworks(client)
     up = upload(client).json()

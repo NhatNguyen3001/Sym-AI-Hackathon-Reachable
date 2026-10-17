@@ -53,7 +53,7 @@ def test_rain_toggle(client):
     assert "weather" in types
 
 
-def test_updates_feed_and_filter(client, lifts_live):
+def test_updates_feed_and_filter(client, lifts_live, campus_roadwork):
     items = client.get("/updates").json()
     assert len(items) >= 5
     first = items[0]

@@ -22,8 +22,8 @@ def test_schema_seed_json_and_threads_work_on_libsql(tmp_path):
     init_db(eng)
     with Session(eng) as s:
         seed(s, G, PL)
-        b = s.exec(select(Barrier).where(Barrier.type == "blocked")).first()
-        assert b.sources[0]["label"].endswith("(demo data)")
+        b = s.exec(select(Barrier).where(Barrier.place == "Herring Road crossing")).first()
+        assert b.sources[0]["label"] == "One user report, no photo yet"  # JSON column round-trips
         assert aware(b.first_seen).tzinfo == timezone.utc
         b.status = "resolved"
         s.add(b)

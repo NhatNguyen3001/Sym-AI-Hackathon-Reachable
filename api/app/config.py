@@ -33,3 +33,8 @@ class Settings(BaseSettings):
     tfnsw_url: str = "https://api.transport.nsw.gov.au"
     transit_min_km: float = 1
     lift_poll_seconds: int = 300  # 0 = no background polling (tests poll on demand)
+    # Map agent (cycle 5): owner-only, on demand. Empty ADMIN_KEY turns the run button off.
+    admin_key: str = ""
+    map_agent_paused: bool = False
+    # Dated OpenStreetMap places, loaded only when the map has never been updated. Empty string: none.
+    osm_snapshot_path: str = str(API_DIR / "data" / "osm_places_snapshot.json")
