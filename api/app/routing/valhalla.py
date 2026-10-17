@@ -14,8 +14,7 @@ from app.routing.route import SUGGESTION
 from app.routing.steps import group_items
 
 NO_PATH_CODES = {170, 171, 442, 443, 154, 155, 156, 157}
-TOO_LONG = ("This is too far to walk or roll. Take public transport for the long part; "
-            "we'll plan the trip to and from the stations soon.")
+TOO_LONG = "This is too far to walk or roll. Try public transport."
 SLOPE_REASON = "No step-free route within your slope limit."
 NO_ROUTE = "No step-free route right now."
 SLOPE_NOTE = "Slopes outside the Macquarie University campus are estimates. Check steep sections before you go."

@@ -24,6 +24,7 @@ from app.places.photon import PhotonClient
 from app.places.resolver import PlaceResolver
 from app.seed import seed
 from app.transit.lifts import LiftAlertSync, LiftFeed, LiftPoller
+from app.transit.plan import TransitPlanner
 from app.transit.tfnsw import TfnswClient
 from app.weather import WeatherService
 
@@ -79,6 +80,8 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
         st.lift_feed = LiftFeed(enabled=st.tfnsw is not None)
         st.lift_poller = (LiftPoller(st.tfnsw, LiftAlertSync(st.places, st.tfnsw.stop_coord), st.lift_feed, st.engine,
                                      st.broadcaster, settings.lift_poll_seconds) if st.tfnsw else None)
+        st.transit = (TransitPlanner(st.tfnsw, st.places.station_stop_id, frozenset(st.places.lift_osm_ids))
+                      if st.tfnsw else None)
         task = asyncio.create_task(st.lift_poller.run()) if st.lift_poller and settings.lift_poll_seconds > 0 else None
         yield
         if task:

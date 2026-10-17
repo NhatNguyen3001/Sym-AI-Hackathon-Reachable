@@ -90,8 +90,7 @@ def test_too_long_leg_is_ok_false():
     assert "public transport" in r["reason"]
 
 
-TOO_FAR = ("This is too far to walk or roll. Take public transport for the long part; "
-           "we'll plan the trip to and from the stations soon.")
+TOO_FAR = "This is too far to walk or roll. Try public transport."
 
 
 def test_walk_longer_than_cap_is_too_far_even_when_straight_line_is_short():

@@ -97,3 +97,18 @@ def test_template_mentions_outage_and_minutes():
 def test_template_same_as_fastest_and_no_route():
     assert "also the fastest route" in template_explanation({**FACTS, "minutesLonger": 0, "liftsOut": []})
     assert "couldn't find a step-free route" in template_explanation({"ok": False})
+
+
+TRANSIT_OPT = {"legs": [{"kind": "walk", "source": "reachable", "minutes": 7, "stepFree": True, "to": "Gadigal Station"},
+                        {"kind": "station", "station": "Gadigal Station", "path": [{"type": "lift", "label": "Lift down"}]},
+                        {"kind": "ride", "label": "Metro M1", "stops": 5, "to": {"name": "Chatswood Station"}},
+                        {"kind": "walk", "source": "reachable", "minutes": 3, "stepFree": True, "to": "436 Victoria Av"}],
+               "warnings": []}
+
+
+def test_template_transit():
+    from app.llm.explain import template_transit
+    assert template_transit(TRANSIT_OPT) == ("Walk 7 min on a step-free path to Gadigal Station, take the lift, ride the "
+                                             "Metro M1 5 stops to Chatswood Station, then walk 3 min.")
+    warned = template_transit({**TRANSIT_OPT, "warnings": ["Lift 3 at Sydenham is out. Check before you go."]})
+    assert warned.endswith(" Lift 3 at Sydenham is out. Check before you go.")
