@@ -32,22 +32,46 @@ export function PlaceInput({
     setText(value.name);
   }
 
-  async function runSearch(q: string) {
+  // The query the current suggestions belong to, so Enter never picks a result for different text.
+  const optionsFor = useRef<string | null>(null);
+
+  /** One or no characters only shows our known places. */
+  const normalise = (q: string) => (q.trim().length >= 2 ? q : "");
+
+  /** Runs a search now. Returns its results, or null if a newer search started meanwhile. */
+  async function runSearch(query: string): Promise<Place[] | null> {
     const n = ++seq.current;
-    const { data, limited: lim } = await getPlaces(q);
-    if (n === seq.current) {
-      setOptions(data);
-      setLimited(lim && q.trim().length >= 2);
-      setActive(data.length ? 0 : -1);
-    }
+    const { data, limited: lim } = await getPlaces(query);
+    if (n !== seq.current) return null;
+    optionsFor.current = query;
+    setOptions(data);
+    setLimited(lim && query.trim().length >= 2);
+    setActive(data.length ? 0 : -1);
+    return data;
   }
 
-  /** Waits for a pause in typing (250 ms). One or no characters only shows our known places. */
+  /** Waits for a pause in typing (250 ms). Any search already in flight is discarded straight away. */
   function search(q: string, immediate = false) {
     if (timer.current) clearTimeout(timer.current);
-    const query = q.trim().length >= 2 ? q : "";
+    timer.current = null;
+    seq.current++;
+    optionsFor.current = null;
+    const query = normalise(q);
     if (immediate) void runSearch(query);
-    else timer.current = setTimeout(() => void runSearch(query), 250);
+    else timer.current = setTimeout(() => { timer.current = null; void runSearch(query); }, 250);
+  }
+
+  /** Enter while the list is out of date (still typing, or results for older text): search now, pick the top match. */
+  async function pickForEnter() {
+    const query = normalise(text);
+    if (optionsFor.current === query && !timer.current) {
+      if (options[active]) pick(options[active]);
+      return;
+    }
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = null;
+    const results = await runSearch(query);
+    if (results && results.length && query) pick(results[0]);
   }
 
   function pick(p: Place) {
@@ -66,9 +90,9 @@ export function PlaceInput({
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setActive((a) => Math.max(0, a - 1));
-    } else if (e.key === "Enter" && open && options[active]) {
+    } else if (e.key === "Enter" && open) {
       e.preventDefault();
-      pick(options[active]);
+      void pickForEnter();
     } else if (e.key === "Escape") {
       setOpen(false);
     }

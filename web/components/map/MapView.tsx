@@ -1,10 +1,12 @@
 "use client";
 // Client-only Leaflet map. Load it through RouteMap (next/dynamic with ssr: false), never directly from a server file.
 import "leaflet/dist/leaflet.css";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import L from "leaflet";
 import { CircleMarker, MapContainer, Marker, Polyline, TileLayer } from "react-leaflet";
 import { Minus, Plus } from "lucide-react";
+import { guardMap } from "./guardMap";
+import { useVisibleMount } from "./useVisibleMount";
 import type { MapBarrier, RouteOut } from "@/lib/types";
 
 const PRIMARY = "#1D4FA8";
@@ -51,6 +53,8 @@ export default function MapView({
   barriers?: MapBarrier[];
 }) {
   const [map, setMap] = useState<L.Map | null>(null);
+  const mountKey = useVisibleMount();
+  const mapRef = useCallback((m: L.Map | null) => setMap(guardMap(m)), []);
   const reduced = useReducedMotion();
   const acc = useMemo(() => toLatLng(accessible), [accessible]);
   const fast = useMemo(() => toLatLng(fastest), [fastest]);
@@ -72,14 +76,15 @@ export default function MapView({
 
   return (
     <div role="region" aria-label="Route map" className="relative h-full min-h-[560px] w-full">
-      <MapContainer
+      {mountKey !== null && <MapContainer
+        key={mountKey}
         center={CAMPUS}
         zoom={17}
         zoomControl={false}
         zoomAnimation={!reduced}
         fadeAnimation={!reduced}
         markerZoomAnimation={!reduced}
-        ref={setMap}
+        ref={mapRef}
         className="absolute inset-0 z-0"
       >
         <TileLayer
@@ -99,7 +104,7 @@ export default function MapView({
         {barriers.map((b) => (
           <Marker key={b.id} position={[b.lat, b.lng]} icon={barrierIcon(b)} title={b.title} alt={b.title} keyboard={false} />
         ))}
-      </MapContainer>
+      </MapContainer>}
 
       <div className="pointer-events-none absolute top-3 left-3 z-[500] rounded-[14px] border border-line bg-surface px-3.5 py-2.5 text-[14px]">
         <p className="sr-only">Map legend</p>
