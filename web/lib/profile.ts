@@ -16,6 +16,11 @@ export const AID_DEFAULTS: Record<Aid, Pick<Profile, "maxSlope"> & { avoid: Prof
   pram: { maxSlope: 8, avoid: { stairs: true, kerbsNoRamp: true, slipperyWhenWet: false, uneven: false } },
 };
 
+/** Switch mobility aid and take that aid's slope limit and avoid list (a wheelchair never takes stairs). */
+export function withAid(p: Profile, aid: Aid): Profile {
+  return { ...p, aid, maxSlope: AID_DEFAULTS[aid].maxSlope, avoid: { ...AID_DEFAULTS[aid].avoid } };
+}
+
 export const AID_LABELS: Record<Aid, string> = {
   manual_wheelchair: "Manual wheelchair",
   power_wheelchair: "Power wheelchair",

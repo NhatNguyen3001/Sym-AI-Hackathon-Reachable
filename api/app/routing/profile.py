@@ -1,9 +1,12 @@
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic.alias_generators import to_camel
 
 
 class Camel(BaseModel):
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+
+
+WHEELCHAIRS = {"manual_wheelchair", "power_wheelchair"}
 
 
 class Avoid(Camel):
@@ -25,6 +28,13 @@ class Profile(Camel):
     avoid: Avoid = Avoid()
     destination: Destination = Destination()
     text: str = ""
+
+    @model_validator(mode="after")
+    def _wheelchairs_never_take_stairs(self):
+        """Safety net: a wheelchair can't use steps, whatever the avoid list says."""
+        if self.aid in WHEELCHAIRS:
+            self.avoid = self.avoid.model_copy(update={"stairs": True})
+        return self
 
 
 DEFAULT_PROFILE = Profile(text="I use a manual wheelchair. Nothing steeper than 5%, and I need an accessible toilet where I'm going.")

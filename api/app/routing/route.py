@@ -38,18 +38,16 @@ def _same_line(a, b) -> bool:
 
 
 def _alt_summary(alt, primary) -> str:
-    """One plain sentence a non-specialist can compare with the recommended route."""
+    """One plain sentence a non-specialist can compare with the recommended route. Steps are always named first."""
     slower = alt["minutes"] - primary["minutes"]
+    if not alt["stepFree"] and primary["stepFree"]:
+        return "Faster, but it has steps" if slower < 0 else "Another way, but it has steps"
     if alt["maxSlope"] < primary["maxSlope"] and slower > 0:
         return f"Gentler slope, but about {slower} min slower"
     if alt["maxSlope"] < primary["maxSlope"] and slower <= 0:
         return "Gentler slope, and no slower"
     if alt["minutes"] < primary["minutes"] and alt["maxSlope"] > primary["maxSlope"]:
         return "Faster, but steeper"
-    if not alt["stepFree"] and primary["stepFree"] and alt["minutes"] < primary["minutes"]:
-        return "Faster, but it has steps"
-    if not alt["stepFree"] and primary["stepFree"]:
-        return "Another way, but it has steps"
     if slower > 0 and alt["maxSlope"] == primary["maxSlope"] and alt["stepFree"] == primary["stepFree"]:
         return f"A longer way around, about {slower} min slower, with the same slope"
     if slower > 0:
@@ -59,8 +57,9 @@ def _alt_summary(alt, primary) -> str:
     return "Another way, about the same time"
 
 
-def _other_routes(G, src, dst, primary, primary_edges, speed_mps, ctx: Context, exit_names) -> list[dict]:
-    """Up to two real alternatives: a flatter path, then the shortest path, drawn dashed on the map."""
+def _other_routes(G, src, dst, primary, primary_edges, speed_mps, ctx: Context, exit_names, profile, acc_w) -> list[dict]:
+    """Up to two real alternatives, drawn dashed on the map. They follow the same rules as the recommended route
+    (stairs, lift outages, barriers, kerbs, slope limit): a flatter way, then a way that avoids the recommended one."""
     found: list[dict] = []
 
     def add(edges):
@@ -69,30 +68,25 @@ def _other_routes(G, src, dst, primary, primary_edges, speed_mps, ctx: Context, 
         item = _summary(G, edges, speed_mps)
         if _same_line(item, primary) or any(_same_line(item, other) for other in found):
             return
+        if (profile.avoid.stairs and not item["stepFree"]) or item["maxSlope"] > profile.max_slope:
+            return  # belt and braces: acc_w already rules these out
         item["summary"] = _alt_summary(item, primary)
         item["steps"] = group_steps(G, edges, ctx, exit_names)
         found.append(item)
 
     def gentle_w(u, v, k, d):
-        if is_steps(d):
-            return math.inf
-        length = max(float(d.get("length", 1) or 1), 1.0)
+        cost = acc_w(u, v, k, d)
         grade = float(d.get("grade_abs", 0) or 0) * 100
-        return length * (1 + grade * grade)
+        return cost if cost == math.inf else cost * (1 + grade * grade)
 
-    def len_w(u, v, k, d):
-        return float(d.get("length", 0) or 0)
+    used = set(primary_edges)
+
+    def detour_w(u, v, k, d):
+        cost = acc_w(u, v, k, d)
+        return cost * 8 if (u, v, k) in used and cost != math.inf else cost
 
     add(_path(G, src, dst, gentle_w))
-    add(_path(G, src, dst, len_w))
-    if len(found) < 2:
-        blocked = set(primary_edges)
-
-        def detour_w(u, v, k, d):
-            length = float(d.get("length", 0) or 0)
-            return length * 8 if (u, v, k) in blocked else length
-
-        add(_path(G, src, dst, detour_w))
+    add(_path(G, src, dst, detour_w))
     return found
 
 
@@ -118,5 +112,5 @@ def find_routes(G, start, end, profile, ctx: Context, speed_mps: float, exit_nam
     return {"ok": True, "accessible": accessible, "fastest": fastest,
             "minutesLonger": max(0, accessible["minutes"] - fastest["minutes"]),
             "steps": group_steps(G, acc, ctx, exit_names), "exitUsed": exit_used,
-            "alternatives": _other_routes(G, start.node, end.node, accessible, acc, speed_mps, ctx, exit_names),
+            "alternatives": _other_routes(G, start.node, end.node, accessible, acc, speed_mps, ctx, exit_names, profile, acc_w),
             "edges": [edge_id(*e) for e in acc]}

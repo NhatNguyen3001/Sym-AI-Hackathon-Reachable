@@ -41,3 +41,13 @@ test("trips survive corrupt storage", () => {
   localStorage.setItem("reachable.trips", "[[[");
   expect(loadTrips()).toEqual([]);
 });
+
+test("choosing an aid applies its slope and avoid defaults", async () => {
+  const { withAid } = await import("@/lib/profile");
+  const cane = { ...placeholder, aid: "cane" as const, maxSlope: 8, avoid: { ...placeholder.avoid, stairs: false } };
+  const chair = withAid(cane, "manual_wheelchair");
+  expect(chair.aid).toBe("manual_wheelchair");
+  expect(chair.avoid.stairs).toBe(true);
+  expect(chair.maxSlope).toBe(5);
+  expect(chair.destination).toEqual(cane.destination);
+});

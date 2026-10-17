@@ -1,5 +1,5 @@
 "use client";
-import { AID_LABELS } from "@/lib/profile";
+import { AID_LABELS, withAid } from "@/lib/profile";
 import type { Aid, Profile } from "@/lib/types";
 import { cn } from "cn";
 
@@ -45,7 +45,7 @@ export function NeedsTicks({ profile, onChange }: { profile: Profile; onChange: 
         <div className="flex flex-wrap gap-2">
           {AIDS.map((aid) => (
             <Tick key={aid} label={AID_LABELS[aid]} on={profile.aid === aid}
-              onClick={() => onChange({ ...profile, aid })} />
+              onClick={() => onChange(withAid(profile, aid))} />
           ))}
         </div>
       </fieldset>

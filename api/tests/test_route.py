@@ -49,7 +49,7 @@ def test_needs_checking_on_route_marks_step_not_sure():
 
 
 def test_steps_allowed_profile_uses_steps():
-    r = run(profile=Profile(max_slope=5, avoid=Avoid(stairs=False)))
+    r = run(profile=Profile(aid="cane", max_slope=5, avoid=Avoid(stairs=False)))
     assert r["exitUsed"] == "south" and r["accessible"]["stepFree"] is False   # P-S-L 80
 
 
@@ -77,3 +77,30 @@ def test_step_grouping_labels():
     assert labels[0] == "Lift at north exit"
     assert "Flat footpath, 100 m" in labels
     assert "Gentle slope, up to 2%, 100 m" in labels
+
+
+def _uses(alt, label):
+    return any(s["label"] == label for s in alt["steps"])
+
+
+def test_alternatives_follow_the_profile():
+    for alt in run()["alternatives"]:
+        assert alt["stepFree"] and alt["maxSlope"] <= 5          # never the S-L steps or the 8% N-L shortcut
+
+
+def test_alternatives_never_use_a_broken_lift():
+    r = run(Context(lift_out_exits={"north"}))
+    assert r["exitUsed"] == "south"
+    assert not any(_uses(a, "Lift at north exit") for a in r["alternatives"])
+
+
+def test_alternatives_avoid_confirmed_barriers():
+    r = run(Context(barriers={"B-L-0": "confirmed", "L-B-0": "confirmed"}))
+    assert r["alternatives"] == []                               # the only other step-free way is blocked
+
+
+def test_alternative_label_names_steps_first():
+    from app.routing.route import _alt_summary
+    alt = {"minutes": 9, "maxSlope": 1, "stepFree": False}
+    primary = {"minutes": 10, "maxSlope": 3, "stepFree": True}
+    assert "steps" in _alt_summary(alt, primary)

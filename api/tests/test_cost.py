@@ -19,7 +19,7 @@ def test_steps_blocked_when_avoiding_stairs():
 
 
 def test_steps_allowed_when_not_avoiding():
-    p = Profile(avoid=Avoid(stairs=False))
+    p = Profile(aid="cane", avoid=Avoid(stairs=False))
     assert edge_cost("a", e(highway="steps"), p, Context()) == 100.0
 
 
@@ -68,3 +68,10 @@ def test_barriers():
 
 def test_list_valued_tags_are_handled():
     assert edge_cost("a", e(highway=["steps", "footway"]), P, Context()) == math.inf
+
+
+def test_wheelchair_profiles_always_avoid_stairs():
+    from app.routing.profile import Avoid, Profile
+    for aid in ("manual_wheelchair", "power_wheelchair"):
+        assert Profile(aid=aid, avoid=Avoid(stairs=False)).avoid.stairs is True
+    assert Profile(aid="cane", avoid=Avoid(stairs=False)).avoid.stairs is False

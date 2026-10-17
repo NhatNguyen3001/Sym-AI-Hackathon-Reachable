@@ -112,7 +112,7 @@ def test_wheelchair_options_and_rain():
 
 def test_stairs_allowed_uses_foot_without_step_penalty():
     c = FakeClient([trip()], [trace()])
-    router(c).plan(START, END, Profile(max_slope=5, avoid=Avoid(stairs=False)), Context())
+    router(c).plan(START, END, Profile(aid="cane", max_slope=5, avoid=Avoid(stairs=False)), Context())
     opts = c.route_bodies[0]["costing_options"]["pedestrian"]
     assert opts["type"] == "foot" and "step_penalty" not in opts
 
@@ -241,7 +241,7 @@ def test_unavoidable_steps_is_ok_false():
 
 def test_steps_edge_marks_not_step_free():
     edges = [edge(0, 1), edge(1, 2, use="steps")]
-    r = router(FakeClient([trip()], [trace(edges=edges)])).plan(START, END, Profile(max_slope=5, avoid=Avoid(stairs=False)), Context())
+    r = router(FakeClient([trip()], [trace(edges=edges)])).plan(START, END, Profile(aid="cane", max_slope=5, avoid=Avoid(stairs=False)), Context())
     assert r["accessible"]["stepFree"] is False and any(s["label"].startswith("Steps") for s in r["steps"])
 
 

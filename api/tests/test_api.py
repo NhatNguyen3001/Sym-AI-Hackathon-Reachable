@@ -111,3 +111,17 @@ def test_profile_parse(client):
 def test_updates_run_logs(client):
     r = client.post("/agents/updates/run").json()
     assert r["ok"] is True and r["summary"] == "Live lift alerts are off. Checked the weather."
+
+
+def test_barriers_along_an_alternative_are_listed(client, app):
+    from sqlmodel import Session
+    from app.models import Barrier
+    first = client.post("/route", json=body()).json()
+    alt = first["alternatives"][0]["geometry"]["coordinates"]
+    lng, lat = alt[len(alt) // 2]
+    with Session(app.state.engine) as s:  # a point barrier (no edge), so it doesn't change the routes
+        s.add(Barrier(id="on-alt", type="narrow", title="Path too narrow", place="x", lat=lat, lng=lng,
+                      status="needs_checking", update_type="report"))
+        s.commit()
+    r = client.post("/route", json=body()).json()
+    assert "on-alt" in {b["id"] for b in r["barriers"]}

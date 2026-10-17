@@ -168,7 +168,8 @@ def plan_route(body: RouteIn, request: Request, session: Session = Depends(get_s
              "exitName": st.places.exit_names.get(r["exitUsed"]) if r.get("exitUsed") else None,
              "liftsOut": lifts_out, "raining": weather["raining"], "avoided": avoided}
     barriers = [{"id": b.id, "type": b.type, "title": b.title, "status": b.status, "lat": b.lat, "lng": b.lng}
-                for b in active_barriers(session) if b.type != "lift_outage" and _near(b, (acc, fast))]
+                for b in active_barriers(session)
+                if b.type != "lift_outage" and _near(b, (acc, fast, *r.get("alternatives", [])))]
     out = {k: v for k, v in r.items() if k != "edges"}
     explanation = explain_transit(top, st.llm) if top["mode"] == "transit" else explain_route(facts, st.llm)
     return {**out, **extra, "options": options, "liftStatus": lifts, "barriers": barriers, "explanation": explanation,
