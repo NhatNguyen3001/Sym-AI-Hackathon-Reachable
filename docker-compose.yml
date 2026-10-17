@@ -1,0 +1,14 @@
+# Local services for Sydney-wide routing. First start builds routing tiles + elevation (can take a while).
+# Build the map first: api/.venv/Scripts/python api/scripts/build_sydney_extract.py
+services:
+  valhalla:
+    image: ghcr.io/valhalla/valhalla-scripted:latest
+    ports: ["8002:8002"]
+    volumes: ["./valhalla/custom_files:/custom_files"]
+    environment:
+      use_tiles_ignore_pbf: "True"
+      build_elevation: "True"
+      build_admins: "False"
+      build_time_zones: "False"
+      server_threads: "4"
+    restart: unless-stopped
