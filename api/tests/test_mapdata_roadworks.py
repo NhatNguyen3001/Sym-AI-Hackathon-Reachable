@@ -103,3 +103,16 @@ def test_one_failed_batch_of_several_is_also_no_verdict():
                 raise RuntimeError("rate limited")
             return super().parse(**kw)
     assert judge(items(30), Flaky()) is None
+
+
+def test_judging_gets_more_time_than_a_page_request():
+    """Found in the first real run: 25 notices take Claude longer than the 15 s the page-request client allows."""
+    seen = {}
+
+    class Timed(FakeClaude):
+        def with_options(self, **kw):
+            seen.update(kw)
+            return self
+
+    judge(items(2), Timed())
+    assert seen["timeout"] >= 120 and seen["max_retries"] >= 2

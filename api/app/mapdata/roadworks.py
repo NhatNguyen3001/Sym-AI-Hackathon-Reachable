@@ -10,6 +10,9 @@ from zoneinfo import ZoneInfo
 from pydantic import BaseModel
 
 MODEL = "claude-sonnet-5-5"
+# The shared client allows 15 s (fine inside a page request); a batch of 25 notices takes longer, and this runs in
+# the background, so it may wait.
+JUDGE_TIMEOUT_S = 120.0
 KINDS = ("roadwork", "incident", "majorevent")
 TZ = ZoneInfo("Australia/Sydney")
 log = logging.getLogger("reachable")
@@ -82,6 +85,8 @@ def judge(items: list[dict], client, batch: int = 25) -> dict[str, Verdict] | No
     like "nothing affects walkers" (the run then keeps the roadworks it has)."""
     if client is None:
         return None
+    if hasattr(client, "with_options"):
+        client = client.with_options(timeout=JUDGE_TIMEOUT_S, max_retries=2)
     out: dict[str, Verdict] = {}
     for i in range(0, len(items), batch):
         chunk = items[i:i + batch]
