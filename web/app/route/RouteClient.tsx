@@ -15,8 +15,6 @@ import { useEvents } from "@/lib/events";
 import { addTrip, loadProfile, rememberPlace, saveProfile } from "@/lib/profile";
 import { profile as defaultProfile } from "@/lib/placeholder";
 import { routeFeatures } from "@/lib/routeFeatures";
-import { routeProgress } from "@/lib/routeProgress";
-import { useUserLocation } from "@/lib/useUserLocation";
 import type { Place, Profile, RouteOption, RouteResult, VenueCheck } from "@/lib/types";
 
 interface LiveCard {
@@ -47,8 +45,6 @@ export function RouteClient() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [picked, setPicked] = useState<number | null>(null);
-  const [navigating, setNavigating] = useState(false);
-  const { fix } = useUserLocation();
 
   const load = useCallback(async (p: Profile) => {
     try {
@@ -80,7 +76,6 @@ export function RouteClient() {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage is only readable after mount
     setProfile(p);
     setPicked(null);
-    setNavigating(false);
     load(p);
     findPlace(fromId).then(setFrom);
     findPlace(toId).then(setTo);
@@ -126,9 +121,6 @@ export function RouteClient() {
       : route?.ok && (route.minutesLonger ?? 0) > 0
         ? `${route.minutesLonger} min longer than the fastest`
         : "";
-  const progress = routeProgress(active?.geometry.coordinates, fix?.lat ?? 0, fix?.lng ?? 0);
-  const progressPct = Math.round(progress.fraction * 100);
-  const minutesLeft = active ? Math.max(1, Math.ceil(active.minutes * (1 - progress.fraction))) : 0;
 
   function chooseRoute(which: "active" | number) {
     if (!route?.ok) return;
@@ -212,17 +204,7 @@ export function RouteClient() {
         {!sheetOpen && (
           <div className="lg:hidden">
             <p className="text-[16px] font-bold">{from?.name ?? "From"} to {to?.name ?? "To"}</p>
-            {navigating && active ? (
-              <div className="mt-2">
-                <div role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progressPct}
-                  aria-label="Trip progress" className="h-3 overflow-hidden rounded-full bg-line">
-                  <div className="h-full rounded-full bg-primary" style={{ width: `${progressPct}%` }} />
-                </div>
-                <p className="mt-1 text-[15px] text-muted">
-                  {fix ? `${progress.leftM} m left · about ${minutesLeft} min` : "Waiting for your location."}
-                </p>
-              </div>
-            ) : active && (
+            {active && (
               <p className="text-[15px] text-muted">
                 {active.minutes} min · {active.stepFree ? "step-free" : "has steps"} · max slope {active.maxSlope}%
               </p>
@@ -232,8 +214,8 @@ export function RouteClient() {
                 className="inline-flex size-11 items-center justify-center rounded-full border border-line-strong text-ink">
                 <SlidersHorizontal aria-hidden="true" className="size-5" strokeWidth={2.4} />
               </button>
-              {picked !== null && !navigating && (
-                <button type="button" onClick={() => setNavigating(true)}
+              {picked !== null && (
+                <button type="button"
                   className="inline-flex min-h-11 items-center rounded-full bg-primary px-5 text-[15px] font-bold text-white">
                   Start
                 </button>
@@ -251,8 +233,8 @@ export function RouteClient() {
                 filtersOpen ? "border-primary bg-primary text-white" : "border-line-strong bg-surface text-ink")}>
               <SlidersHorizontal aria-hidden="true" className="size-5" strokeWidth={2.4} />
             </button>
-            {picked !== null && !navigating && (
-              <button type="button" onClick={() => setNavigating(true)}
+            {picked !== null && (
+              <button type="button"
                 className="inline-flex min-h-11 items-center rounded-full bg-primary px-5 text-[15px] font-bold text-white">
                 Start
               </button>
@@ -279,28 +261,16 @@ export function RouteClient() {
           {active && (
             <section aria-labelledby="summary-h">
               <h2 id="summary-h" className="sr-only">Summary</h2>
-              {navigating ? (
+              <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
-                  <div role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progressPct}
-                    aria-label="Trip progress" className="h-3 overflow-hidden rounded-full bg-line">
-                    <div className="h-full rounded-full bg-primary" style={{ width: `${progressPct}%` }} />
-                  </div>
-                  <p className="mt-2 text-[15px] text-muted">
-                    {fix ? `${progress.leftM} m left · about ${minutesLeft} min` : "Waiting for your location."}
+                  <p className="text-[32px] leading-none font-bold">{active.minutes} min</p>
+                  <p className="mt-1 text-[15px] text-muted">
+                    {active.distanceM} m · {active.stepFree ? "step-free" : "has steps"} ·{" "}
+                    {active.slopeEstimated ? "slopes estimated" : `max slope ${active.maxSlope}%`}
                   </p>
                 </div>
-              ) : (
-                <div className="flex flex-wrap items-end justify-between gap-3">
-                  <div>
-                    <p className="text-[32px] leading-none font-bold">{active.minutes} min</p>
-                    <p className="mt-1 text-[15px] text-muted">
-                      {active.distanceM} m · {active.stepFree ? "step-free" : "has steps"} ·{" "}
-                      {active.slopeEstimated ? "slopes estimated" : `max slope ${active.maxSlope}%`}
-                    </p>
-                  </div>
-                  {route?.status && !chosen && <StatusBadge label={route.status} />}
-                </div>
-              )}
+                {route?.status && !chosen && <StatusBadge label={route.status} />}
+              </div>
             </section>
           )}
 
