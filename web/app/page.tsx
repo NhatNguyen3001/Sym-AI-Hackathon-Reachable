@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Check, Clock, DoorOpen } from "lucide-react";
+import { Check, Clock, DoorOpen, TriangleAlert } from "lucide-react";
 import { StairsIcon } from "@/components/icons";
 import { LivePreview } from "@/components/LivePreview";
 import { Footer } from "@/components/layout/Footer";
@@ -53,11 +53,11 @@ export default function Landing() {
               <div className="mt-4 space-y-3">
                 <div className="flex items-start gap-3 rounded-[14px] border border-line bg-bg p-4">
                   <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-[9px] bg-warn text-white">
-                    <StairsIcon width={20} height={20} />
+                    <TriangleAlert className="size-5" strokeWidth={2.4} />
                   </span>
                   <div>
-                    <p className="font-bold">Fastest route, 8 min</p>
-                    <p className="text-[15px] text-muted">Uses the south exit stairs</p>
+                    <p className="font-bold">Without lift status: south exit, 11 min</p>
+                    <p className="text-[15px] text-muted">The south exit lift is out of service. You&apos;d find out when you get there.</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 rounded-[14px] border-2 border-primary bg-primary-soft p-4">
@@ -65,12 +65,14 @@ export default function Landing() {
                     <Check className="size-5" strokeWidth={2.6} />
                   </span>
                   <div>
-                    <p className="font-bold text-primary-hover">Reachable route, 12 min</p>
-                    <p className="text-[15px] text-primary-hover">North exit lift is working, step-free path, entrance checked</p>
+                    <p className="font-bold text-primary-hover">Reachable: north exit, 10 min</p>
+                    <p className="text-[15px] text-primary-hover">North exit lift is working, step-free path, gentle slopes, entrance checked</p>
                   </div>
                 </div>
               </div>
-              <p className="mt-4 text-[14px] text-muted">Macquarie University station to the Library, manual wheelchair</p>
+              <p className="mt-4 text-[14px] text-muted">
+                Macquarie University station to Waranara Library, manual wheelchair. Lift outage is demo data.
+              </p>
             </figure>
           </div>
         </section>
