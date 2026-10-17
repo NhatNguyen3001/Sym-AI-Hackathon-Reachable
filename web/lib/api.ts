@@ -118,6 +118,10 @@ export const getAmenities = () => read<AmenityPin[]>("/amenities", sample.amenit
 export const getMapPlaces = (bbox: [number, number, number, number]) =>
   read<MapPlacePin[]>(`/map/places?bbox=${bbox.map((v) => v.toFixed(4)).join(",")}`, []);
 
+/** Owner only: start a map update (the key travels in a header, never the URL). */
+export const runMapAgent = (key: string) =>
+  request<{ started: boolean }>("/agents/map/run", { method: "POST", headers: { "X-Admin-Key": key } });
+
 /** When the map agent last ran. Null when the API is down. */
 export const getMapStatus = () => read<MapStatus | null>("/agents/map/status", null);
 

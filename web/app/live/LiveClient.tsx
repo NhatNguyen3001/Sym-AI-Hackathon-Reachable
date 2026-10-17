@@ -2,9 +2,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { SampleDataBanner } from "@/components/Banners";
 import { FilterChips } from "@/components/FilterChips";
+import { MapFreshness } from "@/components/MapFreshness";
+import { OwnerMapUpdate } from "@/components/OwnerMapUpdate";
 import { UpdateRow } from "@/components/Rows";
 import { getUpdates } from "@/lib/api";
 import { useEvents } from "@/lib/events";
+import { useMapStatus } from "@/lib/useMapStatus";
 import type { UpdateItem, UpdateType } from "@/lib/types";
 
 type Filter = UpdateType | "all";
@@ -22,6 +25,7 @@ export function LiveClient() {
   const [items, setItems] = useState<UpdateItem[] | null>(null);
   const [sample, setSample] = useState(false);
   const [announce, setAnnounce] = useState("");
+  const [mapStatus, reloadMapStatus] = useMapStatus();
 
   const loadItems = useCallback(async (f: Filter) => {
     const r = await getUpdates(f);
@@ -42,7 +46,7 @@ export function LiveClient() {
     };
   }, [filter]);
 
-  useEvents(["barrier_changed", "lift_changed", "weather_changed", "report_created"], async () => {
+  useEvents(["barrier_changed", "lift_changed", "weather_changed", "report_created", "map_updated"], async () => {
     const fresh = await loadItems(filter);
     if (fresh[0]) setAnnounce(`New update: ${fresh[0].title} at ${fresh[0].place}.`);
   });
@@ -56,6 +60,10 @@ export function LiveClient() {
           <li><strong>Unconfirmed</strong> — someone reported it. It has not been checked yet.</li>
           <li><strong>Cleared</strong> — the problem is gone. People should be able to get through.</li>
         </ul>
+      </section>
+      <section aria-label="Map updates" className="flex flex-wrap items-center justify-between gap-3">
+        <MapFreshness status={mapStatus} className="text-[15px]" />
+        <OwnerMapUpdate status={mapStatus} reload={reloadMapStatus} />
       </section>
       <FilterChips label="Show" options={FILTERS} value={filter} onChange={setFilter} />
       <SampleDataBanner show={sample} />
