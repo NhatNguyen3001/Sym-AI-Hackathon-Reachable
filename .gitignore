@@ -1,0 +1,11 @@
+api/.venv/
+**/__pycache__/
+api/uploads/
+api/*.db
+.env
+api/.env
+web/node_modules/
+web/.next/
+web/test-results/
+web/playwright-report/
+.superpowers/
