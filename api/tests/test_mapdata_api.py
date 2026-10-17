@@ -156,3 +156,10 @@ def test_browser_test_hooks(settings):
         assert press(c).status_code == 202
         s = wait_done(c)
         assert s["places"] == 40 and s["roadworks"] == 1 and s["failed"] == []
+
+
+def test_a_zoomed_out_sydney_box_returns_every_place(client, app):
+    """Zoomed out over Sydney the map asks for the whole box: all ~5,500 places, not the southern 2,000."""
+    add_places(app, [(-34.1 + i * 0.0002, 151.1, "toilet", TOILET) for i in range(2500)])
+    pins = client.get("/map/places", params={"bbox": "150.5,-34.2,151.4,-33.4"}).json()
+    assert len(pins) == 2500

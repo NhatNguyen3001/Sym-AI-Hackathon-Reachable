@@ -12,6 +12,7 @@ import { WeatherBanner } from "@/components/Banners";
 import { MapFreshness } from "@/components/MapFreshness";
 import { getAmenities, getMapPlaces, getUpdates, getWeather } from "@/lib/api";
 import { useMapStatus } from "@/lib/useMapStatus";
+import { placesBox, SYDNEY_BOX } from "@/lib/mapBox";
 import { startPlaceId } from "@/lib/start";
 import { distanceLabel, HAZARD_LABEL, hazardsFromUpdates, type Hazard } from "@/lib/hazards";
 import { loadProfile, saveProfile } from "@/lib/profile";
@@ -45,14 +46,17 @@ export function ExploreClient() {
   const [mapStatus] = useMapStatus();
   const viewTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Load the OpenStreetMap places in view (plus a margin) after the map stops moving. Far out, the bubbles
-  // show what's already loaded.
+  // Load the OpenStreetMap places in view (plus a margin) after the map stops moving; zoomed out, all of Sydney
+  // once (about 5,500 places), so every bubble is there.
+  const loadedAll = useRef(false);
   const onView = useCallback((bounds: L.LatLngBounds, zoom: number) => {
     if (viewTimer.current) clearTimeout(viewTimer.current);
-    if (zoom < 11) return;
+    if (loadedAll.current) return;
     viewTimer.current = setTimeout(async () => {
-      const b = bounds.pad(0.2);
-      const r = await getMapPlaces([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()]);
+      const box = placesBox({ west: bounds.getWest(), south: bounds.getSouth(), east: bounds.getEast(),
+        north: bounds.getNorth() }, zoom);
+      const r = await getMapPlaces(box);
+      if (box === SYDNEY_BOX && !r.sample) loadedAll.current = true;
       if (!r.data.length) return;
       setPlaceMap((old) => {
         const next = new Map(old);

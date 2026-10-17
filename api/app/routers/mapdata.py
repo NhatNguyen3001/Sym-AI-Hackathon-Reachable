@@ -14,7 +14,7 @@ from app.models import MapPlace
 
 router = APIRouter()
 log = logging.getLogger("reachable")
-MAX_PINS = 2000
+MAX_PINS = 8000  # all of Greater Sydney (~5,500 places), so a zoomed-out view is never cut off
 LABEL = {"toilet": "Accessible toilet", "parking": "Accessible parking", "entrance": "Step-free entrance",
          "venue": "Wheelchair-accessible place"}
 
