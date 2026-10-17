@@ -5,7 +5,18 @@ import type {
   AgentCardData, AmenityPin, Fetched, Place, Profile, ReportIn, RouteResult, UpdateItem, UpdateType, VenueCheck, Weather,
 } from "./types";
 
-export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000").replace(/\/$/, "");
+// 127.0.0.1, not localhost: on Windows "localhost" tries IPv6 first and adds ~0.2 s to every request.
+export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000").replace(/\/$/, "");
+
+/** Identical requests made at the same time share one network call. */
+const inflight = new Map<string, Promise<unknown>>();
+function shared<T>(key: string, run: () => Promise<T>): Promise<T> {
+  const existing = inflight.get(key) as Promise<T> | undefined;
+  if (existing) return existing;
+  const p = run().finally(() => inflight.delete(key));
+  inflight.set(key, p);
+  return p;
+}
 
 export class ApiError extends Error {
   constructor(public code: string, message: string, public status = 0) {
@@ -59,9 +70,9 @@ async function read<T>(path: string, fallback: T, init?: RequestInit): Promise<F
 }
 
 /** Place search. `limited` means the server's address search is down and only known places came back. */
-export async function getPlaces(q: string): Promise<Fetched<Place[]> & { limited: boolean }> {
+export async function getPlaces(q: string, { photon = true }: { photon?: boolean } = {}): Promise<Fetched<Place[]> & { limited: boolean }> {
   try {
-    const { body, headers } = await requestWithHeaders<Place[]>(`/places?q=${encodeURIComponent(q)}`);
+    const { body, headers } = await requestWithHeaders<Place[]>(`/places?q=${encodeURIComponent(q)}${photon ? "" : "&photon=0"}`);
     return { data: body, sample: false, limited: headers.get("X-Search-Limited") === "1" };
   } catch {
     const data = sample.places.filter((p) => p.name.toLowerCase().includes(q.toLowerCase()));
@@ -69,12 +80,31 @@ export async function getPlaces(q: string): Promise<Fetched<Place[]> & { limited
   }
 }
 
+export interface SearchUpdate {
+  data: Place[];
+  limited: boolean;
+  /** True while the full (address) search is still running. */
+  pending: boolean;
+}
+
+/** Known places straight away (no address search), then the full results. onUpdate runs for each. */
+export async function searchPlaces(q: string, onUpdate: (r: SearchUpdate) => void): Promise<SearchUpdate> {
+  const known = await getPlaces(q, { photon: false });
+  onUpdate({ data: known.data, limited: false, pending: true });
+  const full = await getPlaces(q);
+  const done = { data: full.data, limited: full.limited, pending: false };
+  onUpdate(done);
+  return done;
+}
+
 const SAMPLE_TRIP = { from: "mq-station", to: "library" };
 
 /** The sample route only stands in for the sample trip; any other failed trip is reported as an error. */
-export async function getRoute(from: string, to: string, profile: Profile): Promise<Fetched<RouteResult>> {
-  if (from === SAMPLE_TRIP.from && to === SAMPLE_TRIP.to) return read<RouteResult>("/route", sample.route, jsonBody({ from, to, profile }));
-  return { data: await request<RouteResult>("/route", jsonBody({ from, to, profile })), sample: false };
+export function getRoute(from: string, to: string, profile: Profile): Promise<Fetched<RouteResult>> {
+  return shared(`route ${from} ${to} ${JSON.stringify(profile)}`, async () => {
+    if (from === SAMPLE_TRIP.from && to === SAMPLE_TRIP.to) return read<RouteResult>("/route", sample.route, jsonBody({ from, to, profile }));
+    return { data: await request<RouteResult>("/route", jsonBody({ from, to, profile })), sample: false };
+  });
 }
 
 export const getVenueCheck = (id: string) => read<VenueCheck>(`/venue/${encodeURIComponent(id)}/check`, sample.venue);
@@ -103,10 +133,19 @@ export const sendReport = (body: ReportIn) => request<{ id: string; status: stri
 export const photoSrc = (photoUrl: string) => `${API_URL}${photoUrl}`;
 
 /** One place by id (known, searched or coord:), or null if the server doesn't know it. */
-export async function getPlace(id: string): Promise<Place | null> {
-  try {
-    return await request<Place>(`/places/${encodeURIComponent(id)}`);
-  } catch {
-    return sample.places.find((p) => p.id === id) ?? null;
-  }
+/** Places don't change, so one found on this visit is reused (the route page needs each one several times). */
+const foundPlaces = new Map<string, Place>();
+
+export function getPlace(id: string): Promise<Place | null> {
+  const known = foundPlaces.get(id);
+  if (known) return Promise.resolve(known);
+  return shared(`place ${id}`, async () => {
+    try {
+      const place = await request<Place>(`/places/${encodeURIComponent(id)}`);
+      foundPlaces.set(id, place);
+      return place;
+    } catch {
+      return sample.places.find((p) => p.id === id) ?? null;
+    }
+  });
 }

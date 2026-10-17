@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { Clock, MapPin } from "lucide-react";
 import { cn } from "cn";
-import { getPlaces } from "@/lib/api";
+import { searchPlaces } from "@/lib/api";
 import { loadPlaces, rememberPlace } from "@/lib/profile";
 import type { Place } from "@/lib/types";
 
@@ -23,6 +23,7 @@ export function PlaceSearch({
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
   const [limited, setLimited] = useState(false);
+  const [pending, setPending] = useState(false);
   const seq = useRef(0);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const optionsFor = useRef<string | null>(null);
@@ -52,13 +53,19 @@ export function PlaceSearch({
 
   async function runSearch(query: string): Promise<Place[] | null> {
     const n = ++seq.current;
-    const { data, limited: lim } = await getPlaces(query);
+    let first = true;
+    // Known places show at once; address results replace them when the full search answers.
+    const done = await searchPlaces(query, (r) => {
+      if (n !== seq.current) return;  // a newer search (or a pick) has taken over
+      optionsFor.current = query;
+      setOptions(r.data);
+      setLimited(r.limited && query.trim().length >= 2);
+      setPending(r.pending);
+      if (first) setActive(r.data.length ? 0 : -1);
+      first = false;
+    });
     if (n !== seq.current) return null;
-    optionsFor.current = query;
-    setOptions(data);
-    setLimited(lim && query.trim().length >= 2);
-    setActive(data.length ? 0 : -1);
-    return data;
+    return done.data;
   }
 
   function search(q: string, immediate = false) {
@@ -66,6 +73,7 @@ export function PlaceSearch({
     timer.current = null;
     seq.current++;
     optionsFor.current = null;
+    setPending(false);
     const query = normalise(q);
     if (!query) {
       setOptions([]);
@@ -197,6 +205,9 @@ export function PlaceSearch({
               ))}
             </ul>
           )}
+          <p role="status" className={cn("px-3 pb-1 text-[14px] text-muted", !(open && pending && searching) && "sr-only")}>
+            {open && pending && searching ? "Searching…" : ""}
+          </p>
           <p role="status" className={cn("px-3 pb-2 text-[14px] text-warn-strong", !(open && limited && searching) && "sr-only")}>
             {open && limited && searching ? "Search is limited right now. Only some places are shown." : ""}
           </p>

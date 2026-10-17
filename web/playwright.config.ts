@@ -66,7 +66,7 @@ export default defineConfig({
     {
       command: `npm run build && npx next start -p ${WEB_PORT}`,
       url: `http://localhost:${WEB_PORT}`,
-      env: { NEXT_PUBLIC_API_URL: `http://localhost:${API_PORT}` },
+      env: { NEXT_PUBLIC_API_URL: `http://127.0.0.1:${API_PORT}` },
       reuseExistingServer: false,
       timeout: 300_000,
     },

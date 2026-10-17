@@ -49,7 +49,7 @@ Start it (leave this terminal running):
 .venv\Scripts\python -m uvicorn app.main:app --reload --port 8000     # Windows
 .venv/bin/python -m uvicorn app.main:app --reload --port 8000         # macOS / Linux
 ```
-Check: http://localhost:8000/health shows `{"ok":true}`.
+Check: http://127.0.0.1:8000/health shows `{"ok":true,...}`. The web app talks to the API at `127.0.0.1`, not `localhost`: on Windows `localhost` tries IPv6 first and adds about 0.2 s to every request.
 
 **2. Web** (second terminal, from the repo folder)
 ```bash
