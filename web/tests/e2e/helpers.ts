@@ -11,6 +11,14 @@ export async function openDetails(page: Page) {
   if (await show.isVisible()) await show.click();
 }
 
+/** Test browsers have location off, so the map asks where the trip starts: pick the campus station. */
+export async function startAtStation(page: Page) {
+  const from = page.getByRole("combobox", { name: "From" }).filter({ visible: true }).first();
+  await from.fill("macquarie uni");
+  await page.getByRole("option", { name: /Macquarie University station/ }).filter({ visible: true }).first().click();
+  await expect(from).toHaveValue("Macquarie University station");
+}
+
 /** Close the route details so the map and its buttons are free (on phones the sheet covers them). */
 export async function closeDetails(page: Page) {
   await expect(page.getByRole("button", { name: SHOW }).or(page.getByRole("button", { name: HIDE })).first()).toBeVisible();

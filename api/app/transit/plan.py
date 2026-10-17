@@ -194,7 +194,7 @@ class TransitPlanner:
             for s in (r.origin, r.dest):
                 if s.stop_id not in seen:
                     seen.add(s.stop_id)
-                    stations.append({"stopId": s.stop_id, "name": s.name})
+                    stations.append({"stopId": s.stop_id, "name": s.name, "lat": s.lat, "lng": s.lng})
         walks = [l for l in legs if l["kind"] == "walk"]
         step_free = all(l["stepFree"] for l in walks)
         # Departures share a card only when they're the same in everything that matters for safety (spec §10.2).

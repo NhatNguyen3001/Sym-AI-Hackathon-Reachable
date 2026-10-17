@@ -8,7 +8,7 @@ import { Minus, Plus } from "lucide-react";
 import { guardMap } from "./guardMap";
 import { useVisibleMount } from "./useVisibleMount";
 import type { PlaceMark, SlopeSpan } from "@/lib/routeFeatures";
-import type { Leg, MapBarrier, RouteOption, RouteOut } from "@/lib/types";
+import type { Leg, LiftRow, MapBarrier, RouteOption, RouteOut } from "@/lib/types";
 import { useUserLocation } from "@/lib/useUserLocation";
 
 const PRIMARY = "#1D4FA8";
@@ -67,6 +67,23 @@ function placeIcon(mark: PlaceMark) {
   });
 }
 
+const LIFT_COLOUR: Record<LiftRow["status"], string> = { Working: PRIMARY, "Out of service": "#BE123C", "Not sure": "#6B746F" };
+const LIFT_SVG = '<path d="M7 3h10v18H7z"/><path d="M12 3v18"/><path d="M9.5 9.5 12 7l2.5 2.5M9.5 14.5 12 17l2.5-2.5"/>';
+
+function liftIcon(lift: LiftRow, selected: boolean) {
+  const colour = LIFT_COLOUR[lift.status];
+  const cross = lift.status === "Out of service"
+    ? '<span style="position:absolute;right:-4px;top:-4px;display:flex;width:18px;height:18px;align-items:center;justify-content:center;border-radius:999px;background:#fff;color:#BE123C;font:800 13px/1 sans-serif">!</span>'
+    : "";
+  return L.divIcon({
+    className: "",
+    iconSize: [44, 44],
+    iconAnchor: [22, 22],
+    html: `<span style="position:relative;display:flex;width:44px;height:44px;align-items:center;justify-content:center;border-radius:12px;background:${colour};border:3px solid #fff;box-shadow:0 2px 8px rgba(21,32,27,.35);outline:${selected ? "3px solid " + colour : "none"};outline-offset:2px">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LIFT_SVG}</svg>${cross}</span>`,
+  });
+}
+
 const userIcon = L.divIcon({
   className: "",
   iconSize: [22, 22],
@@ -98,6 +115,7 @@ function sameLine(a?: RouteOut | null, b?: RouteOut | null) {
 
 export default function MapView({
   accessible, fastest, alternatives = [], barriers = [], routeLabel = "", marks = [], slopes = [], onPick, legs, ends,
+  lifts = [], selectedLift = null, onLift,
 }: {
   accessible?: RouteOut | null;
   fastest?: RouteOut | null;
@@ -111,6 +129,10 @@ export default function MapView({
   legs?: Leg[];
   /** Start and destination, shown as pins before the route arrives. */
   ends?: { from?: [number, number]; to?: [number, number] };
+  /** Station lifts on this trip. Tapping one opens its status card. */
+  lifts?: LiftRow[];
+  selectedLift?: string | null;
+  onLift?: (key: string) => void;
 }) {
   const [map, setMap] = useState<L.Map | null>(null);
   const [legendOpen, setLegendOpen] = useState(false);
@@ -248,6 +270,14 @@ export default function MapView({
         {barriers.map((b) => (
           <Marker key={b.id} position={[b.lat, b.lng]} icon={barrierIcon(b)} title={b.title} alt={b.title} keyboard={false} />
         ))}
+        {lifts.map((l) => {
+          const key = l.exitId ?? l.exit;
+          return (
+            <Marker key={`lift-${key}`} position={[l.lat as number, l.lng as number]} icon={liftIcon(l, key === selectedLift)}
+              title={`${l.exit}: ${l.status}`} alt={`${l.exit}: ${l.status}`} zIndexOffset={800}
+              eventHandlers={{ click: () => onLift?.(key) }} />
+          );
+        })}
         {fix && fix.accuracy > 0 && fix.accuracy < 1500 && (
           <Circle center={[fix.lat, fix.lng]} radius={fix.accuracy}
             pathOptions={{ color: PRIMARY, weight: 1, fillColor: PRIMARY, fillOpacity: 0.12 }} />
@@ -290,6 +320,14 @@ export default function MapView({
                 <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-full" style={{ background: PRIMARY }} />Level entrance</li>
               )}
               <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-[4px] bg-warn" />Barrier</li>
+              {(Object.keys(LIFT_COLOUR) as LiftRow["status"][])
+                .filter((status) => lifts.some((l) => l.status === status))
+                .map((status) => (
+                  <li key={status} className="flex items-center gap-2">
+                    <span aria-hidden="true" className="size-3.5 rounded-[4px]" style={{ background: LIFT_COLOUR[status] }} />
+                    Lift: {status.toLowerCase()}
+                  </li>
+                ))}
               {fix && <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-full border-2 border-white bg-primary" />You</li>}
             </ul>
           </div>

@@ -32,6 +32,7 @@ export function ExploreClient() {
   const [thanks, setThanks] = useState<Record<string, number>>({});
   const [note, setNote] = useState("");
   const [to, setTo] = useState<Place | null>(null);
+  const [typedFrom, setTypedFrom] = useState<Place | null>(null);
   const [weather, setWeather] = useState<Weather | null>(null);
   const [amenities, setAmenities] = useState<AmenityPin[]>([]);
   const [expanded, setExpanded] = useState(true);
@@ -68,19 +69,26 @@ export function ExploreClient() {
     setExpanded(false);
   }
 
+  const here = startPlaceId(fix);
+  const needFrom = status !== "pending" && !here;
+  const fromId = here ?? typedFrom?.id ?? null;
+
+  function routeTo(toId: string) {
+    const start = fromId ? `from=${encodeURIComponent(fromId)}&` : "";
+    router.push(`/route?${start}to=${encodeURIComponent(toId)}`);
+  }
+
   function goToAmenity(pin: AmenityPin) {
     saveProfile(profile);
-    const from = startPlaceId(fix);
-    router.push(`/route?from=${encodeURIComponent(from)}&to=${encodeURIComponent(pin.placeId)}`);
+    routeTo(pin.placeId);
   }
 
   function go(e: React.FormEvent) {
     e.preventDefault();
-    if (!to) return;
+    if (!to || !fromId) return;
     setGoing(true);  // say so at once; the route page takes over from here
     saveProfile(profile);
-    const from = startPlaceId(fix);
-    router.push(`/route?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to.id)}`);
+    routeTo(to.id);
   }
 
   const locationText = status === "ready"
@@ -88,6 +96,9 @@ export function ExploreClient() {
     : status === "pending"
       ? "Looking for your location."
       : "Location is off. The map stays on Macquarie University.";
+  const fromHint = status === "ready"
+    ? "You're outside Greater Sydney. Type where you're starting from."
+    : "Location is off. Type where you're starting from.";
 
   return (
     <div className="relative min-h-0 flex-1">
@@ -105,8 +116,11 @@ export function ExploreClient() {
       <div className="pointer-events-none absolute top-3 right-16 left-3 z-[600] hidden lg:block">
         <form onSubmit={go} className="pointer-events-none flex items-start gap-2">
           <div className="pointer-events-auto w-[min(100%,380px)] rounded-[18px] bg-surface p-3 shadow-lg">
-            {status !== "ready" && status !== "pending" && (
-              <p className="mb-2 text-[14px] text-muted">Location is off, so a route starts at Macquarie University station.</p>
+            {needFrom && (
+              <>
+                <p className="mb-2 text-[14px] text-muted">{fromHint}</p>
+                <div className="mb-2"><PlaceSearch label="From" value={typedFrom} onChange={setTypedFrom} /></div>
+              </>
             )}
             <PlaceSearch label="Where to?" value={to} onChange={setTo} />
             <button type="button" aria-expanded={filtersOpen} aria-label={filtersOpen ? "Hide filter" : "Filter"}
@@ -121,7 +135,7 @@ export function ExploreClient() {
                 <Button type="button" variant="secondary" size="lg" className="mt-3 w-full" onClick={saveFilter}>Save filter</Button>
               </div>
             )}
-            <Button type="submit" size="lg" className="mt-2 w-full" disabled={!to || going}>{going ? "Finding…" : "Show a step-free route"}</Button>
+            <Button type="submit" size="lg" className="mt-2 w-full" disabled={!to || !fromId || going}>{going ? "Finding…" : "Show a step-free route"}</Button>
           </div>
         </form>
       </div>
@@ -192,8 +206,11 @@ export function ExploreClient() {
           >
             <span aria-hidden="true" className="h-1.5 w-10 rounded-full bg-line-strong" />
           </button>
-          {status !== "ready" && status !== "pending" && (
-            <p className="mb-2 px-1 text-[14px] text-muted">Location is off, so a route starts at Macquarie University station.</p>
+          {needFrom && (
+            <>
+              <p className="mb-2 px-1 text-[14px] text-muted">{fromHint}</p>
+              <div className="mb-2"><PlaceSearch label="From" value={typedFrom} onChange={setTypedFrom} /></div>
+            </>
           )}
           <PlaceSearch label="Where to?" value={to} onChange={setTo} />
           {expanded && (
@@ -203,7 +220,7 @@ export function ExploreClient() {
             </div>
           )}
           {(expanded || to) && (
-            <Button type="submit" size="lg" className="mt-3 w-full" disabled={!to || going}>{going ? "Finding…" : "Show a step-free route"}</Button>
+            <Button type="submit" size="lg" className="mt-3 w-full" disabled={!to || !fromId || going}>{going ? "Finding…" : "Show a step-free route"}</Button>
           )}
         </form>
         <p role="status" className="sr-only">{note}</p>

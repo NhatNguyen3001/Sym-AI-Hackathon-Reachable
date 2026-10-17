@@ -2,14 +2,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "cn";
-import { ChevronLeft, ChevronRight, CircleCheck, SlidersHorizontal, TriangleAlert } from "lucide-react";
+import { ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
 import { NeedsTicks } from "@/components/NeedsTicks";
 import { Button } from "@/components/ui/button";
 import { InfoBanner, SampleDataBanner, WarnBanner, WeatherBanner } from "@/components/Banners";
 import { PlaceInput } from "@/components/PlaceInput";
 import { LegTimeline } from "@/components/LegTimeline";
 import { RouteSkeleton } from "@/components/RouteSkeleton";
-import { RouteStep, VenueCheckRow } from "@/components/Rows";
+import { RouteStep } from "@/components/Rows";
 import { StatusBadge } from "@/components/StatusBadge";
 import { TripOptions } from "@/components/TripOptions";
 import { RouteMap } from "@/components/map/RouteMap";
@@ -19,7 +19,7 @@ import { addTrip, loadProfile, rememberPlace, saveProfile } from "@/lib/profile"
 import { profile as defaultProfile } from "@/lib/placeholder";
 import { routeFeatures } from "@/lib/routeFeatures";
 import { optionTimes, selectOption, showsCards } from "@/lib/trip";
-import type { Place, Profile, RouteOption, RouteResult, VenueCheck } from "@/lib/types";
+import type { LiftRow, Place, Profile, RouteOption, RouteResult, VenueCheck } from "@/lib/types";
 
 interface LiveCard {
   title: string;
@@ -28,12 +28,14 @@ interface LiveCard {
 }
 
 const findPlace = (id: string) => getPlace(id);
+const liftKey = (l: LiftRow) => l.exitId ?? l.exit;
 
 export function RouteClient() {
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const fromId = params.get("from") ?? "mq-station";
+  // No "from" when location is off: the person types where they're starting.
+  const fromId = params.get("from");
   const toId = params.get("to") ?? "library";
   const urlOption = params.get("option");
 
@@ -52,6 +54,8 @@ export function RouteClient() {
   const [picked, setPicked] = useState<number | null>(null);
   // Way to get there (walk or a public transport trip). Applies at once; the URL catches up for Back and sharing.
   const [pickedOption, setPickedOption] = useState<string | null>(null);
+  const [liftOpen, setLiftOpen] = useState<string | null>(null);
+  const [liftAnswers, setLiftAnswers] = useState<Record<string, "working" | "broken">>({});
 
   /** Open the details (desktop side panel, phone sheet) so a problem with the trip is seen. */
   function showDetails() {
@@ -60,6 +64,7 @@ export function RouteClient() {
   }
 
   const load = useCallback(async (p: Profile, fresh = false) => {
+    if (!fromId) return;
     try {
       const r = await getRoute(fromId, toId, p, { fresh });
       setRoute(r.data);
@@ -97,7 +102,7 @@ export function RouteClient() {
     setRoute(null);   // a new trip: show placeholders, not the previous trip
     showDetails();    // open the panel straight away so there's something to see while the route loads
     load(p);
-    findPlace(fromId).then(setFrom);
+    if (fromId) findPlace(fromId).then(setFrom);
     findPlace(toId).then(setTo);
   }, [load, fromId, toId]);
 
@@ -133,7 +138,9 @@ export function RouteClient() {
   const selected = selectOption(options, pickedOption ?? urlOption);
   const transit = selected?.mode === "transit" ? selected : undefined;
   const cards = showsCards(options);   // with cards, the chosen card is the summary
-  const liftRows = selected?.liftStatus ?? route?.liftStatus ?? [];
+  const liftRows = useMemo(() => (selected?.liftStatus ?? route?.liftStatus ?? [])
+    .filter((l) => typeof l.lat === "number" && typeof l.lng === "number"), [selected, route]);
+  const lift = liftRows.find((l) => liftKey(l) === liftOpen) ?? null;
   const explanation = transit && selected !== options?.[0] ? selected?.explanation : route?.explanation;
   const acc = route?.ok && !transit ? route.accessible ?? undefined : undefined;
   // Memoised so the map only refits when the route itself changes, not on every render.
@@ -226,7 +233,48 @@ export function RouteClient() {
           slopes={features.spans}
           onPick={chooseRoute}
           legs={transit?.legs}
+          lifts={liftRows}
+          selectedLift={liftOpen}
+          onLift={(key) => setLiftOpen(key)}
         />
+        {lift && (
+          <article aria-labelledby="lift-h"
+            className="absolute inset-x-3 top-[4.5rem] z-[700] rounded-[18px] bg-[#15201b] p-4 text-white shadow-lg lg:right-3 lg:left-auto lg:w-[360px]">
+            <p className="text-[14px] font-bold tracking-wide text-[#ffd7a8] uppercase">Station lift</p>
+            <div className="mt-1 flex items-start justify-between gap-3">
+              <div>
+                <h2 id="lift-h" className="text-[22px] leading-tight font-bold">{lift.exit}</h2>
+                <p className="text-[18px] font-bold">{lift.status}</p>
+              </div>
+              <button type="button" onClick={() => setLiftOpen(null)}
+                className="inline-flex min-h-11 items-center rounded-[12px] px-2 text-[15px] font-bold text-white underline">
+                Close
+              </button>
+            </div>
+            <p className="mt-1 text-[14px] text-[#d5ddd8]">{lift.source}, updated {lift.updated}</p>
+            {liftAnswers[liftKey(lift)] ? (
+              <p role="status" className="mt-3 text-[15px]">
+                Thanks. You said this lift is {liftAnswers[liftKey(lift)] === "working" ? "working" : "not working"}. That stays on this device.
+              </p>
+            ) : (
+              <>
+                <p className="mt-3 text-[16px] font-bold">
+                  {lift.status === "Out of service" ? "Is this lift still out of service?" : "Is this lift working?"}
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <button type="button" onClick={() => setLiftAnswers((a) => ({ ...a, [liftKey(lift)]: "broken" }))}
+                    className="inline-flex min-h-12 items-center rounded-full bg-[#e11d48] px-4 font-bold text-white">
+                    Not working
+                  </button>
+                  <button type="button" onClick={() => setLiftAnswers((a) => ({ ...a, [liftKey(lift)]: "working" }))}
+                    className="inline-flex min-h-12 items-center rounded-full bg-[#1d4fa8] px-4 font-bold text-white">
+                    Working
+                  </button>
+                </div>
+              </>
+            )}
+          </article>
+        )}
         <WeatherBanner weather={route?.weather} className="absolute top-3 right-3 z-[600] max-w-[340px]" />
         <div aria-live="polite" className="absolute top-3 left-[4.5rem] z-[600] max-w-[280px] lg:top-auto lg:bottom-6 lg:left-3 lg:max-w-[380px]">
           {live && (
@@ -307,7 +355,8 @@ export function RouteClient() {
           {route?.note && <InfoBanner>{route.note}. Sydney-wide routing is unavailable right now.</InfoBanner>}
           {route?.transitNote && <InfoBanner>{route.transitNote}</InfoBanner>}
           {error && <WarnBanner alert>{error}</WarnBanner>}
-          {route === null && !error && <RouteSkeleton from={from?.name} to={to?.name} />}
+          {!fromId && <InfoBanner>Type where you&apos;re starting from to see a route.</InfoBanner>}
+          {fromId && route === null && !error && <RouteSkeleton from={from?.name} to={to?.name} />}
 
           {route && !route.ok && (
             <WarnBanner alert>
@@ -349,26 +398,6 @@ export function RouteClient() {
             </section>
           )}
 
-          {route && liftRows.length > 0 && (
-            <section aria-labelledby="lifts-h">
-              <h2 id="lifts-h" className="mb-1 text-[13px] font-bold tracking-wide text-muted uppercase">Station lifts</h2>
-              <ul>
-                {liftRows.map((l) => (
-                  <li key={l.exit} className="flex items-start gap-3 border-b border-line py-2.5 last:border-b-0">
-                    {l.status === "Working"
-                      ? <CircleCheck aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />
-                      : <TriangleAlert aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-warn" />}
-                    <div className="flex-1">
-                      <p className="text-[16px]">{l.exit}: {l.status}</p>
-                      <p className="text-[14px] text-muted">{l.source}, updated {l.updated}</p>
-                    </div>
-                    <StatusBadge label={l.status === "Working" ? "Confirmed" : l.status} />
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
           {route?.ok && route.slopeNote && <WarnBanner>{route.slopeNote}</WarnBanner>}
 
           {transit && explanation && (
@@ -391,16 +420,6 @@ export function RouteClient() {
 
           {unmet.length > 0 && (
             <WarnBanner>This place may not meet your need for {unmet.join(" or ")}.</WarnBanner>
-          )}
-
-          {venue && (
-            <section aria-labelledby="dest-h">
-              <h2 id="dest-h" className="text-[13px] font-bold tracking-wide text-muted uppercase">Destination check: {venue.name}</h2>
-              <ul>{venue.checks.map((c) => <VenueCheckRow key={c.field} check={c} />)}</ul>
-              <p className="mt-1 text-[14px] text-muted">
-                {venue.sourceCount > 0 ? `Checked ${venue.checkedAgo}, using ${venue.sourceCount} sources.` : "No one has checked this place yet."}
-              </p>
-            </section>
           )}
 
           <Button type="button" size="lg" className="w-full" onClick={saveFilter} disabled={saving}>

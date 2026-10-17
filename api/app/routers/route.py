@@ -20,6 +20,7 @@ router = APIRouter()
 NEAR_ROUTE_M = 25
 TRANSIT_NOTE = "Public transport options unavailable right now."
 NO_TRANSIT_TRIP = "No step-free public transport trip found right now."
+ROUTING_DOWN = "Route planning is unavailable right now. Please try again soon."
 
 
 class RouteIn(BaseModel):
@@ -82,7 +83,8 @@ def _station_rows(session, st, opt: dict) -> list[dict]:
         out = by_stop.get(s["stopId"], [])
         rows.append({"exitId": None, "exit": f"{s['name']} lifts",
                      "status": "Out of service" if out else ("Working" if feed.fresh() else "Not sure"),
-                     "source": feed.source(), "updated": ago(out[0].first_seen) if out else feed.updated()})
+                     "source": feed.source(), "updated": ago(out[0].first_seen) if out else feed.updated(),
+                     "lat": s.get("lat"), "lng": s.get("lng")})
     return rows
 
 
@@ -106,7 +108,7 @@ def plan_route(body: RouteIn, request: Request, tasks: BackgroundTasks, session:
     ctx = build_context(session, weather["raining"])
     for p in (start, end):
         st.resolver.ensure_exits(p)
-    note = None
+    note, walk_down = None, False
     try:
         # Campus trips use the campus graph: measured slopes and a hard slope limit (spec section 8).
         if st.campus.covers(start) and st.campus.covers(end):
@@ -116,9 +118,10 @@ def plan_route(body: RouteIn, request: Request, tasks: BackgroundTasks, session:
     except OutOfArea:
         raise ApiError(422, "out_of_area", "We only cover Greater Sydney for now.")
     except RoutingUnavailable:
-        if not (st.campus.covers(start) and st.campus.covers(end)):
-            raise ApiError(503, "routing_unavailable", "Route planning is unavailable right now. Please try again soon.")
-        r, note = st.campus.plan(start, end, body.profile, ctx), CAMPUS_NOTE
+        if st.campus.covers(start) and st.campus.covers(end):
+            r, note = st.campus.plan(start, end, body.profile, ctx), CAMPUS_NOTE
+        else:  # no Sydney walking route, but public transport may still get there
+            r, walk_down = {"ok": False, "reason": ROUTING_DOWN, "suggestion": "", "fastest": None}, True
     lifts = [row for p in (start, end) if st.places.get(p.id) and p.kind == "station"
              for row in lift_rows(session, st.places, p.id, st.lift_feed)]
     for p in (start, end):
@@ -148,6 +151,8 @@ def plan_route(body: RouteIn, request: Request, tasks: BackgroundTasks, session:
         lifts = top["liftStatus"]
 
     if not r["ok"] and not options:
+        if walk_down:
+            raise ApiError(503, "routing_unavailable", ROUTING_DOWN)
         if st.transit and far and "transitNote" not in extra and r["reason"] == TOO_LONG:
             r = {**r, "reason": NO_TRANSIT_TRIP}
         return {**r, **extra, "options": [], "liftStatus": lifts, "weather": weather,

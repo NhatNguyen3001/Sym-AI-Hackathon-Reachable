@@ -6,8 +6,8 @@ afterEach(() => vi.unstubAllGlobals());
 
 test("start from your location only inside Greater Sydney", () => {
   expect(startPlaceId({ lat: -33.87, lng: 151.21 })).toBe("coord:here:-33.87000,151.21000");
-  expect(startPlaceId({ lat: -37.81, lng: 144.96 })).toBe("mq-station"); // Melbourne
-  expect(startPlaceId(null)).toBe("mq-station");
+  expect(startPlaceId({ lat: -37.81, lng: 144.96 })).toBeNull(); // Melbourne: the person types a start
+  expect(startPlaceId(null)).toBeNull();
 });
 
 test("storage that throws (private mode, blocked site data) never breaks the page", () => {

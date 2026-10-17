@@ -67,4 +67,7 @@ class Places:
         p = self.get(place_id)
         if not p or p.kind != "station":
             return []
-        return [{"exitId": e["id"], "name": e["name"], "via": e["via"]} for e in self.exits]
+        at = {e["id"]: e for e in p.exit_points}
+        return [{"exitId": e["id"], "name": e["name"], "via": e["via"],
+                 "lat": at.get(e["id"], {}).get("lat", p.lat), "lng": at.get(e["id"], {}).get("lng", p.lng)}
+                for e in self.exits]

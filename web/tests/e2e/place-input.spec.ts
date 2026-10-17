@@ -1,11 +1,13 @@
 import { expect, test } from "@playwright/test";
+import { startAtStation } from "./helpers";
 
 // Regression: typing then pressing Enter quickly picked a stale suggestion. The focus search (empty query,
 // all places, station first) landed after the text changed, so Enter chose "Macquarie University station"
 // and the trip became station -> station.
 test("Enter right after typing picks a place matching what was typed", async ({ page }) => {
   await page.goto("/");
-  const to = page.getByRole("combobox", { name: "Where to?" });
+  await startAtStation(page);
+  const to = page.getByRole("combobox", { name: "Where to?" }).filter({ visible: true }).first();
   await to.fill("waranara");
   await to.press("Enter");
   await expect(to).toHaveValue("Waranara Library");
@@ -49,7 +51,8 @@ test("known places show at once while the full search is still running", async (
 test("a late search result never changes a place you already picked", async ({ page }) => {
   const release = await slowFullSearch(page);
   await page.goto("/");
-  const to = page.getByRole("combobox", { name: "Where to?" });
+  await startAtStation(page);
+  const to = page.getByRole("combobox", { name: "Where to?" }).filter({ visible: true }).first();
   await to.fill("wara");
   await page.getByRole("option", { name: /Waranara Library/ }).click();
   await expect(to).toHaveValue("Waranara Library");
