@@ -13,4 +13,4 @@ def lifts(station_id: str, request: Request, session: Session = Depends(get_sess
     place = request.app.state.places.get(station_id)
     if not place or place.kind != "station":
         raise ApiError(404, "station_not_found", "We don't know that station.")
-    return lift_rows(session, request.app.state.places, station_id)
+    return lift_rows(session, request.app.state.places, station_id, request.app.state.lift_feed)

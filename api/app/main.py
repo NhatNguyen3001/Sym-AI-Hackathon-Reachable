@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 
@@ -22,6 +23,8 @@ from app.places.overpass import OverpassClient
 from app.places.photon import PhotonClient
 from app.places.resolver import PlaceResolver
 from app.seed import seed
+from app.transit.lifts import LiftAlertSync, LiftFeed, LiftPoller
+from app.transit.tfnsw import TfnswClient
 from app.weather import WeatherService
 
 log = logging.getLogger("reachable")
@@ -40,7 +43,8 @@ async def server_error_handler(_: Request, exc: Exception):
     return JSONResponse({"error": {"code": "server_error", "message": "Something went wrong on our side."}}, status_code=500)
 
 
-def create_app(settings: Settings | None = None, graph=None, places=None, weather_service=None, router=None) -> FastAPI:
+def create_app(settings: Settings | None = None, graph=None, places=None, weather_service=None, router=None,
+               tfnsw=None) -> FastAPI:
     settings = settings or Settings()
 
     @asynccontextmanager
@@ -63,7 +67,15 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
         if settings.seed:
             with Session(st.engine) as s:
                 seed(s, st.graph, st.places)
+        # Transport for NSW: live lift alerts (and, in /route, public transport options). Off without a key.
+        st.tfnsw = tfnsw or (TfnswClient(settings.tfnsw_url, settings.tfnsw_api_key) if settings.tfnsw_api_key else None)
+        st.lift_feed = LiftFeed(enabled=st.tfnsw is not None)
+        st.lift_poller = (LiftPoller(st.tfnsw, LiftAlertSync(st.places, st.tfnsw.stop_coord), st.lift_feed, st.engine,
+                                     st.broadcaster, settings.lift_poll_seconds) if st.tfnsw else None)
+        task = asyncio.create_task(st.lift_poller.run()) if st.lift_poller and settings.lift_poll_seconds > 0 else None
         yield
+        if task:
+            task.cancel()
 
     app = FastAPI(title="Reachable API", lifespan=lifespan)
     app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["*"], allow_headers=["*"],

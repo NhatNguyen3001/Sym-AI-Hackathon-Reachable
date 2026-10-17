@@ -3,7 +3,6 @@ from sqlmodel import Session
 
 from app.agents import agent_cards, log_run
 from app.db import get_session
-from app.state import build_context
 
 router = APIRouter()
 
@@ -16,10 +15,10 @@ def status(session: Session = Depends(get_session)):
 @router.post("/agents/updates/run")
 async def run_updates(request: Request, session: Session = Depends(get_session)):
     st = request.app.state
-    weather = st.weather.current()
-    n = len(build_context(session, weather["raining"]).lift_out_exits)
-    plural = "" if n == 1 else "s"
-    summary = f"Checked lift alerts and weather. {n} lift outage{plural} active."
-    log_run(session, "updates", summary)
+    if st.lift_poller:
+        summary = await st.lift_poller.run_once()  # logs its own run
+    else:
+        summary = "Live lift alerts are off. Checked the weather."
+        log_run(session, "updates", summary)
     await st.broadcaster.publish("agent_run", {"agent": "updates", "summary": summary})
     return {"ok": True, "summary": summary}

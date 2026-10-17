@@ -59,7 +59,7 @@ def plan_route(body: RouteIn, request: Request, session: Session = Depends(get_s
             raise ApiError(503, "routing_unavailable", "Route planning is unavailable right now. Please try again soon.")
         r, note = st.campus.plan(start, end, body.profile, ctx), CAMPUS_NOTE
     lifts = [row for p in (start, end) if st.places.get(p.id) and p.kind == "station"
-             for row in lift_rows(session, st.places, p.id)]
+             for row in lift_rows(session, st.places, p.id, st.lift_feed)]
     lifts_out = [st.places.exit_names[row["exitId"]] for row in lifts if row["status"] == "Out of service"]
     log_run(session, "route", f"Planned {start.name} to {end.name}.")
     extra = {"note": note} if note else {}

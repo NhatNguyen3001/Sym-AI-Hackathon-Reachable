@@ -18,16 +18,12 @@ def seed(session: Session, G, places) -> None:
         return
     t = now()
     m, h = timedelta(minutes=1), timedelta(hours=1)
-    st = places.get(places.station_id)
 
     def barrier(lat, lng, ago, **kw):
         edge, _ = nearest_edge(G, lat, lng)
         return Barrier(lat=lat, lng=lng, edge_id=edge, first_seen=t - ago, last_confirmed=t - ago, **kw)
 
     session.add_all([
-        Barrier(type="lift_outage", title="Lift out of service", place=f"{st.name}, south exit", lat=-33.777433, lng=151.118452,
-                exit_id="south", status="confirmed", confidence=0.95, update_type="transport",
-                sources=[_src("feed", "Transport for NSW lift alert (demo data)", h)], first_seen=t - h, last_confirmed=t - 4 * m),
         barrier(-33.77215, 151.11590, 2 * h, type="blocked", title="Footpath works, detour in place", place="Management Drive",
                 status="confirmed", confidence=0.9, update_type="roadworks",
                 sources=[_src("feed", "Live Traffic NSW (demo data)", 2 * h)]),
@@ -62,7 +58,7 @@ def seed(session: Session, G, places) -> None:
               checked_at=t - 3 * h),
     ])
     session.add_all([
-        AgentRun(agent="updates", started_at=t - 3 * m, finished_at=t - 3 * m, summary="Checked lift alerts and weather. 1 lift outage active."),
+        AgentRun(agent="updates", started_at=t - 3 * m, finished_at=t - 3 * m, summary="Checked the weather."),
         AgentRun(agent="report_checker", started_at=t - h, finished_at=t - h, summary="Rechecked 1 report."),
         AgentRun(agent="venue", started_at=t - 2 * m, finished_at=t - 2 * m, summary="Checked Waranara Library using 3 sources."),
         AgentRun(agent="route", started_at=t - h, finished_at=t - h, summary="Planned Macquarie University station to Waranara Library."),

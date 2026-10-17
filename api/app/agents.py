@@ -4,7 +4,7 @@ from sqlmodel import Session, select, func
 from app.models import AgentRun, Report, aware, now
 
 CARDS = [
-    ("updates", "Updates agent", "Watching roadworks, transport, weather and council notices."),
+    ("updates", "Updates agent", "Watching Transport for NSW lift alerts and the weather."),
     ("report_checker", "Report checker", "Rechecks every user report against other sources before it changes the map."),
     ("venue", "Venue agent", "Checks entrances, toilets and parking when someone picks a destination."),
     ("route", "Route agent", "Turns your needs into a route and explains it in plain English."),

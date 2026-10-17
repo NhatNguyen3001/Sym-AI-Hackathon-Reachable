@@ -12,8 +12,9 @@ def test_seed_is_idempotent(tmp_path):
         seed(s, G, PL)
         seed(s, G, PL)
         lifts = s.exec(select(Barrier).where(Barrier.type == "lift_outage")).all()
-        assert len(lifts) == 1 and lifts[0].exit_id == "south" and lifts[0].status == "confirmed"
+        assert lifts == []  # lift status is live from Transport for NSW, never seeded
         barriers = s.exec(select(Barrier)).all()
+        assert len(barriers) == 3
         assert all("(demo data)" in src["label"] for b in barriers for src in b.sources if src["kind"] != "user")
         assert all(b.edge_id for b in barriers if b.type != "lift_outage")
         assert s.get(Venue, "library") is not None and s.get(Venue, "library-cafe") is not None

@@ -37,6 +37,9 @@ class Places:
         self.exits = ov["exits"]
         self.station_id = ov["station"]["id"]
         self.exit_names = {e["id"]: e["name"].lower() for e in self.exits}
+        # Transport for NSW ids: the station, and the OSM ids of the lifts each exit needs (cycle 3 lift alerts).
+        self.station_stop_id = ov["station"].get("tfnswStopId")
+        self.lift_osm_ids = {e["id"]: set(e.get("liftOsmIds", [])) for e in self.exits}
         self._places: list[Place] = []
         for row in json.loads(Path(places_path).read_text(encoding="utf-8")):
             p = Place(id=row["id"], name=row["name"], kind=row["kind"], lat=row["lat"], lng=row["lng"], node=row.get("node"))

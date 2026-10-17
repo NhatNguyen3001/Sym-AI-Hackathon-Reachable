@@ -1,3 +1,6 @@
+from tests.conftest import NORTH_OUT, SOUTH_OUT
+
+
 def body(**kw):
     return {"from": "mq-station", "to": "library", "profile": {"aid": "manual_wheelchair", "maxSlope": 5}, **kw}
 
@@ -7,7 +10,7 @@ def test_places_search(client):
     assert r[0] == {"id": "mq-station", "name": "Macquarie University station", "kind": "station", "lat": -33.77735, "lng": 151.11825}
 
 
-def test_route_demo_trip(client):
+def test_route_demo_trip(client, lifts_live):
     r = client.post("/route", json=body()).json()
     assert r["ok"] and r["exitUsed"] == "north"
     assert {l["exitId"]: l["status"] for l in r["liftStatus"]} == {"north": "Working", "south": "Out of service"}
@@ -32,14 +35,14 @@ def test_route_bad_profile_is_422(client):
     assert r.status_code == 422 and r.json()["error"]["code"] == "invalid_request"
 
 
-def test_demo_lift_toggle_changes_route(client):
-    assert client.post("/demo/lifts/north").json()["status"] == "Out of service"
+def test_live_lift_outages_change_route(client, lifts_live):
+    lifts_live([SOUTH_OUT, NORTH_OUT])
     r = client.post("/route", json=body()).json()
     assert r["ok"] is False and "nearby station" in r["suggestion"]
     assert r["reason"] == "Every lift at Macquarie University station is out of service."
-    assert client.post("/demo/lifts/south").json()["status"] == "Working"
+    lifts_live([NORTH_OUT])
     assert client.post("/route", json=body()).json()["exitUsed"] == "south"
-    assert client.post("/demo/lifts/nope").status_code == 404
+    assert client.post("/demo/lifts/north").status_code == 404  # the demo lift toggle is gone
 
 
 def test_rain_toggle(client):
@@ -50,7 +53,7 @@ def test_rain_toggle(client):
     assert "weather" in types
 
 
-def test_updates_feed_and_filter(client):
+def test_updates_feed_and_filter(client, lifts_live):
     items = client.get("/updates").json()
     assert len(items) >= 5
     first = items[0]
@@ -86,6 +89,7 @@ def test_venue_check_unchecked_place_and_unknown(client):
 def test_station_lifts(client):
     rows = client.get("/stations/mq-station/lifts").json()
     assert {r["exitId"]: r["exit"] for r in rows} == {"north": "North exit lift", "south": "South exit lift"}
+    assert {r["status"] for r in rows} == {"Not sure"} and rows[0]["source"] == "Live lift alerts are off"
     assert client.get("/stations/library/lifts").status_code == 404
 
 
@@ -96,4 +100,4 @@ def test_profile_parse(client):
 
 def test_updates_run_logs(client):
     r = client.post("/agents/updates/run").json()
-    assert r["ok"] is True and "1 lift outage" in r["summary"]
+    assert r["ok"] is True and r["summary"] == "Live lift alerts are off. Checked the weather."

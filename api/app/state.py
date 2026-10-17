@@ -2,10 +2,8 @@
 from sqlmodel import Session, select
 
 from app.agents import ago
-from app.models import AgentRun, Barrier
+from app.models import Barrier
 from app.routing.cost import Context
-
-LIFT_SOURCE = "Transport for NSW (demo data)"
 
 
 def active_barriers(session: Session) -> list[Barrier]:
@@ -28,17 +26,20 @@ def build_context(session: Session, raining: bool) -> Context:
     return ctx
 
 
-def lift_rows(session: Session, places, station_id: str) -> list[dict]:
-    outages = {b.exit_id: b for b in active_barriers(session) if b.type == "lift_outage" and b.status == "confirmed"}
-    last_check = session.exec(
-        select(AgentRun).where(AgentRun.agent == "updates").order_by(AgentRun.started_at.desc())).first()
-    checked = ago(last_check.started_at) if last_check else "just now"
+def lift_rows(session: Session, places, station_id: str, feed) -> list[dict]:
+    """Lift status per station exit. Without fresh live data we say "Not sure" rather than "Working"."""
+    lifts = [b for b in active_barriers(session) if b.type == "lift_outage"]
+    outages = {b.exit_id: b for b in lifts if b.status == "confirmed" and b.exit_id}
+    unsure = any(b.status == "needs_checking" and not b.exit_id for b in lifts)
     rows = []
     for e in places.station_exits(station_id):
         if e["via"] != "lift":
             continue
         out = outages.get(e["exitId"])
-        rows.append({"exitId": e["exitId"], "exit": f"{e['name']} lift",
-                     "status": "Out of service" if out else "Working", "source": LIFT_SOURCE,
-                     "updated": ago(out.first_seen) if out else checked})
+        if out:
+            status, updated = "Out of service", ago(out.first_seen)
+        else:
+            status, updated = ("Not sure" if unsure or not feed.fresh() else "Working"), feed.updated()
+        rows.append({"exitId": e["exitId"], "exit": f"{e['name']} lift", "status": status, "source": feed.source(),
+                     "updated": updated})
     return rows
