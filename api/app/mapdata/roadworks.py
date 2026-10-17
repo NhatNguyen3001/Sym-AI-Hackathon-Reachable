@@ -61,32 +61,36 @@ def notices(features: list[dict], bbox, today: date) -> list[dict]:
     return out
 
 
-def _ask(batch: list[dict], client) -> dict[str, Verdict]:
+def _ask(batch: list[dict], client) -> dict[str, Verdict] | None:
+    """Claude's verdicts for one batch; None when the whole batch failed."""
     lines = "\n".join(json.dumps({k: it[k] for k in ("id", "title", "road", "suburb", "advice", "periods")})
                       for it in batch)
     try:
         r = client.messages.parse(model=MODEL, max_tokens=4096, system=SYSTEM, output_format=Verdicts,
                                   messages=[{"role": "user", "content": f"Notices, one per line:\n{lines}"}])
         if r.stop_reason == "refusal" or r.parsed_output is None:
-            log.warning("Claude didn't judge %d road notices; treating them as not affecting walkers.", len(batch))
-            return {}
+            log.warning("Claude didn't judge %d road notices.", len(batch))
+            return None
         return {v.id: v for v in r.parsed_output.verdicts}
-    except Exception as e:  # noqa: BLE001 - one bad batch must not stop the run
+    except Exception as e:  # noqa: BLE001 - reported as "Claude unavailable"; the run keeps the old roadworks
         log.warning("Claude couldn't judge road notices (%s).", type(e).__name__)
-        return {}
+        return None
 
 
 def judge(items: list[dict], client, batch: int = 25) -> dict[str, Verdict] | None:
-    """Claude's verdict for every notice; None without Claude (roadworks are never guessed)."""
+    """Claude's verdict for every notice. None without Claude, or when any batch failed: an outage must not look
+    like "nothing affects walkers" (the run then keeps the roadworks it has)."""
     if client is None:
         return None
     out: dict[str, Verdict] = {}
     for i in range(0, len(items), batch):
         chunk = items[i:i + batch]
         got = _ask(chunk, client)
+        if got is None:
+            return None
         for it in chunk:
             v = got.get(it["id"])
-            if v is None and got:
+            if v is None:
                 log.warning("Claude gave no verdict for road notice %s; treating it as not affecting walkers.", it["id"])
             out[it["id"]] = v or Verdict(id=it["id"], effect="no")
     return out

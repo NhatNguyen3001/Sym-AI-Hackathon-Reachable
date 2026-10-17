@@ -69,11 +69,6 @@ def test_a_missing_verdict_counts_as_no():
     assert v["lt-2"].effect == "no"
 
 
-def test_refusal_or_error_counts_as_no():
-    assert {x.effect for x in judge(items(2), FakeClaude(refusal=True)).values()} == {"no"}
-    assert {x.effect for x in judge(items(2), FakeClaude(raise_=True)).values()} == {"no"}
-
-
 def test_batches_of_25():
     c = FakeClaude()
     v = judge(items(30), c)
@@ -92,3 +87,19 @@ def test_live_hazards_uses_the_key_header_and_path():
     assert seen["url"] == "https://api.example/v1/live/hazards/roadwork/open"
     assert seen["headers"]["Authorization"] == "apikey k-123"
     assert not seen["params"] and len(out) == 1
+
+
+def test_a_claude_outage_is_no_verdict_at_all():
+    """If a whole batch fails (rate limit, network), the run must not treat every roadwork as car-only."""
+    assert judge(items(2), FakeClaude(raise_=True)) is None
+    assert judge(items(2), FakeClaude(refusal=True)) is None
+
+
+def test_one_failed_batch_of_several_is_also_no_verdict():
+    class Flaky(FakeClaude):
+        def parse(self, **kw):
+            if self.calls == 1:
+                self.calls += 1
+                raise RuntimeError("rate limited")
+            return super().parse(**kw)
+    assert judge(items(30), Flaky()) is None
