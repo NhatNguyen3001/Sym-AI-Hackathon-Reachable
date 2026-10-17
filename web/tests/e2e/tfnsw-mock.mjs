@@ -1,6 +1,6 @@
 // A tiny stand-in for the Transport for NSW API so the browser tests run offline and deterministically.
 // GET /v1/tp/add_info   current lift alerts (default: Macquarie University station Lift 2 = south exit out)
-// POST /_mock/lifts     {"osmIds": [...]} replaces the broken lifts
+// POST /_mock/lifts     {"osmIds": [...], "stops": [{id, text}]} replaces the broken lifts (stops: alerts at other stops)
 // GET /v1/tp/trip       a small campus journey (Library -> bus 141 -> Mortarboard Cafe), times relative to now
 // GET /v1/tp/stop_finder  nothing
 import http from "node:http";
@@ -8,6 +8,7 @@ import http from "node:http";
 const PORT = Number(process.env.TFNSW_MOCK_PORT ?? 8300);
 const LIFTS = { 9756349221: "Lift 1 to the Herring Rd west entry", 9756349250: "Lift 2 to the Herring Rd east entry", 9756349262: "Lift 3 to the platform" };
 let broken = [9756349250];
+let stopAlerts = [];
 
 const alert = (osm) => ({
   id: `ems-e2e-${osm}`,
@@ -30,21 +31,25 @@ const coordOf = (v) => {
 
 function campusTrip() {
   const iso = (d) => d.toISOString().replace(/\.\d{3}Z$/, "Z");
-  const dep = new Date(Date.now() + 15 * 60_000);
-  const arr = new Date(dep.getTime() + 6 * 60_000);
   const s1 = [-33.776, 151.1142];
   const s2 = [-33.7726, 151.116];
   const walk = (a, b) => ({ duration: 120, transportation: { product: { class: 100 } }, origin: { coord: a }, destination: { coord: b }, coords: [a, b] });
-  const ride = {
-    duration: 360,
-    transportation: { disassembledName: "141", product: { class: 5 }, destination: { name: "Manly" } },
-    origin: { name: "Library Rd, Stand A", coord: s1, departureTimeEstimated: iso(dep), parent: { id: "2113001", type: "stop" }, properties: { platformName: "Stand A" } },
-    destination: { name: "Mortarboard Stop", coord: s2, arrivalTimeEstimated: iso(arr), parent: { id: "2113002", type: "stop" }, properties: {} },
-    stopSequence: [{}, {}, {}],
-    properties: { PlanWheelChairAccess: "1" },
-    coords: [s1, s2],
+  // Three departures of bus 141, ten minutes apart: one "way" with three "Leave at" times.
+  const journey = (inMin) => {
+    const dep = new Date(Date.now() + inMin * 60_000);
+    const arr = new Date(dep.getTime() + 6 * 60_000);
+    const ride = {
+      duration: 360,
+      transportation: { disassembledName: "141", product: { class: 5 }, destination: { name: "Manly" } },
+      origin: { name: "Library Rd, Stand A", coord: s1, departureTimeEstimated: iso(dep), parent: { id: "2113001", type: "stop" }, properties: { platformName: "Stand A" } },
+      destination: { name: "Mortarboard Stop", coord: s2, arrivalTimeEstimated: iso(arr), parent: { id: "2113002", type: "stop" }, properties: {} },
+      stopSequence: [{}, {}, {}],
+      properties: { PlanWheelChairAccess: "1" },
+      coords: [s1, s2],
+    };
+    return { interchanges: 0, legs: [walk(LIB, s1), ride, walk(s2, MORT)] };
   };
-  return { journeys: [{ interchanges: 0, legs: [walk(LIB, s1), ride, walk(s2, MORT)] }] };
+  return { journeys: [journey(15), journey(25), journey(35)] };
 }
 
 const send = (res, body, status = 200) => {
@@ -58,12 +63,19 @@ http.createServer((req, res) => {
     let raw = "";
     req.on("data", (c) => (raw += c));
     req.on("end", () => {
-      broken = JSON.parse(raw || "{}").osmIds ?? [];
+      const body = JSON.parse(raw || "{}");
+      broken = body.osmIds ?? [];
+      stopAlerts = body.stops ?? [];
       send(res, { broken });
     });
     return;
   }
-  if (url.pathname === "/v1/tp/add_info") return send(res, { infos: { current: broken.map(alert) } });
+  if (url.pathname === "/v1/tp/add_info") {
+    const atStops = stopAlerts.map((a) => ({ id: `ems-e2e-stop-${a.id}`, subtitle: a.text, url: null,
+      properties: { announcementType: "liftsEscalators", stopIDglobalID: a.id },
+      affected: { stops: [{ id: a.id, name: "Stop" }] } }));
+    return send(res, { infos: { current: [...broken.map(alert), ...atStops] } });
+  }
   if (url.pathname === "/v1/tp/stop_finder") return send(res, { locations: [] });
   if (url.pathname === "/v1/tp/trip") {
     const o = coordOf(url.searchParams.get("name_origin"));

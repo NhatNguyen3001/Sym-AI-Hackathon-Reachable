@@ -18,7 +18,7 @@ import { useEvents } from "@/lib/events";
 import { addTrip, loadProfile, rememberPlace, saveProfile } from "@/lib/profile";
 import { profile as defaultProfile } from "@/lib/placeholder";
 import { routeFeatures } from "@/lib/routeFeatures";
-import { optionTimes, selectOption } from "@/lib/trip";
+import { optionTimes, selectOption, showsCards } from "@/lib/trip";
 import type { Place, Profile, RouteOption, RouteResult, VenueCheck } from "@/lib/types";
 
 interface LiveCard {
@@ -132,6 +132,8 @@ export function RouteClient() {
   const options = route?.ok ? route.options : undefined;
   const selected = selectOption(options, pickedOption ?? urlOption);
   const transit = selected?.mode === "transit" ? selected : undefined;
+  const cards = showsCards(options);   // with cards, the chosen card is the summary
+  const liftRows = selected?.liftStatus ?? route?.liftStatus ?? [];
   const explanation = transit && selected !== options?.[0] ? selected?.explanation : route?.explanation;
   const acc = route?.ok && !transit ? route.accessible ?? undefined : undefined;
   // Memoised so the map only refits when the route itself changes, not on every render.
@@ -314,7 +316,7 @@ export function RouteClient() {
 
           {options && <TripOptions options={options} selected={selected?.id} onSelect={chooseOption} />}
 
-          {transit && (
+          {transit && !cards && (
             <section aria-labelledby="summary-h">
               <h2 id="summary-h" className="sr-only">Summary</h2>
               <div className="flex flex-wrap items-end justify-between gap-3">
@@ -329,7 +331,7 @@ export function RouteClient() {
             </section>
           )}
 
-          {active && (
+          {active && !cards && (
             <section aria-labelledby="summary-h">
               <h2 id="summary-h" className="sr-only">Summary</h2>
               <div className="flex flex-wrap items-end justify-between gap-3">
@@ -345,11 +347,11 @@ export function RouteClient() {
             </section>
           )}
 
-          {route && route.liftStatus.length > 0 && (
+          {route && liftRows.length > 0 && (
             <section aria-labelledby="lifts-h">
               <h2 id="lifts-h" className="mb-1 text-[13px] font-bold tracking-wide text-muted uppercase">Station lifts</h2>
               <ul>
-                {route.liftStatus.map((l) => (
+                {liftRows.map((l) => (
                   <li key={l.exit} className="flex items-start gap-3 border-b border-line py-2.5 last:border-b-0">
                     {l.status === "Working"
                       ? <CircleCheck aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />

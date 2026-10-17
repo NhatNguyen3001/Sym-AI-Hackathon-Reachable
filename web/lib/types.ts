@@ -130,6 +130,10 @@ export type Leg = WalkLeg | StationLeg | RideLeg;
 
 export interface TripOption {
   id: string;
+  /** Departures of the same way (same lines, stops, platforms, step-free) share a card. "walk" for walking. */
+  wayId?: string;
+  /** Lift status for the stations this option uses. */
+  liftStatus?: LiftRow[];
   mode: "walk" | "transit";
   minutes: number;
   leaveAt?: string;
