@@ -36,9 +36,10 @@ export interface Step {
 }
 
 export interface LiftRow {
-  exitId: string;
+  /** Campus station exit id, or null for a whole station on a public transport trip. */
+  exitId: string | null;
   exit: string;
-  status: "Working" | "Out of service";
+  status: "Working" | "Out of service" | "Not sure";
   source: string;
   updated: string;
 }
@@ -59,9 +60,83 @@ export interface MapBarrier {
   lng: number;
 }
 
+export interface LiftAlert {
+  station: string;
+  text: string;
+  /** The alert names the platform this trip uses. */
+  blocking: boolean;
+  url: string | null;
+}
+
+type Line = { type: "LineString"; coordinates: [number, number][] };
+
+export interface WalkLeg {
+  kind: "walk";
+  minutes: number;
+  distanceM: number;
+  geometry: Line;
+  steps: Step[];
+  stepFree: boolean;
+  maxSlope: number;
+  slopeEstimated?: boolean;
+  /** "reachable": our accessible walk; "tfnsw": a transfer path from Transport for NSW. */
+  source: "reachable" | "tfnsw";
+  to: string;
+}
+
+export interface StationLeg {
+  kind: "station";
+  station: string;
+  stopId: string | null;
+  minutes: number;
+  path: { type: string; label: string }[];
+  liftAlerts: LiftAlert[];
+}
+
+export interface RideStop {
+  name: string;
+  platform: string;
+  lat: number;
+  lng: number;
+}
+
+export interface RideLeg {
+  kind: "ride";
+  mode: string;
+  label: string;
+  line: string;
+  headsign: string;
+  from: RideStop;
+  to: RideStop;
+  departAt: string;
+  arriveAt: string;
+  minutes: number;
+  stops: number;
+  wheelchairAccessible: boolean | null;
+  geometry: Line;
+}
+
+export type Leg = WalkLeg | StationLeg | RideLeg;
+
+export interface TripOption {
+  id: string;
+  mode: "walk" | "transit";
+  minutes: number;
+  leaveAt?: string;
+  arriveAt?: string;
+  summary: string;
+  stepFree: boolean;
+  interchanges: number;
+  warnings: string[];
+  liftAlerts: LiftAlert[];
+  legs: Leg[];
+  explanation?: string;
+}
+
 export interface RouteResult {
   ok: boolean;
-  accessible?: RouteOut;
+  /** The walk/roll route. Null when the trip is only possible with public transport. */
+  accessible?: RouteOut | null;
   fastest?: RouteOut | null;
   minutesLonger?: number;
   steps?: Step[];
@@ -77,6 +152,10 @@ export interface RouteResult {
   note?: string;
   /** Explains that slopes are estimates (routes outside the campus). */
   slopeNote?: string;
+  /** Ways to get there, best first: the walk/roll and public transport trips. */
+  options?: TripOption[];
+  /** Set when public transport options couldn't be planned. */
+  transitNote?: string;
 }
 
 export interface VenueCheck {
