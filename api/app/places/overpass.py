@@ -40,7 +40,11 @@ class OverpassClient:
                 r = self.http.post(self.url, data={"data": query(bbox)}, headers={"User-Agent": USER_AGENT},
                                    timeout=120)
                 if r.status_code == 200:
-                    return r.json().get("elements", [])
+                    body = r.json()
+                    # A timeout or out-of-memory still answers 200, with a "remark" and only part of the elements:
+                    # saving those would wipe most of the tile, so it's a failure (retry).
+                    if "runtime error" not in str(body.get("remark", "")):
+                        return body.get("elements", [])
             except (httpx.HTTPError, ValueError):
                 pass
         return None

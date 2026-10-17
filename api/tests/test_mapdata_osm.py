@@ -82,3 +82,22 @@ def test_overpass_retries_with_backoff():
 def test_overpass_gives_up_after_retries():
     c = OverpassClient("http://x", http=_Http([504] * 6))
     assert c.accessible_places((151.0, -33.9, 151.3, -33.6), sleep=lambda s: None) is None
+
+
+class _Remark:
+    """Overpass answers 200 with a remark when a query timed out or ran out of memory: the elements are partial."""
+    def __init__(self):
+        self.calls = 0
+
+    def post(self, url, data=None, headers=None, **kw):
+        self.calls += 1
+        body = {"elements": [node({"amenity": "toilets", "wheelchair": "yes"})],
+                "remark": "runtime error: Query timed out in \"query\" at line 1 after 91 seconds."}
+        return httpx.Response(200, json=body, request=httpx.Request("POST", url))
+
+
+def test_a_timed_out_answer_is_a_failure_not_a_short_list():
+    http = _Remark()
+    c = OverpassClient("http://x", http=http)
+    assert c.accessible_places((151.0, -33.9, 151.3, -33.6), sleep=lambda s: None) is None
+    assert http.calls == 6  # retried
