@@ -25,7 +25,7 @@ def venue_check(venue_id: str, request: Request, session: Session = Depends(get_
             raise ApiError(404, "venue_not_found", "We don't know that place yet.")
         return {"id": place.id, "name": place.name, "checkedBy": "Not checked yet", "checkedAgo": "",
                 "sourceCount": 0, "sources": [],
-                "checks": [{"field": f, "status": "Not found", "source": "Not checked yet"} for f, _ in FIELDS]}
+                "checks": [{"field": f, "status": "Not checked", "source": "Not checked yet"} for f, _ in FIELDS]}
     checks = []
     for label, key in FIELDS:
         srcs = [s["label"] for s in v.sources if key in s.get("fields", [])]

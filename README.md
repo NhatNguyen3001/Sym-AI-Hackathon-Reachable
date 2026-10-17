@@ -49,6 +49,44 @@ cd web && npm test          # unit
 cd web && npm run e2e       # accessibility (axe) + live reroute, starts both servers
 ```
 
+## Sydney-wide routing (Valhalla)
+
+Trips anywhere in Greater Sydney are routed by a local [Valhalla](https://github.com/valhalla/valhalla) container; place search uses [Photon](https://photon.komoot.io). Campus trips always use the campus graph below.
+
+Prerequisites: Docker Desktop running.
+
+```bash
+# 1. Download the Australia extract (~970 MB, once) and clip it to Greater Sydney (~85 MB)
+api/.venv/Scripts/python api/scripts/build_sydney_extract.py
+
+# 2. Build and serve the routing tiles (first start builds tiles + elevation, about 10 minutes)
+docker compose up -d valhalla
+curl localhost:8002/status        # ready when this returns JSON
+```
+
+API settings (env or `api/.env`):
+
+| Setting | Default | |
+|---|---|---|
+| `ROUTER` | `valhalla` | `campus` = campus graph only (no Docker needed) |
+| `VALHALLA_URL` | `http://localhost:8002` | |
+| `PHOTON_URL` | `https://photon.komoot.io` | empty disables address search |
+| `COVERAGE_BBOX` | `149.97,-34.33,151.63,-32.99` | Greater Sydney |
+| `MAX_LEG_KM` | `10` | longest walk/roll |
+
+If Valhalla is down, campus trips still work and other trips return a clear "Route planning is unavailable" message.
+
+**Slopes outside campus are estimates.** Valhalla's elevation data is too coarse for a trustworthy slope limit at footpath scale, so Sydney routes prefer flatter paths and say their slopes are estimated. On campus the slope limit is enforced with measured data.
+
+Tests against the live stack (with the container running):
+
+```bash
+cd api && .venv/Scripts/python -m pytest -m valhalla          # live routing tests (skipped when Docker is down)
+cd web && E2E_VALHALLA=1 npx playwright test sydney            # browser test: search Sydney + route
+```
+
+To refresh the map: run the extract script again, then `docker compose down && docker compose up -d valhalla` (delete `valhalla/custom_files/valhalla_tiles*` first to force a rebuild).
+
 ## Campus graph
 
 `api/data/graph.graphml` is prebuilt and committed. To rebuild it: `cd api && .venv/Scripts/python scripts/build_graph.py`.

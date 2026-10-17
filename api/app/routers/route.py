@@ -77,7 +77,12 @@ def plan_route(body: RouteIn, request: Request, session: Session = Depends(get_s
              "liftsOut": lifts_out, "raining": weather["raining"], "avoided": avoided}
     barriers = [{"id": b.id, "type": b.type, "title": b.title, "status": b.status, "lat": b.lat, "lng": b.lng}
                 for b in active_barriers(session) if b.type != "lift_outage" and _near(b, (acc, fast))]
-    status = "Some details not sure" if any(s["confidence"] == "Not sure" for s in r["steps"]) else "Confirmed today"
+    if any(s["confidence"] == "Not sure" for s in r["steps"]):
+        status = "Some details not sure"
+    elif acc.get("slopeEstimated"):
+        status = "Slopes estimated"
+    else:
+        status = "Confirmed today"
     out = {k: v for k, v in r.items() if k != "edges"}
     return {**out, **extra, "liftStatus": lifts, "barriers": barriers, "explanation": explain_route(facts, st.llm),
             "status": status, "weather": weather}

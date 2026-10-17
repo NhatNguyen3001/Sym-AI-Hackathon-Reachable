@@ -79,7 +79,7 @@ def test_venue_check(client):
 
 def test_venue_check_unchecked_place_and_unknown(client):
     v = client.get("/venue/mortarboard-cafe/check").json()
-    assert v["checkedBy"] == "Not checked yet" and all(c["status"] == "Not found" for c in v["checks"])
+    assert v["checkedBy"] == "Not checked yet" and all(c["status"] == "Not checked" for c in v["checks"])
     assert client.get("/venue/nope/check").status_code == 404
 
 

@@ -93,3 +93,13 @@ def test_slope_note_passed_through(make_client):
     with make_client(FakeRouter(result=result)) as c:
         r = c.post("/route", json={"from": "coord:-33.8732,151.2066", "to": "coord:-33.8661,151.2129"}).json()
     assert r["slopeNote"] == "Slopes are estimates." and r["accessible"]["slopeEstimated"] is True
+
+
+def test_estimated_slopes_never_say_confirmed(make_client):
+    result = {"ok": True, "accessible": {"geometry": {"type": "LineString", "coordinates": [[151.2066, -33.8732], [151.2129, -33.8661]]},
+                                         "distanceM": 900, "minutes": 15, "maxSlope": 2, "stepFree": True, "slopeEstimated": True},
+              "fastest": None, "minutesLonger": 0, "steps": [{"icon": "check", "label": "Footpath, 900 m", "confidence": "Likely", "lengthM": 900}],
+              "exitUsed": None, "slopeNote": "x"}
+    with make_client(FakeRouter(result=result)) as c:
+        r = c.post("/route", json={"from": "coord:-33.8732,151.2066", "to": "coord:-33.8661,151.2129"}).json()
+    assert r["status"] == "Slopes estimated"
