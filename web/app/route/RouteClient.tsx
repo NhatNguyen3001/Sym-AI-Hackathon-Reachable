@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { InfoBanner, SampleDataBanner, WarnBanner, WeatherBanner } from "@/components/Banners";
 import { PlaceInput } from "@/components/PlaceInput";
 import { LegTimeline } from "@/components/LegTimeline";
-import { RouteStep } from "@/components/Rows";
+import { RouteStep, VenueCheckRow } from "@/components/Rows";
 import { StatusBadge } from "@/components/StatusBadge";
 import { TripOptions } from "@/components/TripOptions";
 import { RouteMap } from "@/components/map/RouteMap";
@@ -56,6 +56,7 @@ export function RouteClient() {
     try {
       const r = await getRoute(fromId, toId, p);
       setRoute(r.data);
+      setPicked(null); // a reloaded route (live update, new filter) may have different alternatives
       setSample(r.sample);
       setError(null);
       const minutes = r.data.options?.[0]?.minutes ?? r.data.accessible?.minutes;
@@ -118,15 +119,16 @@ export function RouteClient() {
   const transit = selected?.mode === "transit" ? selected : undefined;
   const explanation = transit && selected !== options?.[0] ? selected?.explanation : route?.explanation;
   const acc = route?.ok && !transit ? route.accessible ?? undefined : undefined;
-  const alts = route?.ok && !transit ? route.alternatives ?? [] : [];
-  const chosen = picked !== null && picked >= 0 ? alts[picked] : null;
+  // Memoised so the map only refits when the route itself changes, not on every render.
+  const alts = useMemo(() => (route?.ok && !transit ? route.alternatives ?? [] : []), [route, transit]);
+  const chosen = picked !== null && picked >= 0 ? alts[picked] ?? null : null;
   const active = chosen ?? acc;
   const activeSteps = chosen?.steps ?? (route?.ok ? route.steps : undefined);
-  const others: RouteOption[] = route?.ok && acc
+  const others: RouteOption[] = useMemo(() => (route?.ok && acc
     ? (chosen
       ? [{ ...acc, summary: "Recommended route", steps: route.steps }, ...alts.filter((_, i) => i !== picked)]
       : alts)
-    : [];
+    : []), [route, acc, chosen, alts, picked]);
   const features = useMemo(
     () => routeFeatures(active?.geometry.coordinates, activeSteps, venue, to),
     [active, activeSteps, venue, to],
@@ -162,6 +164,12 @@ export function RouteClient() {
     setPicked(next);
     setAnnounce(alts[next]?.summary ?? "Directions updated.");
   }
+
+  const toilet = venue?.checks.find((c) => c.field === "Accessible toilet");
+  const entrance = venue?.checks.find((c) => c.field === "Level entrance");
+  const unmet: string[] = [];
+  if (profile.destination.toilet && toilet?.status === "Not found") unmet.push("an accessible toilet");
+  if (profile.destination.entrance && entrance?.status === "Not found") unmet.push("a level or ramped entrance");
 
   function saveFilter() {
     saveProfile(profile);
@@ -351,6 +359,20 @@ export function RouteClient() {
             <section aria-labelledby="steps-h">
               <h2 id="steps-h" className="text-[13px] font-bold tracking-wide text-muted uppercase">Step by step</h2>
               <ol>{activeSteps.map((s, i) => <RouteStep key={i} step={s} />)}</ol>
+            </section>
+          )}
+
+          {unmet.length > 0 && (
+            <WarnBanner>This place may not meet your need for {unmet.join(" or ")}.</WarnBanner>
+          )}
+
+          {venue && (
+            <section aria-labelledby="dest-h">
+              <h2 id="dest-h" className="text-[13px] font-bold tracking-wide text-muted uppercase">Destination check: {venue.name}</h2>
+              <ul>{venue.checks.map((c) => <VenueCheckRow key={c.field} check={c} />)}</ul>
+              <p className="mt-1 text-[14px] text-muted">
+                {venue.sourceCount > 0 ? `Checked ${venue.checkedAgo}, using ${venue.sourceCount} sources.` : "No one has checked this place yet."}
+              </p>
             </section>
           )}
 

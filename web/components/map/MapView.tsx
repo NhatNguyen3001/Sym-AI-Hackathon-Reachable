@@ -117,10 +117,14 @@ export default function MapView({
   const reduced = useReducedMotion();
   const { fix } = useUserLocation();
   const acc = useMemo(() => toLatLng(accessible), [accessible]);
+  // Each extra line keeps its index in `alternatives`, so a click picks the right one. The fastest line is only
+  // shown for comparison when there are no alternatives: it is not a route you can pick (pick: null).
   const extras = useMemo(() => {
-    const offered = alternatives.filter((alt) => !sameLine(accessible, alt) && toLatLng(alt).length > 1);
+    const offered = alternatives
+      .map((alt, pick) => ({ ...alt, pick: pick as number | null }))
+      .filter((alt) => !sameLine(accessible, alt) && toLatLng(alt).length > 1);
     if (offered.length) return offered;
-    if (fastest && !sameLine(accessible, fastest)) return [{ ...fastest, summary: "Fastest route" }];
+    if (fastest && !sameLine(accessible, fastest)) return [{ ...fastest, summary: "Fastest route", pick: null }];
     return [];
   }, [accessible, alternatives, fastest]);
 
@@ -184,15 +188,15 @@ export default function MapView({
         {extras.map((alt, i) => {
           const line = toLatLng(alt);
           const mid = line[Math.floor(line.length / 2)];
-          const choose = () => onPick?.(i);
+          const choose = alt.pick === null ? undefined : () => onPick?.(alt.pick as number);
           return (
             <Fragment key={`${alt.summary}-${i}`}>
-              <Polyline positions={line} eventHandlers={{ click: choose }}
+              <Polyline positions={line} eventHandlers={choose ? { click: choose } : {}} interactive={!!choose}
                 pathOptions={{ color: ALT[i % ALT.length], weight: 14, opacity: 0.01 }} />
-              <Polyline positions={line} eventHandlers={{ click: choose }}
+              <Polyline positions={line} eventHandlers={choose ? { click: choose } : {}} interactive={!!choose}
                 pathOptions={{ color: ALT[i % ALT.length], weight: 6, dashArray: i % 2 ? "2 10" : "10 8", opacity: 0.95 }} />
               {mid && <Marker position={mid} icon={labelIcon(alt.summary, i + 1)} alt={alt.summary} title={alt.summary}
-                eventHandlers={{ click: choose }} zIndexOffset={500} />}
+                eventHandlers={choose ? { click: choose } : {}} interactive={!!choose} zIndexOffset={500} />}
             </Fragment>
           );
         })}

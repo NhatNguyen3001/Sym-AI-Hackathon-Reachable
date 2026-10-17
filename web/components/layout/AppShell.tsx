@@ -11,6 +11,7 @@ import { useTheme } from "@/components/theme/ThemeProvider";
 import {
   Dialog, DialogContent, DialogDescription, DialogTitle,
 } from "@/components/ui/dialog";
+import { readStored, writeStored } from "@/lib/storage";
 
 const LINKS = [
   { href: "/", label: "Map", icon: MapIcon, match: (p: string) => p === "/" || p.startsWith("/route") },
@@ -98,12 +99,12 @@ export function AppShell({ children, map = false }: { children: ReactNode; map?:
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   useEffect(() => {
-    setCollapsed(localStorage.getItem("reachable-sidebar") === "closed");
+    setCollapsed(readStored("reachable-sidebar") === "closed");
   }, []);
   function toggleSidebar() {
     setCollapsed((v) => {
       const next = !v;
-      localStorage.setItem("reachable-sidebar", next ? "closed" : "open");
+      writeStored("reachable-sidebar", next ? "closed" : "open");
       return next;
     });
   }

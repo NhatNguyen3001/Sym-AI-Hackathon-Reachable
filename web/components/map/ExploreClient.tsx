@@ -9,6 +9,7 @@ import { PlaceSearch } from "@/components/PlaceSearch";
 import { Button } from "@/components/ui/button";
 import { WeatherBanner } from "@/components/Banners";
 import { getAmenities, getUpdates, getWeather } from "@/lib/api";
+import { startPlaceId } from "@/lib/start";
 import { distanceLabel, HAZARD_LABEL, hazardsFromUpdates, type Hazard } from "@/lib/hazards";
 import { loadProfile, saveProfile } from "@/lib/profile";
 import { profile as defaultProfile } from "@/lib/placeholder";
@@ -67,9 +68,7 @@ export function ExploreClient() {
 
   function goToAmenity(pin: AmenityPin) {
     saveProfile(profile);
-    const from = fix
-      ? `coord:here:${fix.lat.toFixed(5)},${fix.lng.toFixed(5)}`
-      : "mq-station";
+    const from = startPlaceId(fix);
     router.push(`/route?from=${encodeURIComponent(from)}&to=${encodeURIComponent(pin.placeId)}`);
   }
 
@@ -77,9 +76,7 @@ export function ExploreClient() {
     e.preventDefault();
     if (!to) return;
     saveProfile(profile);
-    const from = fix
-      ? `coord:here:${fix.lat.toFixed(5)},${fix.lng.toFixed(5)}`
-      : "mq-station";
+    const from = startPlaceId(fix);
     router.push(`/route?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to.id)}`);
   }
 
