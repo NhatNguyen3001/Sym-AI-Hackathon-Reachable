@@ -122,7 +122,7 @@ def plan_route(body: RouteIn, request: Request, tasks: BackgroundTasks, session:
     lifts = [row for p in (start, end) if st.places.get(p.id) and p.kind == "station"
              for row in lift_rows(session, st.places, p.id, st.lift_feed)]
     for p in (start, end):
-        if st.resolver.unsaved(p):
+        if st.resolver.claim_save(p):
             tasks.add_task(st.resolver.save_quietly, [p])
     extra = {"note": note} if note else {}
 

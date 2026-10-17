@@ -22,6 +22,6 @@ def get_place(place_id: str, request: Request, tasks: BackgroundTasks):
     p = resolver.get(place_id)
     if p is None:
         raise ApiError(404, "place_not_found", "We couldn't find that place. Pick one from the list.")
-    if resolver.unsaved(p):  # someone is using this searched place: keep it for shared links and restarts
+    if resolver.claim_save(p):  # someone is using this searched place: keep it for shared links and restarts
         tasks.add_task(resolver.save_quietly, [p])
     return p.public()

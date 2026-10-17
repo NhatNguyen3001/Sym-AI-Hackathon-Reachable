@@ -232,3 +232,19 @@ def test_places_known_only_skips_photon(client):
     client.app.state.resolver.photon = photon_with([TOWN_HALL], seen=seen)
     r = client.get("/places", params={"q": "libr", "photon": "0"}).json()
     assert seen == [] and r[0]["id"] in {"library", "library-cafe"}
+
+
+def test_a_place_is_saved_once_even_when_asked_three_times(engine):
+    r = resolver(engine, photon_with([TOWN_HALL]))
+    place = r.search("town hall")[0][0]
+    assert [r.claim_save(place) for _ in range(3)] == [True, False, False]   # /places/from, /places/to, /route
+    assert not r.unsaved(place)
+
+
+def test_a_failed_save_can_be_tried_again(engine, monkeypatch):
+    r = resolver(engine, photon_with([TOWN_HALL]))
+    place = r.search("town hall")[0][0]
+    assert r.claim_save(place)
+    monkeypatch.setattr(r, "remember", lambda places: (_ for _ in ()).throw(RuntimeError("Turso down")))
+    r.save_quietly([place])
+    assert r.unsaved(place) and r.claim_save(place)

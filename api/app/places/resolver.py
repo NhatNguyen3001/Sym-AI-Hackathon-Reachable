@@ -1,5 +1,6 @@
 """One place lookup for the whole API: known campus places, Photon search results (cached), and coord: ids."""
 import logging
+import threading
 from collections import OrderedDict
 
 from sqlmodel import Session, select
@@ -20,6 +21,8 @@ class PlaceResolver:
         self.known, self.photon, self.overpass, self.engine, self.bbox = known, photon, overpass, engine, bbox
         self._recent: OrderedDict[str, Place] = OrderedDict()
         self._saved: set[str] = set()
+        self._saving: set[str] = set()
+        self._claims = threading.Lock()
 
     def search(self, q: str, photon: bool = True) -> tuple[list[Place], bool]:
         """Matching places (stations first) and whether search was limited because Photon failed.
@@ -80,15 +83,27 @@ class PlaceResolver:
         place.exit_points = exits
 
     def unsaved(self, place: Place) -> bool:
-        """A searched place someone is now using that isn't in the database yet."""
-        return place.id in self._recent and place.id not in self._saved
+        """A searched place someone is now using that isn't in the database (or being saved) yet."""
+        return place.id in self._recent and place.id not in self._saved and place.id not in self._saving
+
+    def claim_save(self, place: Place) -> bool:
+        """True for the one caller that should save this place; others see it's already on its way.
+        Opening a place fires /places/{from}, /places/{to} and /route at once, and each Turso write pauses the API."""
+        with self._claims:
+            if not self.unsaved(place):
+                return False
+            self._saving.add(place.id)
+            return True
 
     def save_quietly(self, places: list[Place]) -> None:
         """For background tasks: a failed save is logged and dropped (spec §10.6)."""
         try:
             self.remember(places)
         except Exception:  # noqa: BLE001
-            log.warning("Couldn't save a place; dropped.", exc_info=True)
+            log.warning("Couldn't save a place; will try again next time it's opened.", exc_info=True)
+        finally:
+            with self._claims:
+                self._saving.difference_update(p.id for p in places)
 
     def remember(self, places: list[Place]) -> None:
         """Save searched places (osm: ids) so links to them keep working, in one transaction."""
