@@ -5,12 +5,12 @@ metadata:
   type: project
 ---
 
-**Stage (2026-10-17):** Spec + plan written and committed. Execution in progress.
+**Stage (2026-10-17):** Vertical slice implemented on branch `feat/vertical-slice` (not merged, not pushed). All suites green: api pytest 84, web vitest 15, Playwright+axe e2e 22.
 `docs/superpowers/specs/2026-10-17-reachable-vertical-slice-design.md`.
 
-**Next step:** executing the plan `docs/superpowers/plans/2026-10-17-reachable-vertical-slice.md` inline (user approved spec + asked to proceed). Track progress by task number in this file.
-(`docs/superpowers/plans/`) via superpowers:writing-plans → user reviews plan →
-execute inline (superpowers:executing-plans).
+**Next step:** user reviews the branch (optionally a fresh code review), then decide merge/PR. Then real-world checks: confirm real MQ station exit names, try with ANTHROPIC_API_KEY set.
+
+**Progress:** Plan tasks 1-16 done. Rulings/deviations are in the final summary and `.superpowers/sdd/.../progress.md` (gitignored).
 
 **After this cycle (next cycles):** LangGraph agents (Venue, Updates, Report checker),
 TfNSW GTFS-RT lift feed (needs key), Tavily research, deploy (Vercel + App Runner + Turso).

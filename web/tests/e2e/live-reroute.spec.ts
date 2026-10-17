@@ -44,3 +44,18 @@ test("unknown place shows a readable error", async ({ page }) => {
   await page.goto("/route?from=mq-station&to=nowhere");
   await expect(page.getByRole("alert").filter({ hasText: "We couldn't find that place" })).toBeVisible();
 });
+
+test("rain shows the weather banner on plan and route", async ({ page }) => {
+  const api = await request.newContext({ baseURL: API });
+  const on = await (await api.post("/demo/rain")).json();
+  try {
+    expect(on.raining).toBe(true);
+    await page.goto("/plan");
+    await expect(page.getByText("Light rain now.")).toBeVisible();
+    await page.goto("/route?from=mq-station&to=library");
+    await expect(page.getByText("Avoiding steep or smooth paths that get slippery.")).toBeVisible();
+  } finally {
+    await api.post("/demo/rain");
+    await api.dispose();
+  }
+});
