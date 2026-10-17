@@ -13,7 +13,16 @@ def _src(kind: str, label: str, ago: timedelta, url: str | None = None, fields: 
     return s
 
 
+def retire_demo_lifts(session: Session) -> None:
+    """Databases seeded before cycle 3 hold a simulated lift outage; lift status is live now (ids start tfnsw-)."""
+    for b in session.exec(select(Barrier).where(Barrier.type == "lift_outage")).all():
+        if not b.id.startswith("tfnsw-"):
+            session.delete(b)
+    session.commit()
+
+
 def seed(session: Session, G, places) -> None:
+    retire_demo_lifts(session)
     if session.exec(select(Barrier)).first():
         return
     t = now()
