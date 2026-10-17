@@ -73,9 +73,16 @@ class PlaceResolver:
         with Session(self.engine) as s:
             row = s.get(PlaceCache, place.id)
             if row is None or row.exits is not None:
+                if row is not None:
+                    place.exit_points = list(row.exits or [])
                 return
-            exits = self.overpass.station_exits(place.lat, place.lng)
-            if exits is None:
+        # Ask Overpass with the database let go: every save waits while a session is open.
+        exits = self.overpass.station_exits(place.lat, place.lng)
+        if exits is None:
+            return
+        with Session(self.engine) as s:
+            row = s.get(PlaceCache, place.id)
+            if row is None:
                 return
             row.exits = exits
             s.add(row)

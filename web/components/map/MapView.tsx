@@ -9,6 +9,7 @@ import { Minus, Plus } from "lucide-react";
 import { guardMap } from "./guardMap";
 import { useVisibleMount } from "./useVisibleMount";
 import type { PlaceMark, SlopeSpan } from "@/lib/routeFeatures";
+import { DEFAULT_RIDE_COLOUR, lineColour } from "@/lib/lineColours";
 import type { Leg, LiftRow, MapBarrier, RouteOption, RouteOut } from "@/lib/types";
 import { useUserLocation } from "@/lib/useUserLocation";
 
@@ -161,17 +162,19 @@ export default function MapView({
 
   const trip = useMemo(() => {
     const walks: LatLng[][] = [];
-    const rides: LatLng[][] = [];
+    const rides: { line: LatLng[]; colour: string; label: string }[] = [];
     const stops: LatLng[] = [];
     for (const l of legs ?? []) {
       if (l.kind === "walk") walks.push(toLatLng(l));
       if (l.kind === "ride") {
-        rides.push(toLatLng(l));
+        rides.push({ line: toLatLng(l), colour: lineColour(l), label: l.label });
         stops.push([l.from.lat, l.from.lng], [l.to.lat, l.to.lng]);
       }
     }
-    return { walks: walks.filter((w) => w.length > 1), rides: rides.filter((r) => r.length > 1), stops };
+    return { walks: walks.filter((w) => w.length > 1), rides: rides.filter((r) => r.line.length > 1), stops };
   }, [legs]);
+  // One legend row per line on the trip ("Train T2" in blue), in the order you ride them.
+  const rideKey = useMemo(() => trip.rides.filter((r, i, all) => all.findIndex((x) => x.label === r.label) === i), [trip]);
   const hasTrip = trip.rides.length > 0;
   const pins = useMemo(() => [
     ...(ends?.from ? [[ends.from, "route-start"] as const] : []),
@@ -188,7 +191,7 @@ export default function MapView({
   }, [map]);
 
   useEffect(() => {
-    const line = [...acc, ...extras.flatMap((alt) => toLatLng(alt)), ...trip.walks.flat(), ...trip.rides.flat()];
+    const line = [...acc, ...extras.flatMap((alt) => toLatLng(alt)), ...trip.walks.flat(), ...trip.rides.flatMap((r) => r.line)];
     const pts = line.length > 1 ? line : pins.map(([pt]) => pt as LatLng);
     if (map && pts.length > 1) {
       // The whole trip in view. On phones the route sheet covers up to 58% of the screen from the bottom.
@@ -250,8 +253,13 @@ export default function MapView({
               pathOptions={{ color: PRIMARY, weight: 8, opacity: 1 }} />
           </>
         )}
-        {trip.rides.map((r, i) => (
-          <Polyline key={`ride-${i}`} positions={r} pathOptions={{ color: RIDE, weight: 6, dashArray: "2 10", opacity: 0.9 }} />
+        {trip.rides.map((r, i) => r.colour === DEFAULT_RIDE_COLOUR ? (
+          <Polyline key={`ride-${i}`} positions={r.line} pathOptions={{ color: RIDE, weight: 6, dashArray: "2 10", opacity: 0.9 }} />
+        ) : (
+          <Fragment key={`ride-${i}`}>
+            <Polyline positions={r.line} interactive={false} pathOptions={{ color: "#fff", weight: 10, opacity: 1 }} />
+            <Polyline positions={r.line} interactive={false} pathOptions={{ color: r.colour, weight: 6, opacity: 1 }} />
+          </Fragment>
         ))}
         {trip.walks.map((w, i) => (
           <Polyline key={`walk-${i}`} positions={w} pathOptions={{ color: PRIMARY, weight: 8, opacity: 1 }} />
@@ -320,11 +328,14 @@ export default function MapView({
               <li className="flex items-center gap-2">
                 <span aria-hidden="true" className="h-1.5 w-7 rounded bg-primary" />{hasTrip ? "Your walk or roll" : "Your route"}
               </li>
-              {hasTrip && (
-                <li className="flex items-center gap-2">
-                  <span aria-hidden="true" className="w-7 border-t-[3px] border-dotted border-ink" />Public transport
+              {rideKey.map((r) => (
+                <li key={r.label} className="flex items-center gap-2">
+                  {r.colour === DEFAULT_RIDE_COLOUR
+                    ? <span aria-hidden="true" className="w-7 border-t-[3px] border-dotted border-ink" />
+                    : <span aria-hidden="true" className="h-1.5 w-7 rounded" style={{ background: r.colour }} />}
+                  {r.label}
                 </li>
-              )}
+              ))}
               {extras.length > 0 && (
                 <li className="flex items-center gap-2">
                   <span aria-hidden="true" className="w-7 border-t-[3px] border-dashed" style={{ borderColor: ALT[0] }} />Other routes

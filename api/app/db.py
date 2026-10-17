@@ -10,7 +10,7 @@ def make_engine(url: str, turso_url: str = "", turso_token: str = "", replica=No
         # Writes (and anything run in a write session) go through the one Turso connection, one session at a time.
         import app.libsql_dialect  # noqa: F401  registers sqlite+libsql
         eng = create_engine("sqlite+libsql://", creator=replica.write_connect, poolclass=StaticPool)
-        event.listen(eng, "checkout", lambda *_: replica.lock.acquire())
+        event.listen(eng, "checkout", lambda *_: replica.acquire())
         event.listen(eng, "checkin", lambda *_: replica.lock.release())
         return eng
     if turso_url:
