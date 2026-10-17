@@ -2,6 +2,18 @@ import pytest
 from fastapi.testclient import TestClient
 from app.config import Settings
 from app.main import create_app
+from app.weather import WeatherService
+from tests.test_campus_graph import G, PL
+
+
+class _Dry:
+    status_code = 200
+
+    def json(self):
+        return {"current": {"precipitation": 0.0, "weather_code": 1}}
+
+    def raise_for_status(self):
+        pass
 
 
 @pytest.fixture
@@ -10,6 +22,11 @@ def settings(tmp_path):
 
 
 @pytest.fixture
-def client(settings):
-    with TestClient(create_app(settings)) as c:
+def app(settings):
+    return create_app(settings, graph=G, places=PL, weather_service=WeatherService(http_get=lambda *a, **k: _Dry()))
+
+
+@pytest.fixture
+def client(app):
+    with TestClient(app) as c:
         yield c
