@@ -43,6 +43,10 @@ export interface Step {
   label: string;
   confidence: string;
   lengthM: number;
+  /** The facts behind the words (cycle 6): what kind of stretch, and its steepest slope in % (slopes only). */
+  kind?: "flat" | "slope" | "steps" | "lift" | "crossing" | "path";
+  slope?: number | null;
+  measured?: boolean;
 }
 
 export interface LiftRow {
