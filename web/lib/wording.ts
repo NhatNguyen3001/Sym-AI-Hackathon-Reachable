@@ -98,3 +98,38 @@ export function feelChoice(maxSlope: number): (typeof FEEL_CHOICES)[number]["lab
   if (maxSlope <= 8) return "Some hills";
   return "Most hills";
 }
+
+const SAY: Record<Difficulty, string> = {
+  flat: "Go straight",
+  easy: "Easy slope ahead",
+  tiring: "A tiring slope ahead",
+  hard: "A hard slope ahead, you may want help",
+  "too-steep": "A slope too steep for you ahead",
+  unknown: "Go straight",
+};
+
+/** Aloud, distances need whole words: "about 60 metres". */
+const sayMetres = (m: number) => aboutMetres(m).replace(/ km$/, " kilometres").replace(/ m$/, " metres");
+
+/** The same step as a spoken sentence (guidance voice). */
+export function spokenText(step: Step, profile: Profile): string {
+  const unsure = step.confidence === "Not sure";
+  switch (step.kind) {
+    case "flat":
+      return `Go straight for ${sayMetres(step.lengthM)}`;
+    case "slope": {
+      const d = difficulty(step.slope, profile.maxSlope, step.slope !== null && step.slope !== undefined);
+      return d === "flat" || d === "unknown" ? `Go straight for ${sayMetres(step.lengthM)}` : `${SAY[d]}, for ${sayMetres(step.lengthM)}`;
+    }
+    case "path":
+      return `Go straight for ${sayMetres(step.lengthM)}. Hills here aren't measured`;
+    case "steps":
+      return `Steps ahead, for ${sayMetres(step.lengthM)}`;
+    case "crossing":
+      return unsure ? "Crossing ahead. The kerb ramp is not confirmed, check before you cross" : "Cross using the kerb ramp";
+    case "lift":
+      return stepText(step, profile);
+    default:
+      return step.label;
+  }
+}

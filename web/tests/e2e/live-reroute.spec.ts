@@ -20,13 +20,13 @@ test("a live lift alert reroutes an open route page without a reload", async ({ 
     const aside = page.getByRole("complementary", { name: "Route details" });
     await expect(page.getByRole("region", { name: "Route map" }).getByTitle("South exit lift: Out of service"))
       .toBeVisible({ timeout: 10_000 });
-    await expect(aside.getByText("Lift at north exit")).toBeVisible();
+    await expect(aside.getByText("Use the lift at the north exit")).toBeVisible();
 
     await tfnsw.post("/_mock/lifts", { data: { osmIds: [LIFT2, LIFT1] } });
     await expect(aside.getByText(/Every lift at Macquarie University station is out of service/)).toBeVisible({ timeout: 10_000 });
 
     await tfnsw.post("/_mock/lifts", { data: { osmIds: [LIFT2] } });
-    await expect(aside.getByText("Lift at north exit")).toBeVisible({ timeout: 10_000 });
+    await expect(aside.getByText("Use the lift at the north exit")).toBeVisible({ timeout: 10_000 });
   } finally {
     await tfnsw.post("/_mock/lifts", { data: { osmIds: [LIFT2] } });
     await tfnsw.dispose();

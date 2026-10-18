@@ -1,6 +1,7 @@
 // Turn-by-turn guidance: where you are along the route, which step you're on, and what comes next.
 import { haversine } from "./hazards";
-import type { Leg, Step } from "./types";
+import type { Leg, Profile, Step } from "./types";
+import { spokenText, stepText } from "./wording";
 
 type LngLat = [number, number];
 export type LatLng = [number, number];
@@ -14,6 +15,8 @@ export interface NavStep {
   icon: NavIcon;
   /** The route data isn't sure about this step (e.g. a kerb ramp nobody has confirmed): never said as a fact. */
   unsure?: boolean;
+  /** What the voice says for this step, in the same plain words as the screen (cycle 6). */
+  say?: string;
   startM: number;
   endM: number;
 }
@@ -61,7 +64,7 @@ function addLine(nav: NavRoute, coords: LngLat[]) {
 }
 
 /** Steps from the API, spread along the geometry in proportion to their lengths. */
-function addSteps(nav: NavRoute, coords: LngLat[], steps: Step[], detail?: string): string | undefined {
+function addSteps(nav: NavRoute, coords: LngLat[], steps: Step[], detail?: string, profile?: Profile): string | undefined {
   const start = nav.total;
   addLine(nav, coords);
   const length = nav.total - start;
@@ -71,7 +74,8 @@ function addSteps(nav: NavRoute, coords: LngLat[], steps: Step[], detail?: strin
     const share = stepTotal > 0 ? s.lengthM / stepTotal : 1 / steps.length;
     const from = start + walked;
     walked += share * length;
-    nav.steps.push({ label: s.label, icon: s.icon, unsure: s.confidence === "Not sure", startM: from, endM: start + walked,
+    nav.steps.push({ label: profile ? stepText(s, profile) : s.label, say: profile ? spokenText(s, profile) : undefined,
+      icon: s.icon, unsure: s.confidence === "Not sure", startM: from, endM: start + walked,
       detail: i === 0 ? detail : undefined });
   });
   return steps.length ? undefined : detail;
@@ -88,15 +92,15 @@ function finish(nav: NavRoute, label: string): NavRoute {
 }
 
 /** A walk or roll: the route line and its step-by-step list. */
-export function navFromWalk(coords: LngLat[], steps: Step[] | undefined): NavRoute {
+export function navFromWalk(coords: LngLat[], steps: Step[] | undefined, profile?: Profile): NavRoute {
   const nav = empty();
-  addSteps(nav, coords, steps ?? []);
+  addSteps(nav, coords, steps ?? [], undefined, profile);
   return finish(nav, "Follow the route");
 }
 
 /** A public transport trip: walks with their steps, then each ride as one step. Station paths (lifts, level
  *  paths) become the detail line of the step that follows them. */
-export function navFromLegs(legs: Leg[]): NavRoute {
+export function navFromLegs(legs: Leg[], profile?: Profile): NavRoute {
   const nav = empty();
   let pending: string | undefined;
   for (const leg of legs) {
@@ -106,7 +110,7 @@ export function navFromLegs(legs: Leg[]): NavRoute {
       continue;
     }
     if (leg.kind === "walk") {
-      pending = addSteps(nav, leg.geometry.coordinates, leg.steps, pending);
+      pending = addSteps(nav, leg.geometry.coordinates, leg.steps, pending, profile);
       continue;
     }
     const startM = nav.total;
@@ -262,6 +266,7 @@ export function navKey(nav: NavRoute): string {
 
 /** A step as an instruction to say: "Go straight on a flat footpath for 61 metres", "Use the lift at north exit". */
 export function spokenStep(step: NavStep): string {
+  if (step.say) return speakable([step.say, step.detail].filter(Boolean).join(". "));
   const label = step.label;
   const length = label.match(/,\s*(\d+ m)$/)?.[1];
   const plain = label.replace(/,\s*\d+ m$/, "");

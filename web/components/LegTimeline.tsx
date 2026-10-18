@@ -2,7 +2,7 @@ import { Bus, Footprints, MoveVertical, Ship, TrainFront, TramFront, TriangleAle
 import type { LucideIcon } from "lucide-react";
 import { RouteStep } from "./Rows";
 import { legTitle, rideDetail } from "@/lib/trip";
-import type { Leg } from "@/lib/types";
+import type { Leg, Profile } from "@/lib/types";
 
 const RIDE_ICONS: Record<string, LucideIcon> = { train: TrainFront, metro: TrainFront, lightrail: TramFront, ferry: Ship };
 
@@ -16,7 +16,7 @@ function LegIcon({ leg }: { leg: Leg }) {
 }
 
 /** A public transport trip, leg by leg: our walks (with their steps), station paths, and rides. */
-export function LegTimeline({ legs }: { legs: Leg[] }) {
+export function LegTimeline({ legs, profile }: { legs: Leg[]; profile?: Profile }) {
   return (
     <ol className="mt-2 space-y-4">
       {legs.map((leg, i) => (
@@ -25,7 +25,7 @@ export function LegTimeline({ legs }: { legs: Leg[] }) {
           <div className="min-w-0 flex-1">
             <p className="text-[17px] font-bold">{legTitle(leg)}</p>
             {leg.kind === "walk" && leg.steps.length > 0 && (
-              <ol>{leg.steps.map((s, k) => <RouteStep key={k} step={s} />)}</ol>
+              <ol>{leg.steps.map((s, k) => <RouteStep key={k} step={s} profile={profile} />)}</ol>
             )}
             {leg.kind === "station" && (
               <>

@@ -1,18 +1,22 @@
 import { ArrowUpFromLine, Check, CircleAlert, MoveVertical, TrendingUp } from "lucide-react";
 import { cn } from "cn";
 import { StatusBadge, badgeTone } from "./StatusBadge";
+import { TrustBadge } from "./TrustBadge";
+import { stepText } from "@/lib/wording";
 import { explainUpdate } from "@/lib/plainUpdate";
-import type { AgentCardData, Step, UpdateItem, VenueCheck } from "@/lib/types";
+import type { AgentCardData, Profile, Step, UpdateItem, VenueCheck } from "@/lib/types";
 
 const STEP_ICONS = { check: Check, slope: TrendingUp, alert: CircleAlert, lift: MoveVertical, crossing: ArrowUpFromLine };
 
-export function RouteStep({ step }: { step: Step }) {
+/** A route step in plain words for this person (how hard it is for them), and whether to trust it. */
+export function RouteStep({ step, profile }: { step: Step; profile?: Profile }) {
   const Icon = STEP_ICONS[step.icon] ?? Check;
   const warn = step.icon === "alert" || badgeTone(step.confidence) === "warn";
   return (
     <li className="flex items-start gap-3 border-b border-line py-3 last:border-b-0">
       <Icon aria-hidden="true" className={cn("mt-0.5 size-5 shrink-0", warn ? "text-warn" : "text-primary")} strokeWidth={2.4} />
-      <span className="flex-1 text-[16px]">{step.label}</span>
+      <span className="flex-1 text-[16px]">{profile ? stepText(step, profile) : step.label}</span>
+      {profile && <TrustBadge code={step.confidence} className="mt-0.5" />}
     </li>
   );
 }

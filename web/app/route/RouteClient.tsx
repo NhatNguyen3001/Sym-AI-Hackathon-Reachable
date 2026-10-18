@@ -193,9 +193,9 @@ export function RouteClient() {
     [active, activeSteps, venue, to],
   );
   const navRoute = useMemo(() => {
-    if (transit) return navFromLegs(transit.legs);
-    return active ? navFromWalk(active.geometry.coordinates, activeSteps) : null;
-  }, [transit, active, activeSteps]);
+    if (transit) return navFromLegs(transit.legs, profile);
+    return active ? navFromWalk(active.geometry.coordinates, activeSteps, profile) : null;
+  }, [transit, active, activeSteps, profile]);
   // Keep guiding on the last good route if a re-plan leaves none for a moment.
   const [heldNav, setHeldNav] = useState<NavRoute | null>(null);
   useEffect(() => {
@@ -522,14 +522,14 @@ export function RouteClient() {
           {transit && (
             <section aria-labelledby="steps-h">
               <h2 id="steps-h" className="text-[13px] font-bold tracking-wide text-muted uppercase">Step by step</h2>
-              <LegTimeline legs={transit.legs} />
+              <LegTimeline legs={transit.legs} profile={profile} />
             </section>
           )}
 
           {!transit && route?.ok && activeSteps && activeSteps.length > 0 && (
             <section aria-labelledby="steps-h">
               <h2 id="steps-h" className="text-[13px] font-bold tracking-wide text-muted uppercase">Step by step</h2>
-              <ol>{activeSteps.map((s, i) => <RouteStep key={i} step={s} />)}</ol>
+              <ol>{activeSteps.map((s, i) => <RouteStep key={i} step={s} profile={profile} />)}</ol>
             </section>
           )}
 

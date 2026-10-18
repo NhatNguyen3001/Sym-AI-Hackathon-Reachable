@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import {
-  aboutMetres, difficulty, difficultyText, feelChoice, FEEL_CHOICES, liftText, stepText, trust,
+  aboutMetres, difficulty, difficultyText, feelChoice, FEEL_CHOICES, liftText, spokenText, stepText, trust,
 } from "@/lib/wording";
 import { profile as base } from "@/lib/placeholder";
 import type { Profile, Step } from "@/lib/types";
@@ -82,4 +82,17 @@ test("how steep can you go, by feel", () => {
   expect(feelChoice(5)).toBe("Gentle only");
   expect(feelChoice(6)).toBe("Some hills");
   expect(feelChoice(12)).toBe("Most hills");
+});
+
+test("spoken steps use the same words, as whole sentences", () => {
+  expect(spokenText(step({ kind: "flat", lengthM: 61 }), withLimit(5))).toBe("Go straight for about 60 metres");
+  expect(spokenText(step({ kind: "slope", slope: 2, lengthM: 92 }), withLimit(5))).toBe("Easy slope ahead, for about 90 metres");
+  expect(spokenText(step({ kind: "slope", slope: 3, lengthM: 92 }), withLimit(5))).toBe("A tiring slope ahead, for about 90 metres");
+  expect(spokenText(step({ kind: "slope", slope: 5, lengthM: 40 }), withLimit(5)))
+    .toBe("A hard slope ahead, you may want help, for about 40 metres");
+  expect(spokenText(step({ kind: "path", lengthM: 330 }), withLimit(5)))
+    .toBe("Go straight for about 330 metres. Hills here aren't measured");
+  expect(spokenText(step({ kind: "crossing", confidence: "Not sure", label: "Kerb ramp at crossing" }), withLimit(5)))
+    .toBe("Crossing ahead. The kerb ramp is not confirmed, check before you cross");
+  expect(spokenText(step({ kind: "lift", label: "Lift at north exit" }), withLimit(5))).toBe("Use the lift at the north exit");
 });

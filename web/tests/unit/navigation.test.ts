@@ -5,6 +5,7 @@ import {
   walkedLine,
 } from "@/lib/navigation";
 import type { Leg, Step } from "@/lib/types";
+import { profile } from "@/lib/placeholder";
 
 // A straight line due north on campus: 0.001° of latitude is about 111 m.
 const LINE: [number, number][] = [[151.1135, -33.7770], [151.1135, -33.7760], [151.1135, -33.7750]];
@@ -140,4 +141,14 @@ test("on foot, far from the line is still off route", () => {
   const nav = navFromWalk(LINE, STEPS);
   const g = assessGuidance(nav, [-33.7765, 151.1145], { accuracy: 10, preview: false, hintM: 0 }); // ~90 m east
   expect(g.offRoute).toBe(true);
+});
+
+test("with a profile, guidance shows and says the plain words for that person", () => {
+  const steps: Step[] = [
+    { icon: "check", label: "Flat footpath, 111 m", confidence: "Confirmed", lengthM: 111, kind: "flat", slope: null },
+    { icon: "slope", label: "Gentle slope, up to 3%, 111 m", confidence: "Confirmed", lengthM: 111, kind: "slope", slope: 3 },
+  ];
+  const nav = navFromWalk(LINE, steps, { ...profile, maxSlope: 5 });
+  expect(nav.steps.map((s) => s.label)).toEqual(["Flat path · about 110 m", "A bit tiring · about 110 m"]);
+  expect(spokenStep(nav.steps[1])).toBe("A tiring slope ahead, for about 110 metres");
 });
