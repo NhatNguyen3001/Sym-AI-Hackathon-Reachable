@@ -12,6 +12,8 @@ export interface NavStep {
   /** Extra line under the label, e.g. the lifts to take inside a station before a ride. */
   detail?: string;
   icon: NavIcon;
+  /** The route data isn't sure about this step (e.g. a kerb ramp nobody has confirmed): never said as a fact. */
+  unsure?: boolean;
   startM: number;
   endM: number;
 }
@@ -69,7 +71,8 @@ function addSteps(nav: NavRoute, coords: LngLat[], steps: Step[], detail?: strin
     const share = stepTotal > 0 ? s.lengthM / stepTotal : 1 / steps.length;
     const from = start + walked;
     walked += share * length;
-    nav.steps.push({ label: s.label, icon: s.icon, startM: from, endM: start + walked, detail: i === 0 ? detail : undefined });
+    nav.steps.push({ label: s.label, icon: s.icon, unsure: s.confidence === "Not sure", startM: from, endM: start + walked,
+      detail: i === 0 ? detail : undefined });
   });
   return steps.length ? undefined : detail;
 }
@@ -250,13 +253,24 @@ export function speakable(text: string): string {
     .replace(/(\d+(?:\.\d+)?)\s?%/g, "$1 percent");
 }
 
+/** Stays the same when a live update re-plans the same route, so guidance doesn't restart or repeat itself. */
+export function navKey(nav: NavRoute): string {
+  const first = nav.line[0], last = nav.line[nav.line.length - 1];
+  const at = (p?: LatLng) => (p ? `${p[0].toFixed(5)},${p[1].toFixed(5)}` : "-");
+  return `${at(first)}>${at(last)}:${nav.line.length}:${Math.round(nav.total)}:${nav.steps.map((s) => s.label).join("|")}`;
+}
+
 /** A step as an instruction to say: "Go straight on a flat footpath for 61 metres", "Use the lift at north exit". */
 export function spokenStep(step: NavStep): string {
   const label = step.label;
   const length = label.match(/,\s*(\d+ m)$/)?.[1];
   const plain = label.replace(/,\s*\d+ m$/, "");
   let line: string;
-  if (step.icon === "lift") line = /^lift/i.test(plain) ? `Use the ${plain.charAt(0).toLowerCase()}${plain.slice(1)}` : plain;
+  if (step.unsure && (step.icon === "crossing" || /kerb ramp|crossing/i.test(plain))) {
+    // We don't know there's a ramp: say so, and never tell someone to use one.
+    line = "Crossing ahead. The kerb ramp is not confirmed, check before you cross";
+  } else if (step.unsure) line = `${plain}. Not confirmed, check as you go`;
+  else if (step.icon === "lift") line = /^lift/i.test(plain) ? `Use the ${plain.charAt(0).toLowerCase()}${plain.slice(1)}` : plain;
   else if (step.icon === "crossing" || /kerb ramp|crossing/i.test(plain)) line = `Cross using the ${plain.replace(/ at crossing$/i, "").toLowerCase()}`;
   else if (step.icon === "ride") line = `Take the ${plain}`;
   else if (step.icon === "slope") line = `${plain} ahead`;

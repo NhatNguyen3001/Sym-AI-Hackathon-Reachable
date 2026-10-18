@@ -11,6 +11,8 @@ export interface ClusterItem {
   lat: number;
   lng: number;
   icon: L.DivIcon;
+  /** Changes only when the pin should look different (kind, selected): then the icon is swapped. */
+  iconKey: string;
   /** Accessible name of the pin. */
   title: string;
   z?: number;
@@ -35,6 +37,7 @@ export function ClusterLayer({ items }: { items: ClusterItem[] }) {
   const group = useRef<L.MarkerClusterGroup | null>(null);
   const markers = useRef(new Map<string, L.Marker>());
   const latest = useRef(new Map<string, ClusterItem>());
+  const keys = useRef(new Map<string, string>());
 
   useEffect(() => {
     const g = L.markerClusterGroup({
@@ -63,14 +66,32 @@ export function ClusterLayer({ items }: { items: ClusterItem[] }) {
       if (!latest.current.has(id)) {
         gone.push(m);
         markers.current.delete(id);
+        keys.current.delete(id);
       }
     }
-    if (gone.length) g.removeLayers(gone);
+    if (gone.length) {
+      // Pins on screen fade out first (unless reduced motion); pins inside bubbles just go.
+      const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const shown = still ? [] : gone.filter((m) => m.getElement()?.isConnected);
+      for (const m of shown) {
+        const el = m.getElement();
+        if (el) {
+          el.style.transition = "opacity 160ms ease-in";
+          el.style.opacity = "0";
+        }
+      }
+      const hidden = gone.filter((m) => !shown.includes(m));
+      if (hidden.length) g.removeLayers(hidden);
+      if (shown.length) setTimeout(() => group.current?.removeLayers(shown), 170);
+    }
     const added: L.Marker[] = [];
     for (const it of items) {
       const m = markers.current.get(it.id);
       if (m) {
-        m.setIcon(it.icon);
+        if (keys.current.get(it.id) !== it.iconKey) {
+          m.setIcon(it.icon);
+          keys.current.set(it.id, it.iconKey);
+        }
         m.setZIndexOffset(it.z ?? 0);
         continue;
       }
@@ -86,6 +107,7 @@ export function ClusterLayer({ items }: { items: ClusterItem[] }) {
         }
       });
       markers.current.set(it.id, marker);
+      keys.current.set(it.id, it.iconKey);
       added.push(marker);
     }
     if (added.length) g.addLayers(added);

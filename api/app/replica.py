@@ -20,8 +20,9 @@ log = logging.getLogger("reachable")
 
 NO_COPY = ("Can't reach the Turso database and there's no local copy yet. Check TURSO_DATABASE_URL / "
            "TURSO_AUTH_TOKEN, or clear them to use local SQLite.")
-# A save holds the lock for well under a second; a sync for a fraction of one. Held this long, its holder was lost
-# without letting go (a session never closed), and waiting longer would stall every save for good.
+# A save holds the lock for well under a second; a sync for a fraction of one. A save that waits this long gives up
+# ("can't save right now") instead of taking the lock: the holder may just be slow, and sharing the connection
+# isn't safe.
 LOCK_WAIT_S = 30
 
 
@@ -85,9 +86,11 @@ class Replica:
         return _Shared(self._conn)
 
     def acquire(self) -> None:
-        """Take the write lock, taking it over from a holder that was lost (see LOCK_WAIT_S)."""
+        """Take the write lock, or give up after LOCK_WAIT_S with ReplicaOffline ("can't save right now").
+        Never take it over: the holder may only be slow, and two writers on one libsql connection aren't safe."""
         if not self.lock.acquire(timeout=LOCK_WAIT_S):
-            log.error("The Turso write lock was held for %s s without being released; taking it over.", LOCK_WAIT_S)
+            log.error("The Turso write lock has been busy for %s s; not saving this time.", LOCK_WAIT_S)
+            raise ReplicaOffline("The Turso database is busy right now.")
 
     def sync(self) -> None:
         self.acquire()

@@ -5,7 +5,7 @@ import {
   ArrowUpFromLine, Check, CircleAlert, Flag, MoveVertical, Navigation, TrainFront, TrendingUp, Volume2, VolumeX,
 } from "lucide-react";
 import {
-  distanceText, nextTurn, spokenStep, turnPhrase, turnsOf, type NavIcon, type NavRoute,
+  distanceText, navKey, nextTurn, spokenStep, turnPhrase, turnsOf, type NavIcon, type NavRoute,
 } from "@/lib/navigation";
 import { readStored, writeStored } from "@/lib/storage";
 import { timeOfDay } from "@/lib/trip";
@@ -19,9 +19,11 @@ const VOICE_KEY = "reachable.voice";
 /** A turn is announced from this far away. */
 const TURN_WARN_M = 30;
 
-/** Queued, so a turn said right after a new step doesn't cut it off. */
-function speak(text: string) {
+/** `fresh`: a new step drops anything still waiting to be said, so "Turn left now" never comes after the corner.
+ *  A turn is queued after its step, so it doesn't cut the step off. */
+function speak(text: string, fresh = false) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  if (fresh) window.speechSynthesis.cancel();
   window.speechSynthesis.resume(); // Chrome can leave speech paused (e.g. after the tab was hidden)
   const u = new SpeechSynthesisUtterance(text);
   u.lang = "en-AU";
@@ -46,7 +48,7 @@ function useWakeLock(on: boolean) {
 }
 
 export function NavigationPanel({
-  nav, guide, destination, minutes, arriveAt, locationStatus, previewing, onPreview, onReplan, onEnd,
+  nav, guide, destination, minutes, arriveAt, locationStatus, previewing, onPreview, onReplan, onEnd, problem,
 }: {
   nav: NavRoute;
   guide: Guidance;
@@ -60,16 +62,20 @@ export function NavigationPanel({
   onPreview: (on: boolean) => void;
   onReplan: () => void;
   onEnd: () => void;
+  /** A live update couldn't re-plan (no signal): keep guiding on the last route and say so. */
+  problem?: string | null;
 }) {
-  const [voice, setVoice] = useState(true);
+  // Read before the first render (this panel only mounts in the browser, after Start), so a muted voice never
+  // speaks even once.
+  const [voice, setVoice] = useState(() => readStored(VOICE_KEY) !== "off");
+  const heading = useRef<HTMLHeadingElement>(null);
   const [now, setNow] = useState(() => Date.now());
   const spoken = useRef<Set<string>>(new Set());
   const p = guide.progress;
   useWakeLock(true);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- the voice setting is only readable after mount
-    setVoice(readStored(VOICE_KEY) !== "off");
+    heading.current?.focus(); // after Start, keyboard and screen-reader users land on the directions
     if ("speechSynthesis" in window) window.speechSynthesis.cancel(); // a fresh start, not a queue left from before
     const id = setInterval(() => setNow(Date.now()), 15000);
     return () => clearInterval(id);
@@ -89,17 +95,21 @@ export function NavigationPanel({
       ? `${turnPhrase(turn.dir)} now.`
       : `In ${Math.max(5, Math.round(turnIn / 5) * 5)} metres, ${turnPhrase(turn.dir).toLowerCase()}.`
     : "";
+  // Only a different route starts the cues again: a live update re-planning the same route doesn't repeat them.
+  const routeKey = navKey(nav);
   useEffect(() => {
     spoken.current = new Set();
-  }, [nav]);
-  // Two cues, each said once: the step first, so a turn coming up at the same moment never hides it.
+  }, [routeKey]);
+  // Two cues, each said once: the step first (dropping anything left over), then a turn coming up.
   useEffect(() => {
-    for (const [key, text] of [[stepKey, stepText], [turnKey, turnText]]) {
+    for (const [key, text, fresh] of [[stepKey, stepText, true], [turnKey, turnText, false]] as const) {
       if (!key || spoken.current.has(key)) continue;
       spoken.current.add(key);
-      if (voice) speak(text);
+      if (voice) speak(text, fresh);
     }
   }, [stepKey, stepText, turnKey, turnText, voice]);
+  // For screen readers: one short announcement per step (not every time the distance changes).
+  const announcement = !p ? "" : p.arrived ? `You have arrived at ${destination}.` : `Now: ${p.current.label}`;
   useEffect(() => () => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
   }, []);
@@ -109,7 +119,7 @@ export function NavigationPanel({
     setVoice(next);
     writeStored(VOICE_KEY, next ? "on" : "off");
     if (!next && "speechSynthesis" in window) window.speechSynthesis.cancel();
-    if (next && stepText) speak(stepText); // say where you are, so you hear the voice is back
+    if (next && stepText) speak(stepText, true); // say where you are, so you hear the voice is back
   }
 
   const left = p ? p.remainingM : nav.total;
@@ -131,8 +141,16 @@ export function NavigationPanel({
 
   return (
     <>
-      <section aria-label="Directions" aria-live="polite"
+      <p role="status" className="sr-only">{announcement}</p>
+      <section aria-label="Directions"
         className="absolute top-3 right-3 left-[4.5rem] z-[700] lg:left-1/2 lg:w-[480px] lg:-translate-x-1/2">
+        <h2 ref={heading} tabIndex={-1} className="sr-only">Directions</h2>
+        {problem && (
+          <div role="alert" className="mb-2 rounded-[14px] bg-warn-soft px-4 py-3 text-warn-ink shadow-lg">
+            <p className="font-bold text-warn-strong">{problem}</p>
+            <p className="text-[15px]">Keep following these directions. They update when you&apos;re back online.</p>
+          </div>
+        )}
         {p?.arrived ? (
           <div className="rounded-[18px] bg-[#1d4fa8] p-4 text-white shadow-lg">
             <div className="flex items-center gap-3">

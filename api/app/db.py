@@ -1,7 +1,18 @@
 from fastapi import Request
 from sqlalchemy import event
-from sqlalchemy.pool import StaticPool
+from sqlalchemy.pool import QueuePool, StaticPool
 from sqlmodel import SQLModel, Session, create_engine
+
+
+def _take(replica, record) -> None:
+    replica.acquire()                      # raises ReplicaOffline when the lock stays busy
+    record.info["turso_lock"] = True
+
+
+def _give_back(replica, record) -> None:
+    """Release only a lock this checkout took: a failed checkout must never free someone else's lock."""
+    if record.info.pop("turso_lock", False):
+        replica.lock.release()
 
 
 def make_engine(url: str, turso_url: str = "", turso_token: str = "", replica=None):
@@ -10,8 +21,8 @@ def make_engine(url: str, turso_url: str = "", turso_token: str = "", replica=No
         # Writes (and anything run in a write session) go through the one Turso connection, one session at a time.
         import app.libsql_dialect  # noqa: F401  registers sqlite+libsql
         eng = create_engine("sqlite+libsql://", creator=replica.write_connect, poolclass=StaticPool)
-        event.listen(eng, "checkout", lambda *_: replica.acquire())
-        event.listen(eng, "checkin", lambda *_: replica.lock.release())
+        event.listen(eng, "checkout", lambda _conn, record, _proxy: _take(replica, record))
+        event.listen(eng, "checkin", lambda _conn, record: _give_back(replica, record))
         return eng
     if turso_url:
         import libsql
@@ -22,10 +33,16 @@ def make_engine(url: str, turso_url: str = "", turso_token: str = "", replica=No
     return create_engine(url, connect_args=args)
 
 
+READ_POOL = 20  # enough for the API's worker threads; extra requests wait briefly for a free connection
+
+
 def make_read_engine(replica):
-    """Reads from the local copy of Turso: read-only, no network."""
+    """Reads from the local copy of Turso: read-only, no network.
+    A fixed pool that never closes its connections while running: libsql panics when the default pool keeps opening
+    and closing extra connections under load (found 2026-10-18), and the panic left the pool broken."""
     import app.libsql_dialect  # noqa: F401  registers sqlite+libsql
-    return create_engine("sqlite+libsql://", pool_pre_ping=True, creator=replica.read_connect)
+    return create_engine("sqlite+libsql://", creator=replica.read_connect, poolclass=QueuePool,
+                         pool_size=READ_POOL, max_overflow=0, pool_pre_ping=True)
 
 
 def init_db(engine):

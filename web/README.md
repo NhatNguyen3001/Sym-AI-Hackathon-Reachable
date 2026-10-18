@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Reachable web app
 
-## Getting Started
+Next.js 16 + Tailwind v4 + shadcn/ui + react-leaflet. Setup and the whole project are described in the
+[main README](../README.md); this page is for working on the web app.
 
-First, run the development server:
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+copy .env.example .env.local     # Windows   (macOS / Linux: cp .env.example .env.local)
+npm run dev                      # http://localhost:3000, talks to the API at NEXT_PUBLIC_API_URL (127.0.0.1:8000)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Pages
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Path | What it is |
+|---|---|
+| `/` | The map: search a destination, needs filter chips, pins across Sydney (number bubbles when zoomed out), problem cards, place popups with **Go here**, and when the map was last updated |
+| `/route` | A step-free route or public transport trip, with steps, lift status, warnings and the destination check |
+| `/report` | Report a barrier with a photo |
+| `/live` | Live updates (lifts, roadworks, reports, weather), when the map was updated, and the owner-only **Update map now** button |
+| `/privacy` | What Reachable keeps, as questions you open |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`/plan` and `/needs` are old addresses that redirect to the map.
 
-## Learn More
+## Where things are
 
-To learn more about Next.js, take a look at the following resources:
+- `app/<page>/` — pages. `components/` — shared pieces; `components/map/` — the maps (`ExploreMap`, `MapView`,
+  `ClusterLayer` for bubbles). `lib/` — API client (`api.ts`), types, storage, live events, small helpers.
+- Colours and fonts: `app/globals.css` (design tokens: use these, don't add new colours).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Checks (run before pushing)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm test && npm run lint && npx tsc --noEmit
+npx playwright install chromium   # first time only
+npm run e2e                        # own API + web on ports 8100/3100, mock Transport for NSW; axe accessibility checks
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`next build` type-checks the test files too.

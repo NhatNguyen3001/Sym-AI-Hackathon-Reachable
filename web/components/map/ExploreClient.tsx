@@ -39,7 +39,8 @@ export function ExploreClient() {
   const [typedFrom, setTypedFrom] = useState<Place | null>(null);
   const [weather, setWeather] = useState<Weather | null>(null);
   const [amenities, setAmenities] = useState<AmenityPin[]>([]);
-  const [expanded, setExpanded] = useState(true);
+  // Phones: the panel starts folded (search only) so the map and its buttons stay clear; its handle opens the needs.
+  const [expanded, setExpanded] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const drag = useRef({ y: 0, moved: false });
   const [placeMap, setPlaceMap] = useState<Map<string, MapPlacePin>>(new Map());
@@ -100,6 +101,8 @@ export function ExploreClient() {
     setExpanded(false);
   }
 
+  const foldSheet = useCallback(() => setExpanded(false), []);
+
   const here = startPlaceId(fix);
   const needFrom = status !== "pending" && !here;
   const fromId = here ?? typedFrom?.id ?? null;
@@ -137,7 +140,7 @@ export function ExploreClient() {
       <p role="status" className="sr-only">{locationText}</p>
       <ExploreMap hazards={visible} selectedId={selected?.id ?? null} onSelect={setSelectedId} fix={fix}
         amenities={to ? [] : amenities} onAmenity={goToAmenity}
-        places={to ? [] : places} onPlace={goToAmenity} onView={onView} />
+        places={to ? [] : places} onPlace={goToAmenity} onView={onView} onPinOpen={foldSheet} />
 
       <div className="pointer-events-none absolute top-3 right-3 left-[4.5rem] z-[550] lg:top-3 lg:right-20 lg:left-auto lg:max-w-sm">
         <div className="pointer-events-auto">

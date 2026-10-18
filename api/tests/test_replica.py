@@ -206,14 +206,32 @@ def test_reads_keep_working_when_turso_drops(tmp_path):
         assert c.get("/updates").status_code == 200   # still served from the local copy
 
 
-def test_a_session_that_never_lets_go_does_not_stall_saves_for_good(tmp_path, monkeypatch, caplog):
+def test_a_stuck_holder_makes_saves_fail_clearly_not_share_the_connection(tmp_path, monkeypatch):
+    """Review (2026-10-18): taking the lock over let two writes use the one libsql connection at once. A save that
+    can't get the lock in time fails with "can't save right now"; the holder keeps the lock until it lets go."""
     monkeypatch.setattr("app.replica.LOCK_WAIT_S", 0.2)
     r = Replica(tmp_path / "rep.db", "libsql://x.turso.io", TOKEN, connect=fake_connect())
     r.start()
     eng = make_engine("sqlite://", replica=r)
-    r.lock.acquire()              # a holder that is gone and will never release it
-    with caplog.at_level(logging.ERROR):
-        with eng.connect() as c:  # waits LOCK_WAIT_S, then takes the lock over
-            assert c.execute(text("select 1")).scalar() == 1
-        r.sync()                  # and the lock works normally afterwards
-    assert "taking it over" in caplog.text and not r.lock.locked()
+    r.lock.acquire()                       # someone is holding it (slow network, or stuck)
+    with pytest.raises(Exception) as e:
+        with eng.connect():
+            pass
+    assert "ReplicaOffline" in type(e.value).__name__ or "ReplicaOffline" in repr(e.value)
+    assert r.lock.locked()                 # still theirs: a failed save never frees someone else's lock
+    r.lock.release()                       # they let go
+    with eng.connect() as c:               # and saving works again
+        assert c.execute(text("select 1")).scalar() == 1
+    assert not r.lock.locked()
+
+
+def test_a_sync_that_cant_get_the_lock_is_skipped_not_forced(tmp_path, monkeypatch):
+    monkeypatch.setattr("app.replica.LOCK_WAIT_S", 0.2)
+    connect = fake_connect()
+    r = Replica(tmp_path / "rep.db", "libsql://x.turso.io", TOKEN, connect=connect)
+    r.start()
+    synced = connect.made[0].synced
+    r.lock.acquire()
+    r.sync_quietly()                       # logs and tries again next time
+    assert connect.made[0].synced == synced and r.lock.locked()
+    r.lock.release()

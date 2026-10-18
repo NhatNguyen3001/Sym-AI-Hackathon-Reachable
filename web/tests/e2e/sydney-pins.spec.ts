@@ -60,6 +60,30 @@ test("a Claude-checked roadwork shows what it means for you", async ({ page }) =
 
 test("the map says when its places were updated", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByText(/^OpenStreetMap places from \d+ \w+ \(saved copy\)$|^Places and roadworks updated/).first())
+  // Phones show the line above the search, desktop under the weather: only one is visible at a time.
+  await expect(page.getByText(/^OpenStreetMap places from \d+ \w+ \(saved copy\)$|^Places and roadworks updated/).filter({ visible: true }).first())
     .toBeVisible({ timeout: 20_000 });
+});
+
+test("each kind of pin can be turned off and on, and the choice is remembered", async ({ page }) => {
+  await page.goto("/");
+  const pin = page.getByRole("button", { name: /Accessible toilet at Macquarie Centre toilets \(OpenStreetMap\)/ });
+  await expect(pin).toBeAttached({ timeout: 20_000 });
+  const choose = page.getByRole("button", { name: "Choose pins" });
+  if (await choose.isVisible()) await choose.click(); // phones: the chips open from a button
+  const toilets = page.getByRole("button", { name: "Accessible toilet pins", exact: true });
+  await expect(toilets).toHaveAttribute("aria-pressed", "true");
+  await toilets.click();
+  await expect(toilets).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByRole("status").filter({ hasText: "Accessible toilet pins hidden" })).toBeAttached();
+  await expect(pin).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /Roadworks: Footpath works/ })).toBeAttached(); // other kinds stay
+  await page.reload();
+  await expect(page.getByRole("button", { name: /Roadworks: Footpath works/ })).toBeAttached({ timeout: 20_000 });
+  if (await choose.isVisible()) await choose.click();
+  await expect(page.getByRole("button", { name: "Accessible toilet pins", exact: true })).toHaveAttribute("aria-pressed", "false");
+  await expect(pin).toHaveCount(0);
+  await page.getByRole("button", { name: "Accessible toilet pins", exact: true }).click();
+  await expect(page.getByRole("status").filter({ hasText: "Accessible toilet pins shown" })).toBeAttached();
+  await expect(pin).toBeAttached();
 });

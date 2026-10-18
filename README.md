@@ -2,8 +2,8 @@
 
 *From the stop to the door.* An accessible door-to-door trip planner for Sydney, starting at Macquarie University, built for the Sym AI Open 2026.
 
-- `api/` — FastAPI: real campus routing (OpenStreetMap footpaths, slope, stairs, station lifts, barriers, rain), Sydney-wide walking routes (Valhalla), public transport trips and live lift alerts (Transport for NSW), Claude for needs parsing, route explanations and photo labels, live updates over Server-Sent Events. Data in local SQLite or Turso.
-- `web/` — Next.js + Tailwind + shadcn/ui + react-leaflet: map, route, report and live updates (`/`, `/route`, `/report`, `/live`).
+- `api/` — FastAPI: real campus routing (OpenStreetMap footpaths, slope, stairs, station lifts, barriers, rain), Sydney-wide walking routes (Valhalla), public transport trips and live lift alerts (Transport for NSW), an owner-run **map agent** that gathers accessible places across Sydney (OpenStreetMap) and has **Claude** decide which roadworks affect people walking (Live Traffic NSW), Claude for public transport explanations and photo labels, live updates over Server-Sent Events. Data in local SQLite or Turso.
+- `web/` — Next.js + Tailwind + shadcn/ui + react-leaflet: the map with pins across Sydney (`/`; needs are set with filter chips there), route (`/route`), report a barrier (`/report`), live updates (`/live`) and privacy (`/privacy`).
 - The UI spec, design mockups, specs and plans are kept outside the repo (`.claude/`, `docs/` are gitignored); ask the team for them.
 
 ## Quick start: campus only, no Docker
@@ -61,7 +61,9 @@ npm run dev
 
 **3. Open** http://localhost:3000, or go straight to the demo trip: http://localhost:3000/route?from=mq-station&to=library
 
-Without `ANTHROPIC_API_KEY` everything still works: needs parsing and route explanations fall back to rules, and photo reports ask the user to pick the barrier type. To try Claude, put a key in `api/.env` and restart the API.
+Without `ANTHROPIC_API_KEY` everything still works: public transport explanations use a template, photo reports ask the user to pick the barrier type, and the map agent adds no roadworks (it never guesses them). To try Claude, put a key in `api/.env` and restart the API.
+
+**First start:** the API loads the saved copy of about 5,500 accessible places across Sydney (`api/data/osm_places_snapshot.json`) into the database, so the map is full from the start. This happens once, only while the places table is empty.
 
 **Working on the UI:** pages are in `web/app/<page>/`, shared pieces in `web/components/`, colours and fonts in `web/app/globals.css` (design tokens: use these, don't add new colours). The page reloads as you save. Before pushing UI changes, run the checks (the browser tests also check accessibility with axe):
 ```bash
@@ -94,7 +96,7 @@ cd web && npm test          # unit
 cd web && npm run e2e       # accessibility (axe), live reroute, transit options; starts the API, web and a mock Transport for NSW
 ```
 
-The e2e run never uses your keys or Turso: it starts its own API on a temporary SQLite file and a mock Transport for NSW server (`web/tests/e2e/tfnsw-mock.mjs`).
+The e2e run never uses your keys or Turso: it starts its own API on a temporary SQLite file and a mock Transport for NSW server (`web/tests/e2e/tfnsw-mock.mjs`). For the map it seeds about 40 fixed places and one roadwork (`SEED_MAP_PLACES`), swaps in a map agent that calls nothing real (`MAP_AGENT_FAKE`) and uses a test-only owner key. The API tests blank every key from `api/.env` too.
 
 ## Public transport and live lifts (Transport for NSW)
 
@@ -127,13 +129,22 @@ Why the care about writes: the `libsql` driver holds Python's global lock during
 The map shows accessible toilets, step-free entrances, accessible parking and wheelchair-accessible places across
 Greater Sydney from OpenStreetMap, plus the Live Traffic NSW roadworks and events that affect people walking or using
 a wheelchair. **Claude decides** which roadworks matter ("blocks the path", "may affect", or car-only and dropped)
-and writes one plain sentence for each. Zoomed out, pins join into number bubbles.
+and writes one plain sentence for each. Zoomed out, pins join into soft blue number bubbles that split as you zoom in.
+
+On the map:
+- **A place pin** opens a small popup (what it is, how far, the source) with a **Go here** button; only that button
+  plans a route. The route page's destination check says "Likely" for what OpenStreetMap says (it's community data).
+- **A problem pin** (roadworks, lift out, slope, broken ramp) opens a card with where, when it was checked, the source
+  and, for roadworks, Claude's sentence. "Not there" / "Still there" only change this device.
+- Pins open with Enter or Space too. The map opens on your location when it's in Sydney and accurate (within 1 km),
+  otherwise on campus; it never jumps to the middle of all the pins.
 
 The agent runs **only when the owner asks** (no schedule):
 1. Set `ADMIN_KEY=<a long random key of your own>` in `api/.env` and restart the API.
 2. On **Live updates**, open **Owner**, enter the key once (it stays in that browser only, never in a URL) and press
-   **Update map now**. A run takes a few minutes (OpenStreetMap is often busy and is retried) and saves everything in
-   one write. The map and Live updates say when it last ran.
+   **Update map now**. A run takes about 5 minutes (OpenStreetMap is often busy and is retried; Claude gets up to 2
+   minutes per batch of 25 notices) and saves everything in one write. The map and Live updates say when it last ran.
+   You can keep using the app while it runs.
 3. To freeze the map (for a demo), set `MAP_AGENT_PAUSED=true` and restart: the button shows "Map updates are paused".
 
 Roadworks need `TFNSW_API_KEY` (same key as public transport) and `ANTHROPIC_API_KEY`; without Claude the agent keeps

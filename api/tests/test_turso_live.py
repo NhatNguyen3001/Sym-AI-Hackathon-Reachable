@@ -15,4 +15,4 @@ def test_turso_answers_and_lists_tables():
         assert c.execute(text("select 1")).scalar() == 1
         tables = {r[0] for r in c.execute(text("select name from sqlite_master where type='table'"))}
     print("Turso tables:", sorted(tables))
-    assert tables <= {"agentrun", "barrier", "placecache", "report", "venue"}
+    assert tables <= {"agentrun", "barrier", "mapplace", "placecache", "report", "venue"}

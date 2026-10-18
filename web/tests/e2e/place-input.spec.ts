@@ -21,7 +21,9 @@ test("Enter with no matching place does not pick anything", async ({ page }) => 
   await to.fill("zzzz no such place");
   await to.press("Enter");
   await expect(to).toHaveValue("zzzz no such place");
-  await expect(page.getByRole("button", { name: "Show a step-free route" })).toBeDisabled();
+  // Nothing was picked, so there is no way to submit (on a phone the folded panel doesn't show the button at all).
+  await expect(page.getByRole("button", { name: "Show a step-free route", disabled: false })).toHaveCount(0);
+  await expect(page).toHaveURL(/\/$/);
 });
 
 
