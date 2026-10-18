@@ -122,3 +122,22 @@ def test_two_agreeing_reports_on_route_reroute_it(client):
     assert after["ok"] is False or after["accessible"]["geometry"]["coordinates"] != coords
     if after["ok"]:
         assert any(b["status"] == "confirmed" for b in after["barriers"])
+
+
+def test_photo_uploads_are_off_by_default(settings):
+    """Photo reports are parked (2026-10-18): the server takes no photos unless PHOTO_UPLOADS is turned on."""
+    from fastapi.testclient import TestClient
+    from app.main import create_app
+    from app.weather import WeatherService
+    from tests.conftest import _Dry
+    from tests.test_campus_graph import G, PL
+    app = create_app(settings.model_copy(update={"photo_uploads": False}), graph=G, places=PL,
+                     weather_service=WeatherService(http_get=lambda *a, **k: _Dry()))
+    with TestClient(app) as c:
+        r = c.post("/reports/label", files={"photo": ("p.jpg", b"\xff\xd8\xff", "image/jpeg")})
+        assert r.status_code == 403 and r.json()["error"]["code"] == "photos_off"
+        r = c.post("/reports", json={"photoUrl": "/uploads/" + "0" * 32 + ".jpg", "lat": -33.776, "lng": 151.114,
+                                     "userLabel": "blocked", "note": ""})
+        assert r.status_code == 403 and r.json()["error"]["code"] == "photos_off"
+        ok = c.post("/reports", json={"photoUrl": None, "lat": -33.776, "lng": 151.114, "userLabel": "blocked", "note": ""})
+        assert ok.status_code == 200   # a report without a photo still works

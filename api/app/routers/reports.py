@@ -15,10 +15,13 @@ from app.sandbox import current_box, current_session
 
 router = APIRouter()
 MAX_BYTES = 10 * 1024 * 1024
+PHOTOS_OFF = "Photo reports are switched off for now. You can still report a barrier without a photo."
 
 
 @router.post("/reports/label")
 async def label(request: Request, photo: UploadFile = File(...)):
+    if not request.app.state.settings.photo_uploads:
+        raise ApiError(403, "photos_off", PHOTOS_OFF)
     if not (photo.content_type or "").startswith("image/"):
         raise ApiError(415, "not_an_image", "Please upload a photo (an image file).")
     data = await photo.read(MAX_BYTES + 1)
@@ -55,6 +58,8 @@ def public(r: Report) -> dict:
 @router.post("/reports")
 async def create_report(body: ReportIn, request: Request, tasks: BackgroundTasks,
                         session: Session = Depends(get_write_session)):
+    if body.photoUrl and not request.app.state.settings.photo_uploads:
+        raise ApiError(403, "photos_off", PHOTOS_OFF)
     # The AI label comes from our own upload step, never from the client, so the checker can trust it.
     ai_label = request.app.state.photo_labels.get(body.photoUrl) if body.photoUrl else None
     if body.photoUrl and body.photoUrl not in request.app.state.photo_labels:

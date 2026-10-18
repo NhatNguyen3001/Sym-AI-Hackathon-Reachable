@@ -5,7 +5,7 @@ const QUESTIONS = [
   "Do you track where I go?",
   "What's kept on my phone?",
   "What do you keep about barrier reports?",
-  "Who sees my photo?",
+  "Can I add a photo?",
   "Which services see my data?",
   "How do I delete my data?",
 ];
@@ -17,13 +17,13 @@ test("privacy is plain questions you open one at a time", async ({ page }) => {
   await expect(first).toHaveAttribute("aria-expanded", "true");                // the first one starts open
   await expect(page.getByText(/isn't stored/)).toBeVisible();
 
-  const photo = page.getByRole("button", { name: "Who sees my photo?" });
+  const photo = page.getByRole("button", { name: "Can I add a photo?" });
   await expect(photo).toHaveAttribute("aria-expanded", "false");
   await photo.focus();
   await page.keyboard.press("Enter");
   await expect(photo).toHaveAttribute("aria-expanded", "true");
   const answer = page.locator(`[id="${await photo.getAttribute("aria-controls")}"]`);
-  await expect(answer.getByText(/Claude by Anthropic/)).toBeVisible();
+  await expect(answer.getByText(/Not yet/)).toBeVisible();   // photo reports are switched off for now
   await page.keyboard.press("Space");
   await expect(photo).toHaveAttribute("aria-expanded", "false");
 

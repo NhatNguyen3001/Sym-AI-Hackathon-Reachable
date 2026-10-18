@@ -9,6 +9,9 @@ import { WarnBanner } from "@/components/Banners";
 import { FilterChips, type ChipOption } from "@/components/FilterChips";
 import { Card } from "@/components/layout/Page";
 import { ApiError, labelPhoto, sendReport } from "@/lib/api";
+
+/** Photo reports are parked (2026-10-18): the server takes no photos (PHOTO_UPLOADS off). Flip both to bring them back. */
+const PHOTOS_ENABLED = false;
 import type { BarrierLabel } from "@/lib/types";
 
 const PinPicker = dynamic(() => import("@/components/map/PinPicker"), { ssr: false });
@@ -93,7 +96,13 @@ export function ReportClient() {
   return (
     <div className="flex flex-wrap gap-6">
       <form onSubmit={onSubmit} className="min-w-0 flex-[1_1_520px] space-y-5" aria-describedby="privacy-note">
-        <Card>
+        {!PHOTOS_ENABLED && (
+          <Card>
+            <p className="text-[16px]">Photo reports are coming soon. For now, tell us what&apos;s in the way and where.</p>
+            <p className="mt-1 text-[14px] text-muted">{locNote}</p>
+          </Card>
+        )}
+        {PHOTOS_ENABLED && <Card>
           <div className="flex h-[260px] flex-col items-center justify-center gap-3 overflow-hidden rounded-[14px] border-2 border-dashed border-line-strong bg-map-bg p-4 text-center">
             {preview ? (
               // eslint-disable-next-line @next/next/no-img-element -- local object URL preview
@@ -121,11 +130,11 @@ export function ReportClient() {
             {check.state === "error" && <p role="alert" className="mt-1 font-bold text-warn-strong">{check.message}</p>}
             <p className="mt-1 text-[14px] text-muted">{locNote}</p>
           </div>
-        </Card>
+        </Card>}
 
         <Card>
           <fieldset>
-            <legend className="mb-3 text-[18px] font-bold">Is this right? Change it if not.</legend>
+            <legend className="mb-3 text-[18px] font-bold">{PHOTOS_ENABLED ? "Is this right? Change it if not." : "What's in the way?"}</legend>
             <FilterChips label="Type of barrier" options={LABELS} value={label} onChange={(v) => { setLabel(v); setSent(false); }} />
           </fieldset>
 
@@ -171,9 +180,9 @@ export function ReportClient() {
           <h2 id="next-h" className="text-[20px] font-bold">What happens next</h2>
           <ol className="mt-4 space-y-4">
             {[
-              ["AI reads your photo", "It suggests what the barrier is. You can change it."],
+              ...(PHOTOS_ENABLED ? [["AI reads your photo", "It suggests what the barrier is. You can change it."]] : []),
               ["We double-check it", "We check it against other reports and notices nearby before it changes the map."],
-              ["The map updates for everyone", "Routes that pass this spot change straight away."],
+              ["The map updates", "Routes that pass this spot change straight away."],
             ].map(([t, d], i) => (
               <li key={t} className="flex gap-3">
                 <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary font-bold text-white">{i + 1}</span>

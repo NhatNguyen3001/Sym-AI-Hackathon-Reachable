@@ -43,3 +43,5 @@ class Settings(BaseSettings):
     map_agent_fake: bool = False
     # Demo (cycle 7): each phone (X-Session) keeps its own reports and rain toggle, in memory, never saved.
     demo_sandbox: bool = False
+    # Photo reports are parked (2026-10-18): off means no photo is accepted or stored. Reports without photos work.
+    photo_uploads: bool = False

@@ -117,3 +117,11 @@ test("trip cards say 'No steps' rather than 'Step-free'", async ({ page }) => {
   await expect(ways.getByText("No steps").first()).toBeVisible({ timeout: 20_000 });
   expect(await ways.textContent()).not.toMatch(/max slope|%/);
 });
+
+test("photo reports are off for now: the report page asks what's in the way, with no photo step", async ({ page }) => {
+  await page.goto("/report");
+  await expect(page.getByText("What's in the way?")).toBeVisible();
+  await expect(page.getByText(/Photo reports are coming soon/)).toBeVisible();
+  await expect(page.getByText("Upload a photo")).toHaveCount(0);
+  await expect(page.getByText("AI reads your photo")).toHaveCount(0);
+});

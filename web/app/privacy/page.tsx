@@ -20,15 +20,13 @@ export default function PrivacyPage() {
             server.</p>
         </Disclosure>
         <Disclosure question="What do you keep about barrier reports?">
-          <p>The kind of barrier, where it is, your note and your photo if you add one, and when it was reported. We
+          <p>The kind of barrier, where it is, your note, and when it was reported. We
             don&apos;t keep who sent it. Reports are kept so they keep helping everyone after you; when a barrier is
             fixed, its report is marked as cleared.</p>
         </Disclosure>
-        <Disclosure question="Who sees my photo?">
-          <p>Your photo is stored on our server and shown with the report. When it&apos;s uploaded we re-save it, which
-            removes hidden details such as where it was taken.</p>
-          <p>If photo checking is turned on, the photo is also sent to Claude by Anthropic to suggest what the barrier
-            is. You can always change the suggestion.</p>
+        <Disclosure question="Can I add a photo?">
+          <p>Not yet. Photo reports are switched off for now, so we don&apos;t collect any photos. When they come back,
+            this page will say how they&apos;re handled.</p>
         </Disclosure>
         <Disclosure question="Which services see my data?">
           <ul className="list-disc space-y-1 pl-5">
@@ -37,7 +35,7 @@ export default function PrivacyPage() {
             <li><strong className="text-ink">Transport for NSW</strong> plans public transport, so it sees a trip&apos;s start and destination.</li>
             <li><strong className="text-ink">Open-Meteo</strong> gives the weather near where a trip starts.</li>
             <li><strong className="text-ink">Turso</strong> hosts our database (barrier reports and lift updates).</li>
-            <li><strong className="text-ink">Claude by Anthropic</strong> checks photos and explains routes, when it&apos;s turned on.</li>
+            <li><strong className="text-ink">Claude by Anthropic</strong> explains public transport trips and reads road notices for the map, when it&apos;s turned on.</li>
           </ul>
         </Disclosure>
         <Disclosure question="How do I delete my data?">
