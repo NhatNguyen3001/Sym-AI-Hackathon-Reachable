@@ -74,6 +74,7 @@ test("each kind of pin can be turned off and on, and the choice is remembered", 
   await expect(toilets).toHaveAttribute("aria-pressed", "true");
   await toilets.click();
   await expect(toilets).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByRole("status").filter({ hasText: "Accessible toilet pins hidden" })).toBeAttached();
   await expect(pin).toHaveCount(0);
   await expect(page.getByRole("button", { name: /Roadworks: Footpath works/ })).toBeAttached(); // other kinds stay
   await page.reload();
@@ -82,5 +83,6 @@ test("each kind of pin can be turned off and on, and the choice is remembered", 
   await expect(page.getByRole("button", { name: "Accessible toilet pins", exact: true })).toHaveAttribute("aria-pressed", "false");
   await expect(pin).toHaveCount(0);
   await page.getByRole("button", { name: "Accessible toilet pins", exact: true }).click();
+  await expect(page.getByRole("status").filter({ hasText: "Accessible toilet pins shown" })).toBeAttached();
   await expect(pin).toBeAttached();
 });
