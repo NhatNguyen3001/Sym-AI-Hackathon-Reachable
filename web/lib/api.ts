@@ -6,6 +6,8 @@ import type {
   VenueCheck, Weather,
 } from "./types";
 
+import { sessionId } from "./session";
+
 // 127.0.0.1, not localhost: on Windows "localhost" tries IPv6 first and adds ~0.2 s to every request.
 export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000").replace(/\/$/, "");
 
@@ -35,7 +37,10 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 async function requestWithHeaders<T>(path: string, init?: RequestInit): Promise<{ body: T; headers: Headers }> {
   let res: Response;
   try {
-    res = await fetch(`${API_URL}${path}`, init);
+    // Which phone this is (demo sandbox keeps each phone's reports and rain to itself).
+    const headers = new Headers(init?.headers);
+    headers.set("X-Session", sessionId());
+    res = await fetch(`${API_URL}${path}`, { ...init, headers });
   } catch {
     throw new ApiError("network", NETWORK_MESSAGE);
   }

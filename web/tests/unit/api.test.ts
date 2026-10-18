@@ -119,3 +119,11 @@ test("a fresh route request after a live change doesn't reuse one already on its
   await Promise.all([getRoute("osm:N1", "library", profile), getRoute("osm:N1", "library", profile, { fresh: true })]);
   expect(f).toHaveBeenCalledTimes(2);
 });
+
+test("every API call says which phone it's from (demo sandbox)", async () => {
+  const f = vi.fn().mockResolvedValue(json([]));
+  vi.stubGlobal("fetch", f);
+  await getUpdates();
+  const init = f.mock.calls[0][1] as RequestInit | undefined;
+  expect(new Headers(init?.headers).get("X-Session")).toMatch(/^[a-z0-9-]{16,64}$/);
+});
