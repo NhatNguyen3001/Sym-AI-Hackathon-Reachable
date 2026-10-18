@@ -58,3 +58,42 @@ test("Live updates uses the same three words in the key and on each update", asy
   for (const word of ["In effect", "Someone reported this", "Cleared"]) await expect(key.getByText(word, { exact: true })).toBeVisible();
   await expect(page.getByText("Unconfirmed")).toHaveCount(0);
 });
+
+test("the needs filter asks how steep you can go, by feel, with no percentages", async ({ page }) => {
+  await page.goto("/route?from=mq-station&to=library");
+  await openDetails(page);
+  await page.getByRole("button", { name: "Filter" }).filter({ visible: true }).first().click();
+  const group = page.getByRole("group", { name: "How steep can you go?" });
+  for (const c of ["Gentle only", "Some hills", "Most hills"]) await expect(group.getByRole("button", { name: c })).toBeVisible();
+  await expect(group.getByRole("button", { name: "Gentle only" })).toHaveAttribute("aria-pressed", "true");
+  expect(await group.textContent()).not.toMatch(/%/);
+  await expect(page.getByRole("button", { name: "Kerbs with no ramp" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Entrance without steps" })).toBeVisible();
+});
+
+test("the destination check names things plainly", async ({ page }) => {
+  await page.goto("/route?from=mq-station&to=library");
+  await openDetails(page);
+  const check = page.getByRole("region", { name: /Destination check/ });
+  await expect(check.getByText("Entrance without steps")).toBeVisible({ timeout: 20_000 });
+  await expect(check.getByText("No steps inside")).toBeVisible();
+});
+
+test("the report page doesn't claim a Sym agent", async ({ page }) => {
+  await page.goto("/report");
+  await expect(page.getByText(/We check it against other reports and notices nearby/)).toBeVisible();
+  await expect(page.getByText(/Sym agent/)).toHaveCount(0);
+});
+
+test("when the server can't be reached, the sample says it's an example, not your trip", async ({ page }) => {
+  await page.route(/127\.0\.0\.1:8100\/updates/, (route) => route.abort());
+  await page.goto("/live");
+  await expect(page.getByText("We can't reach Reachable right now. This is an example, not live information.")).toBeVisible();
+});
+
+test("the map key calls a reported barrier a 'Reported problem'", async ({ page }) => {
+  await page.goto("/");
+  // Phones keep the key behind "Choose pins".
+  if ((page.viewportSize()?.width ?? 1440) < 1024) await page.getByRole("button", { name: "Choose pins" }).click({ timeout: 20_000 });
+  await expect(page.getByRole("button", { name: "Reported problem pins" })).toBeVisible({ timeout: 20_000 });
+});

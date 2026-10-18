@@ -20,7 +20,7 @@ export const HAZARD_LABEL: Record<HazardKind, string> = {
   slope: "Slope",
   roadworks: "Roadworks",
   lift: "Lift out",
-  amenity: "Broken amenity",
+  amenity: "Reported problem",
 };
 
 /** Measured slope on the station-to-library path. Shown when the feed has no slope pin of its own. */

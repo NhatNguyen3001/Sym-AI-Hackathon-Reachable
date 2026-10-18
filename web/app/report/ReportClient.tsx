@@ -156,7 +156,7 @@ export function ReportClient() {
             <div role="status">
               {sent && (
                 <p className="rounded-[14px] bg-primary-soft px-4 py-3 text-primary-hover">
-                  <strong>Thanks. Your report is in.</strong> A Sym agent is checking it now.{" "}
+                  <strong>Thanks. Your report is in.</strong> We&apos;re checking it against other reports and notices nearby.{" "}
                   <Link href="/live" className="font-bold underline underline-offset-4">See it on Live updates</Link>
                 </p>
               )}
@@ -172,7 +172,7 @@ export function ReportClient() {
           <ol className="mt-4 space-y-4">
             {[
               ["AI reads your photo", "It suggests what the barrier is. You can change it."],
-              ["A Sym agent double-checks", "It looks for matching notices and other reports nearby before it changes the map."],
+              ["We double-check it", "We check it against other reports and notices nearby before it changes the map."],
               ["The map updates for everyone", "Routes that pass this spot change straight away."],
             ].map(([t, d], i) => (
               <li key={t} className="flex gap-3">

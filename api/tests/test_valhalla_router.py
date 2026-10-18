@@ -215,7 +215,7 @@ def test_advisory_steps_do_not_claim_slopes():
     assert [(s["label"], s["confidence"]) for s in r["steps"]] == [
         ("Footpath, 55 m", "Likely"), ("Kerb ramp at crossing", "Likely"), ("Footpath, 220 m", "Likely")]
     assert r["accessible"]["slopeEstimated"] is True
-    assert r["slopeNote"] == "Slopes outside the Macquarie University campus are estimates. Check steep sections before you go."
+    assert r["slopeNote"] == "We only measure hills on campus. Elsewhere it's our best guess, so check steep bits."
 
 
 def test_advisory_mode_does_not_reroute_on_steep():

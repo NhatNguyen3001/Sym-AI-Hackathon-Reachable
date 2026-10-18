@@ -2,19 +2,19 @@
 import { AID_LABELS, withAid } from "@/lib/profile";
 import type { Aid, Profile } from "@/lib/types";
 import { cn } from "cn";
+import { FEEL_CHOICES, feelChoice } from "@/lib/wording";
 
 const AIDS = Object.keys(AID_LABELS) as Aid[];
-const SLOPES = [5, 8, 12];
 
 const AVOID: { key: keyof Profile["avoid"]; label: string }[] = [
   { key: "stairs", label: "Stairs and steps" },
-  { key: "kerbsNoRamp", label: "Kerbs without a ramp" },
+  { key: "kerbsNoRamp", label: "Kerbs with no ramp" },
   { key: "slipperyWhenWet", label: "Slippery paths when it rains" },
   { key: "uneven", label: "Gravel, grass and uneven ground" },
 ];
 
 const DEST: { key: keyof Profile["destination"]; label: string }[] = [
-  { key: "entrance", label: "Level or ramped entrance" },
+  { key: "entrance", label: "Entrance without steps" },
   { key: "toilet", label: "Accessible toilet" },
   { key: "parking", label: "Accessible parking nearby" },
 ];
@@ -37,7 +37,6 @@ function Tick({ on, label, onClick }: { on: boolean; label: string; onClick: () 
 
 /** The same choices as My needs, as tick buttons for the map and the route. */
 export function NeedsTicks({ profile, onChange }: { profile: Profile; onChange: (next: Profile) => void }) {
-  const slopes = SLOPES.includes(profile.maxSlope) ? SLOPES : [...SLOPES, profile.maxSlope].sort((a, b) => a - b);
   return (
     <div className="space-y-3">
       <fieldset>
@@ -50,11 +49,13 @@ export function NeedsTicks({ profile, onChange }: { profile: Profile; onChange: 
         </div>
       </fieldset>
       <fieldset>
-        <legend className="mb-1.5 text-[13px] font-bold tracking-wide text-muted uppercase">Steepest slope I can manage</legend>
+        <legend className="mb-1.5 text-[13px] font-bold tracking-wide text-muted uppercase">How steep can you go?</legend>
+        {/* By feel, not percentages; each choice is a slope limit the router uses. A stored custom limit keeps
+            working and shows as the nearest choice. */}
         <div className="flex flex-wrap gap-2">
-          {slopes.map((slope) => (
-            <Tick key={slope} label={`Up to ${slope}%`} on={profile.maxSlope === slope}
-              onClick={() => onChange({ ...profile, maxSlope: slope })} />
+          {FEEL_CHOICES.map((c) => (
+            <Tick key={c.label} label={c.label} on={feelChoice(profile.maxSlope) === c.label}
+              onClick={() => onChange({ ...profile, maxSlope: c.maxSlope })} />
           ))}
         </div>
       </fieldset>

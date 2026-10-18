@@ -2,7 +2,7 @@ import { ArrowUpFromLine, Check, CircleAlert, MoveVertical, TrendingUp } from "l
 import { cn } from "cn";
 import { StatusBadge, badgeTone } from "./StatusBadge";
 import { TrustBadge } from "./TrustBadge";
-import { stepText } from "@/lib/wording";
+import { fieldText, stepText } from "@/lib/wording";
 import { explainUpdate } from "@/lib/plainUpdate";
 import type { AgentCardData, Profile, Step, UpdateItem, VenueCheck } from "@/lib/types";
 
@@ -28,7 +28,7 @@ export function VenueCheckRow({ check }: { check: VenueCheck["checks"][number] }
     <li className="flex items-start gap-3 border-b border-line py-3 last:border-b-0">
       <Icon aria-hidden="true" className={cn("mt-0.5 size-5 shrink-0", warn ? "text-warn" : "text-primary")} strokeWidth={2.4} />
       <div className="flex-1">
-        <p className="text-[16px]">{check.field}</p>
+        <p className="text-[16px]">{fieldText(check.field)}</p>
         <p className="text-[14px] text-muted">{check.source}</p>
       </div>
       <TrustBadge code={check.status} className="mt-0.5" />

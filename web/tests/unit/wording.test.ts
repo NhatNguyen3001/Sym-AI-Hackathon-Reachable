@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import {
-  aboutMetres, difficulty, difficultyText, feelChoice, FEEL_CHOICES, liftText, routeTrust, spokenText, stepText, trust,
+  aboutMetres, difficulty, difficultyText, feelChoice, FEEL_CHOICES, fieldText, liftText, routeTrust, spokenText, stepText, trust,
 } from "@/lib/wording";
 import { profile as base } from "@/lib/placeholder";
 import type { Profile, Step } from "@/lib/types";
@@ -103,4 +103,10 @@ test("a route's trust badge in plain words", () => {
   expect(routeTrust("Some details not sure", [step({ confidence: "Not sure" })])).toBe("1 thing we couldn't check");
   expect(routeTrust("Slopes estimated", [])).toBe("Hills not measured");
   expect(routeTrust("Confirmed today", [])).toBe("Checked today");
+});
+
+test("destination check fields in plain words", () => {
+  expect(fieldText("Level entrance")).toBe("Entrance without steps");
+  expect(fieldText("Step-free inside")).toBe("No steps inside");
+  expect(fieldText("Accessible toilet")).toBe("Accessible toilet");
 });

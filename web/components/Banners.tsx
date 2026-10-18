@@ -41,5 +41,5 @@ export function WarnBanner({ children, className, alert = false }: { children: R
 
 export function SampleDataBanner({ show }: { show: boolean }) {
   if (!show) return null;
-  return <InfoBanner>Showing sample data. We can&apos;t reach the server right now.</InfoBanner>;
+  return <InfoBanner>We can&apos;t reach Reachable right now. This is an example, not live information.</InfoBanner>;
 }

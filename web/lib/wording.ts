@@ -148,3 +148,11 @@ export function routeTrust(status: string, steps: Step[]): string {
 
 /** The trust code to show next to a lift: we know it's working or not, unless we haven't heard. */
 export const liftTrust = (status: string) => (status === "Not sure" ? "Not sure" : "Confirmed");
+
+const FIELDS: Record<string, string> = {
+  "Level entrance": "Entrance without steps",
+  "Step-free inside": "No steps inside",
+};
+
+/** A destination check line in plain words (the API's field names stay as codes the route page matches on). */
+export const fieldText = (field: string) => FIELDS[field] ?? field;
