@@ -8,6 +8,7 @@ $apiUrl = StackOutput "ApiUrl"
 $distId = StackOutput "DistributionId"
 $roleArn = StackOutput "SchedulerRoleArn"
 Write-Host "Starting Reachable (about US`$0.12 an hour while it runs)"
+$requested = (Get-Date).ToUniversalTime()
 if ($Fresh) { AwsCall ecs update-service --cluster $Cluster --service $Service --desired-count 1 --force-new-deployment | Out-Null }
 else { AwsCall ecs update-service --cluster $Cluster --service $Service --desired-count 1 | Out-Null }
 
@@ -18,7 +19,8 @@ for ($i = 0; $i -lt 60 -and -not $dns; $i++) {
   $arns = (AwsJson ecs list-tasks --cluster $Cluster --service-name $Service --desired-status RUNNING).taskArns
   if (-not $arns) { Say "waiting for a task..."; continue }
   $tasks = (AwsJson ecs describe-tasks --cluster $Cluster --tasks $arns).tasks | Where-Object { $_.lastStatus -eq "RUNNING" }
-  if ($Fresh) { $tasks = $tasks | Sort-Object startedAt -Descending | Select-Object -First 1 }
+  # -Fresh: only a task started after this request (the old one keeps running for a moment while it's replaced).
+  if ($Fresh) { $tasks = $tasks | Where-Object { $_.startedAt -and ([datetime]$_.startedAt).ToUniversalTime() -gt $requested } }
   $task = $tasks | Select-Object -First 1
   if (-not $task) { Say "task starting (downloading images)..."; continue }
   $eni = ($task.attachments[0].details | Where-Object { $_.name -eq "networkInterfaceId" }).value
