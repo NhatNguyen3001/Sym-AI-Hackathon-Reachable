@@ -1,0 +1,217 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Reachable demo backend (cycle 7): one on-demand Fargate task (API + Valhalla) behind a fixed CloudFront HTTPS
+  address. The service sits at 0 tasks until deploy/start.ps1 sets it to 1; deploy/stop.ps1 (or the 9-hour
+  auto-stop schedule) sets it back to 0. Costs nothing while stopped apart from image storage.
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+  CloudFrontPrefixList:
+    Type: String
+    Description: The com.amazonaws.global.cloudfront.origin-facing managed prefix list in this region.
+  CorsOrigins:
+    Type: String
+    Default: '["*"]'
+    Description: JSON list of web origins allowed to call the API (the Vercel site), e.g. ["https://x.vercel.app"].
+  ImageTag:
+    Type: String
+    Default: latest
+
+Resources:
+  ApiRepo:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: reachable-api
+      LifecyclePolicy:
+        LifecyclePolicyText: '{"rules":[{"rulePriority":1,"description":"keep 3","selection":{"tagStatus":"any","countType":"imageCountMoreThan","countNumber":3},"action":{"type":"expire"}}]}'
+
+  ValhallaRepo:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: reachable-valhalla
+      LifecyclePolicy:
+        LifecyclePolicyText: '{"rules":[{"rulePriority":1,"description":"keep 2","selection":{"tagStatus":"any","countType":"imageCountMoreThan","countNumber":2},"action":{"type":"expire"}}]}'
+
+  Cluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: reachable
+
+  Logs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /reachable
+      RetentionInDays: 3
+
+  ExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Service: ecs-tasks.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        - PolicyName: read-reachable-secrets
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: [ssm:GetParameters]
+                Resource: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/reachable/*
+
+  ApiSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Reachable API, reachable only from CloudFront
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 8000
+          ToPort: 8000
+          SourcePrefixListId: !Ref CloudFrontPrefixList
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: reachable
+      RequiresCompatibilities: [FARGATE]
+      NetworkMode: awsvpc
+      Cpu: "2048"
+      Memory: "4096"
+      RuntimePlatform: { CpuArchitecture: X86_64, OperatingSystemFamily: LINUX }
+      ExecutionRoleArn: !GetAtt ExecutionRole.Arn
+      ContainerDefinitions:
+        - Name: valhalla
+          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/reachable-valhalla:${ImageTag}
+          Essential: true
+          LogConfiguration:
+            LogDriver: awslogs
+            Options: { awslogs-group: /reachable, awslogs-region: !Ref "AWS::Region", awslogs-stream-prefix: valhalla }
+        - Name: api
+          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/reachable-api:${ImageTag}
+          Essential: true
+          PortMappings: [{ ContainerPort: 8000, Protocol: tcp }]
+          Environment:
+            - { Name: ROUTER, Value: valhalla }
+            - { Name: VALHALLA_URL, Value: "http://localhost:8002" }
+            - { Name: CORS_ORIGINS, Value: !Ref CorsOrigins }
+            - { Name: DEMO_SANDBOX, Value: "true" }
+            - { Name: MAP_AGENT_PAUSED, Value: "true" }
+            - { Name: PHOTO_UPLOADS, Value: "false" }
+            - { Name: LIFT_POLL_SECONDS, Value: "300" }
+          Secrets:
+            - { Name: TFNSW_API_KEY, ValueFrom: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/reachable/TFNSW_API_KEY" }
+            - { Name: TURSO_DATABASE_URL, ValueFrom: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/reachable/TURSO_DATABASE_URL" }
+            - { Name: TURSO_AUTH_TOKEN, ValueFrom: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/reachable/TURSO_AUTH_TOKEN" }
+            - { Name: ANTHROPIC_API_KEY, ValueFrom: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/reachable/ANTHROPIC_API_KEY" }
+            - { Name: ADMIN_KEY, ValueFrom: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/reachable/ADMIN_KEY" }
+          HealthCheck:
+            Command: ["CMD-SHELL", "python -c \"import urllib.request;urllib.request.urlopen('http://localhost:8000/health',timeout=3)\""]
+            Interval: 15
+            Timeout: 5
+            Retries: 3
+            StartPeriod: 60
+          LogConfiguration:
+            LogDriver: awslogs
+            Options: { awslogs-group: /reachable, awslogs-region: !Ref "AWS::Region", awslogs-stream-prefix: api }
+
+  Service:
+    Type: AWS::ECS::Service
+    Properties:
+      ServiceName: reachable
+      Cluster: !Ref Cluster
+      LaunchType: FARGATE
+      DesiredCount: 0
+      TaskDefinition: !Ref TaskDefinition
+      DeploymentConfiguration: { MinimumHealthyPercent: 0, MaximumPercent: 100 }
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          Subnets: !Ref SubnetIds
+          SecurityGroups: [!Ref ApiSecurityGroup]
+
+  # The Sydney places list: the same for everyone, keyed by its bbox, kept 5 minutes, compressed.
+  PlacesCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: reachable-map-places
+        MinTTL: 0
+        DefaultTTL: 300
+        MaxTTL: 300
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingGzip: true
+          EnableAcceptEncodingBrotli: false
+          QueryStringsConfig: { QueryStringBehavior: all }
+          HeadersConfig: { HeaderBehavior: none }
+          CookiesConfig: { CookieBehavior: none }
+
+  Distribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: Reachable demo API
+        PriceClass: PriceClass_All
+        Origins:
+          - Id: task
+            DomainName: example.com   # replaced by deploy/start.ps1 with the running task's address
+            CustomOriginConfig:
+              HTTPPort: 8000
+              OriginProtocolPolicy: http-only
+              OriginReadTimeout: 60
+              OriginKeepaliveTimeout: 60
+        DefaultCacheBehavior:
+          TargetOriginId: task
+          ViewerProtocolPolicy: https-only
+          AllowedMethods: [GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE]
+          CachedMethods: [GET, HEAD]
+          Compress: true
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad          # Managed-CachingDisabled
+          OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac  # Managed-AllViewerExceptHostHeader
+        CacheBehaviors:
+          - PathPattern: /map/places
+            TargetOriginId: task
+            ViewerProtocolPolicy: https-only
+            AllowedMethods: [GET, HEAD, OPTIONS]
+            CachedMethods: [GET, HEAD]
+            Compress: true
+            CachePolicyId: !Ref PlacesCachePolicy
+
+  # The 9-hour auto stop: deploy/start.ps1 creates a one-time schedule that runs as this role.
+  SchedulerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Service: scheduler.amazonaws.com }
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: stop-reachable
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: [ecs:UpdateService]
+                Resource: !Ref Service
+
+Outputs:
+  ApiUrl:
+    Value: !Sub https://${Distribution.DomainName}
+  DistributionId:
+    Value: !Ref Distribution
+  ClusterName:
+    Value: !Ref Cluster
+  ServiceName:
+    Value: !GetAtt Service.Name
+  SchedulerRoleArn:
+    Value: !GetAtt SchedulerRole.Arn
