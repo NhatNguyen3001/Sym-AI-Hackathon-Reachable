@@ -218,6 +218,12 @@ API settings go in `api/.env` or the environment.
 
 ## The app
 
+![Desktop: the map with accessible places, parking, roadworks and lift outages, and filters for each kind](assets/desktop-map.png)
+
+![Desktop: a route from Macquarie University station to Waranara Library, with station lifts checked today and step-by-step trust labels](assets/desktop-route.png)
+
+![Desktop: Live updates, each change explained in plain words with where, when it was checked and the source](assets/desktop-live.png)
+
 **Map (`/`).** Accessible toilets, parking, step-free entrances and venues across Sydney, live lift outages and Claude-checked roadworks. Zoomed out, pins join into number bubbles that split as you zoom in; each kind can be turned on or off. Needs are set with filter chips: how you get around, "How steep can you go?" (Gentle only, Some hills, Most hills), what to avoid and what you need at the destination. A place pin opens a popup with **Go here**; only that button plans a route.
 
 **Route (`/route`).** The trip next to the fastest one for comparison, public transport options with "Leave at" times, the station lifts on the way, and the destination check (entrance, steps inside, toilet). The summary reads like "10 min, no steps, a bit tiring in places"; exact distances and slopes are under **Details**.
