@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
+import { assessGuidance } from "@/lib/useGuidance";
 import {
-  distanceText, locate, navFromLegs, navFromWalk, nextTurn, pointAlong, progressAt, speakable, spokenStep, turnPhrase, turnsOf,
+  distanceText, locate, navFromLegs, navKey, navFromWalk, nextTurn, pointAlong, progressAt, speakable, spokenStep, turnPhrase, turnsOf,
   walkedLine,
 } from "@/lib/navigation";
 import type { Leg, Step } from "@/lib/types";
@@ -96,4 +97,47 @@ test("preview points, walked line and distance text", () => {
   expect(distanceText(43)).toBe("45 m");
   expect(distanceText(437)).toBe("440 m");
   expect(distanceText(1530)).toBe("1.5 km");
+});
+
+// --- Review fixes (2026-10-18) -------------------------------------------------------------------------------------
+
+test("an unsure kerb ramp is never spoken as a fact", () => {
+  const nav = navFromWalk(LINE, [{ icon: "alert", label: "Kerb ramp at crossing", confidence: "Not sure", lengthM: 10 }]);
+  const said = spokenStep(nav.steps[0]);
+  expect(said).not.toMatch(/^Cross using the kerb ramp/);
+  expect(said).toMatch(/not confirmed/i);
+  expect(nav.steps[0].unsure).toBe(true);
+});
+
+test("a confirmed crossing is still a plain instruction", () => {
+  const nav = navFromWalk(LINE, [{ icon: "crossing", label: "Kerb ramp at crossing", confidence: "Confirmed", lengthM: 10 }]);
+  expect(spokenStep(nav.steps[0])).toMatch(/^Cross using the kerb ramp/);
+  expect(nav.steps[0].unsure).toBe(false);
+});
+
+test("a re-planned route that is the same route keeps its identity", () => {
+  expect(navKey(navFromWalk(LINE, STEPS))).toBe(navKey(navFromWalk(LINE, STEPS)));
+  expect(navKey(navFromWalk(LINE, STEPS))).not.toBe(navKey(navFromWalk(LINE.slice(0, 2), STEPS)));
+});
+
+test("on a train, being away from the drawn line is not 'off route'", () => {
+  const legs = [
+    { kind: "walk", minutes: 1, distanceM: 111, maxSlope: 0, stepFree: true, steps: [], source: "reachable", to: "Stop",
+      geometry: { type: "LineString", coordinates: [[151.1135, -33.7770], [151.1135, -33.7760]] } },
+    { kind: "ride", label: "Metro M1", headsign: "Tallawong", stops: 3, mode: "metro",
+      from: { name: "Stop", lat: -33.7760, lng: 151.1135 }, to: { name: "Far", lat: -33.7400, lng: 151.1135 },
+      geometry: { type: "LineString", coordinates: [] } },
+  ] as unknown as Leg[];
+  const nav = navFromLegs(legs);
+  // 500 m east of the middle of the ride (GPS is poor underground, and the line is a straight guess)
+  const g = assessGuidance(nav, [-33.758, 151.119], { accuracy: 30, preview: false, hintM: 0 });
+  expect(g.progress?.current.icon).toBe("ride");
+  expect(g.offRoute).toBe(false);
+  expect(g.farFromRoute).toBe(false);
+});
+
+test("on foot, far from the line is still off route", () => {
+  const nav = navFromWalk(LINE, STEPS);
+  const g = assessGuidance(nav, [-33.7765, 151.1145], { accuracy: 10, preview: false, hintM: 0 }); // ~90 m east
+  expect(g.offRoute).toBe(true);
 });
