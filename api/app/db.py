@@ -4,14 +4,25 @@ from sqlalchemy.pool import StaticPool
 from sqlmodel import SQLModel, Session, create_engine
 
 
+def _take(replica, record) -> None:
+    replica.acquire()                      # raises ReplicaOffline when the lock stays busy
+    record.info["turso_lock"] = True
+
+
+def _give_back(replica, record) -> None:
+    """Release only a lock this checkout took: a failed checkout must never free someone else's lock."""
+    if record.info.pop("turso_lock", False):
+        replica.lock.release()
+
+
 def make_engine(url: str, turso_url: str = "", turso_token: str = "", replica=None):
     """Turso through its local replica when one is given, else Turso direct, else the local SQLite DATABASE_URL."""
     if replica is not None:
         # Writes (and anything run in a write session) go through the one Turso connection, one session at a time.
         import app.libsql_dialect  # noqa: F401  registers sqlite+libsql
         eng = create_engine("sqlite+libsql://", creator=replica.write_connect, poolclass=StaticPool)
-        event.listen(eng, "checkout", lambda *_: replica.acquire())
-        event.listen(eng, "checkin", lambda *_: replica.lock.release())
+        event.listen(eng, "checkout", lambda _conn, record, _proxy: _take(replica, record))
+        event.listen(eng, "checkin", lambda _conn, record: _give_back(replica, record))
         return eng
     if turso_url:
         import libsql
