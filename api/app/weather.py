@@ -27,6 +27,11 @@ class WeatherService:
 
     def current(self, lat: float | None = None, lng: float | None = None) -> dict:
         """Weather near a point (cached per 0.1 degree cell, about 10 km); defaults to the campus."""
+        from app.sandbox import current_box
+        box = current_box()
+        if box is not None and box.rain is not None:  # this phone's demo rain toggle (sandbox)
+            return {"raining": box.rain, "summary": "Light rain now." if box.rain else "Dry right now.",
+                    "until": None, "source": "Demo rain toggle"}
         if self._override is not None:
             return {"raining": self._override, "summary": "Light rain now." if self._override else "Dry right now.",
                     "until": None, "source": "Demo rain toggle"}

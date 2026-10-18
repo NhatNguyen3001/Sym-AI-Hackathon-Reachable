@@ -41,3 +41,5 @@ class Settings(BaseSettings):
     # Browser tests only: fixed map places, and a map agent that calls nothing real.
     seed_map_places: bool = False
     map_agent_fake: bool = False
+    # Demo (cycle 7): each phone (X-Session) keeps its own reports and rain toggle, in memory, never saved.
+    demo_sandbox: bool = False

@@ -15,6 +15,7 @@ from app.db import init_db, make_engine, make_read_engine
 from app.errors import ApiError, api_error_handler
 from app.events import Broadcaster
 from app.replica import Replica
+from app import sandbox as demo_sandbox
 from app.llm.client import get_client
 from app.routers import agents, demo, events, health, mapdata, places, reports, route, stations, updates, venue, weather
 from app.routing.graph import load_graph
@@ -94,6 +95,8 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
         st.broadcaster = Broadcaster()
         st.llm = get_client(settings.anthropic_api_key)
         st.photo_labels = {}
+        st.sandbox = demo_sandbox.Sandbox() if settings.demo_sandbox else None
+        demo_sandbox.enable(st.sandbox)
         if settings.seed:
             with Session(st.engine) as s:
                 seed(s, st.graph, st.places)
@@ -131,9 +134,13 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
         if request.url.path in ("/events", "/agents/map/status"):
             return await call_next(request)
         app.state.requests_in_flight += 1
+        # The phone's demo session (sandbox mode only reads it); later code and background tasks see it.
+        token = demo_sandbox.current_session.set(
+            (request.headers.get("x-session") or request.query_params.get("session") or "")[:64] or None)
         try:
             return await call_next(request)
         finally:
+            demo_sandbox.current_session.reset(token)
             app.state.requests_in_flight -= 1
             app.state.last_request_end = time.monotonic()
     app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["*"], allow_headers=["*"],

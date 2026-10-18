@@ -3,11 +3,14 @@ from sqlmodel import Session, select
 
 from app.agents import ago
 from app.models import Barrier
+from app.sandbox import merge_barriers
 from app.routing.cost import Context
 
 
 def active_barriers(session: Session) -> list[Barrier]:
-    return list(session.exec(select(Barrier).where(Barrier.status != "resolved")).all())
+    """Barriers in effect: the shared ones plus, in demo sandbox mode, this phone's own (spec cycle 7 §5)."""
+    shared = list(session.exec(select(Barrier).where(Barrier.status != "resolved")).all())
+    return [b for b in merge_barriers(shared) if b.status != "resolved"]
 
 
 def build_context(session: Session, raining: bool) -> Context:

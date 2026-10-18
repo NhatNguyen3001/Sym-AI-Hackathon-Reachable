@@ -2,6 +2,7 @@ from sqlmodel import Session, select
 
 from app.agents import ago
 from app.models import Barrier, Venue, aware, now
+from app.sandbox import merge_barriers
 
 STATUS = {"confirmed": "Confirmed", "needs_checking": "Needs checking", "resolved": "Resolved"}
 
@@ -12,7 +13,7 @@ def _labels(sources: list) -> str:
 
 def build_updates(session: Session, weather: dict, type_: str | None = None) -> list[dict]:
     items: list[tuple] = []
-    for b in session.exec(select(Barrier)).all():
+    for b in merge_barriers(list(session.exec(select(Barrier)).all())):
         items.append((aware(b.last_confirmed), {
             "id": b.id, "type": b.update_type, "title": b.title, "place": b.place, "time": ago(b.last_confirmed),
             "source": _labels(b.sources), "status": STATUS.get(b.status, b.status),

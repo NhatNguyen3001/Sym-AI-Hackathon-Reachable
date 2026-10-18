@@ -6,11 +6,12 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 from pydantic import BaseModel, Field
 from sqlmodel import Session
 
-from app.checker import check_report
+from app.checker import check_report, check_report_in_sandbox
 from app.db import get_session, get_write_session
 from app.errors import ApiError
 from app.llm.vision import label_photo
 from app.models import Report, uid
+from app.sandbox import current_box, current_session
 
 router = APIRouter()
 MAX_BYTES = 10 * 1024 * 1024
@@ -62,6 +63,15 @@ async def create_report(body: ReportIn, request: Request, tasks: BackgroundTasks
             ai_label, _ = label_photo(path.read_bytes(), "image/jpeg", request.app.state.llm)
     report = Report(photo_url=body.photoUrl, ai_label=ai_label, user_label=body.userLabel, note=body.note,
                     lat=body.lat, lng=body.lng)
+    box = current_box()
+    if box is not None:  # demo sandbox: this phone only, in memory, never saved
+        session.close()
+        box.reports[report.id] = report
+        out = public(report)
+        sid = current_session.get()
+        await request.app.state.broadcaster.publish("report_created", {"reportId": out["id"]}, session=sid)
+        tasks.add_task(check_report_in_sandbox, request.app.state, box, sid, report)
+        return out
     session.add(report)
     try:
         session.commit()
