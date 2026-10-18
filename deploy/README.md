@@ -8,7 +8,7 @@ Run these from the repo folder in PowerShell (AWS CLI signed in, region `ap-sout
 
 | When | Command | What it does |
 |---|---|---|
-| Once | `powershell -File deploy\setup.ps1` | Copies the keys from `api\.env` into AWS Parameter Store (encrypted, never printed) and creates the stack. Prints the fixed API address. |
+| Once (and after changing the template) | `powershell -File deploy\setup.ps1` (then `start.ps1` again if it was running: a stack update resets CloudFront's pointer to the task) | Copies the keys from `api\.env` into AWS Parameter Store (encrypted, never printed) and creates the stack. Prints the fixed API address. |
 | After code changes | `powershell -File deploy\push.ps1` | Builds and uploads both images. Then `start.ps1 -Fresh`. |
 | Before a demo | `powershell -File deploy\start.ps1` | Starts the task, points CloudFront at it, waits until it answers, and schedules the automatic stop **9 hours** later. ~3–5 minutes. |
 | After a demo | `powershell -File deploy\stop.ps1` | Stops it now and removes the automatic stop. |

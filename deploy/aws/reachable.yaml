@@ -184,6 +184,8 @@ Resources:
             CachedMethods: [GET, HEAD]
             Compress: true
             CachePolicyId: !Ref PlacesCachePolicy
+            # Pass the browser's Origin and preflight headers through, so the API can say the site may read it (CORS).
+            OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf  # Managed-CORS-S3Origin: Origin + preflight headers
 
   # The 9-hour auto stop: deploy/start.ps1 creates a one-time schedule that runs as this role.
   SchedulerRole:
