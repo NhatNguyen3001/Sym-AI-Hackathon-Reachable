@@ -2,12 +2,14 @@
 import "leaflet/dist/leaflet.css";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
+import { cn } from "cn";
 import { Circle, MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
-import { LocateFixed, Minus, Plus } from "lucide-react";
+import { Layers, LocateFixed, Minus, Plus } from "lucide-react";
 import { guardMap } from "./guardMap";
 import { useVisibleMount } from "./useVisibleMount";
 import { distanceLabel, HAZARD_LABEL, type Hazard, type HazardKind } from "@/lib/hazards";
 import { opensOn } from "@/lib/start";
+import { readStored, writeStored } from "@/lib/storage";
 import type { AmenityPin, MapPlacePin } from "@/lib/types";
 import { ClusterLayer, type ClusterItem } from "./ClusterLayer";
 import type { UserFix } from "@/lib/useUserLocation";
@@ -118,6 +120,22 @@ function ViewWatcher({ onView }: { onView?: (bounds: L.LatLngBounds, zoom: numbe
   return null;
 }
 
+const HIDDEN_KEY = "reachable.hiddenPinKinds";
+
+/** A legend chip that turns one kind of pin on or off (aria-pressed: on = shown). */
+function KindToggle({ label, colour, on, onToggle }: { label: string; colour: string; on: boolean; onToggle: () => void }) {
+  return (
+    // Named "… pins": the needs filter has its own "Accessible toilet" button with a different meaning.
+    <button type="button" aria-pressed={on} aria-label={`${label} pins`} onClick={onToggle}
+      className={cn("inline-flex min-h-8 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[13px] font-bold",
+        on ? "border-line bg-surface text-ink" : "border-dashed border-line-strong bg-bg text-muted line-through")}>
+      <span aria-hidden="true" className="size-2.5 rounded-full" style={{ background: on ? colour : "transparent",
+        boxShadow: on ? undefined : `inset 0 0 0 2px ${colour}` }} />
+      {label}
+    </button>
+  );
+}
+
 interface OpenPlace {
   id: string;
   name: string;
@@ -138,7 +156,10 @@ function PlacePopup({ place, fix, onClose }: { place: OpenPlace; fix: UserFix | 
   }, [place.id]);
   const away = distanceLabel(fix, place.lat, place.lng);
   return (
-    <Popup position={[place.lat, place.lng]} offset={[0, -16]} eventHandlers={{ remove: onClose }}>
+    // Keep the popup clear of the controls and, on phones, of the folded bottom panel (about 200 px).
+    <Popup position={[place.lat, place.lng]} offset={[0, -16]} eventHandlers={{ remove: onClose }}
+      autoPanPaddingTopLeft={[72, 90]}
+      autoPanPaddingBottomRight={[16, typeof window !== "undefined" && window.innerWidth < 1024 ? 220 : 24]}>
       {/* Leaflet only closes popups on Escape while the map itself has focus; here focus is on "Go here". */}
       <div role="dialog" aria-label={place.name} className="min-w-[180px] text-[15px] text-ink"
         onKeyDown={(e) => {
@@ -161,7 +182,7 @@ function placeTitle(p: MapPlacePin): string {
 }
 
 export default function ExploreMap({
-  hazards, selectedId, onSelect, fix, amenities = [], onAmenity, places = [], onPlace, onView,
+  hazards, selectedId, onSelect, fix, amenities = [], onAmenity, places = [], onPlace, onView, onPinOpen,
 }: {
   hazards: Hazard[];
   selectedId: string | null;
@@ -173,10 +194,35 @@ export default function ExploreMap({
   places?: MapPlacePin[];
   onPlace?: (pin: MapPlacePin) => void;
   onView?: (bounds: L.LatLngBounds, zoom: number) => void;
+  /** A place popup opened (phones fold the bottom panel so the popup can be seen). */
+  onPinOpen?: () => void;
 }) {
   const [map, setMap] = useState<L.Map | null>(null);
   const [recenter, setRecenter] = useState(0);
-  const [openPlace, setOpenPlace] = useState<OpenPlace | null>(null);
+  const [openPlace, setOpenPlaceState] = useState<OpenPlace | null>(null);
+  const setOpenPlace = useCallback((p: OpenPlace | null) => {
+    setOpenPlaceState(p);
+    if (p) onPinOpen?.();
+  }, [onPinOpen]);
+  // Kinds of pin turned off with the legend chips, remembered on this device.
+  const [hiddenKinds, setHiddenKinds] = useState<string[]>([]);
+  const [pinsOpen, setPinsOpen] = useState(false); // phones: the pin chips open from a button
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(readStored(HIDDEN_KEY) ?? "[]");
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- browser storage is only readable after mount
+      if (Array.isArray(saved)) setHiddenKinds(saved.filter((k) => typeof k === "string"));
+    } catch {
+      // nothing saved, or unreadable: show everything
+    }
+  }, []);
+  const toggleKind = (kind: string) => {
+    setHiddenKinds((old) => {
+      const next = old.includes(kind) ? old.filter((k) => k !== kind) : [...old, kind];
+      writeStored(HIDDEN_KEY, JSON.stringify(next));
+      return next;
+    });
+  };
   const mountKey = useVisibleMount();
   const mapRef = useCallback((m: L.Map | null) => setMap(guardMap(m)), []);
 
@@ -210,16 +256,16 @@ export default function ExploreMap({
 
   // Every pin goes into one layer that groups them into number bubbles when zoomed out; your own dot stays out.
   const items: ClusterItem[] = useMemo(() => [
-    ...places.map((p) => ({ id: p.id, lat: p.lat, lng: p.lng, icon: amenityIcon(p), title: placeTitle(p), z: 600,
+    ...places.filter((p) => !hiddenKinds.includes(p.kind)).map((p) => ({ id: p.id, lat: p.lat, lng: p.lng, icon: amenityIcon(p), title: placeTitle(p), z: 600,
       onClick: () => setOpenPlace({ id: p.id, name: p.name, label: p.label, source: p.source, lat: p.lat, lng: p.lng,
         go: () => onPlace?.(p) }) })),
-    ...amenities.map((pin) => ({ id: pin.id, lat: pin.lat, lng: pin.lng, icon: amenityIcon(pin),
+    ...amenities.filter((pin) => !hiddenKinds.includes(pin.kind)).map((pin) => ({ id: pin.id, lat: pin.lat, lng: pin.lng, icon: amenityIcon(pin),
       title: `${pin.label} at ${pin.name}`, z: 650,
       onClick: () => setOpenPlace({ id: pin.id, name: pin.name, label: pin.label, lat: pin.lat, lng: pin.lng,
         go: () => onAmenity?.(pin) }) })),
-    ...hazards.map((h) => ({ id: `hazard:${h.id}`, lat: h.lat, lng: h.lng, icon: hazardIcon(h, h.id === selectedId),
+    ...hazards.filter((h) => !hiddenKinds.includes(h.kind)).map((h) => ({ id: `hazard:${h.id}`, lat: h.lat, lng: h.lng, icon: hazardIcon(h, h.id === selectedId),
       title: `${HAZARD_LABEL[h.kind]}: ${h.title}`, z: h.id === selectedId ? 700 : 400, onClick: () => onSelect(h.id) })),
-  ], [places, amenities, hazards, selectedId, onPlace, onAmenity, onSelect]);
+  ], [places, amenities, hazards, selectedId, onPlace, onAmenity, onSelect, hiddenKinds, setOpenPlace]);
 
   return (
     <div role="region" aria-label="Live map" className="absolute inset-0">
@@ -254,7 +300,12 @@ export default function ExploreMap({
           <ViewWatcher onView={onView} />
         </MapContainer>
       )}
-      <ul className="absolute top-3 left-[4.5rem] z-[500] flex max-w-[calc(100%-5.25rem)] flex-wrap gap-1.5 lg:top-auto lg:bottom-4 lg:left-3 lg:max-w-[calc(100%-4.5rem)]">
+      {/* Phones: the chips sit in a panel opened by "Choose pins" (the top of the map is busy with banners).
+          Desktop: always shown as chips at the bottom left. */}
+      <ul id="map-pin-kinds" aria-label="Pins on the map" className={cn(
+        "absolute top-[4.5rem] right-3 left-[4.5rem] z-[650] flex-wrap gap-1.5 rounded-[16px] bg-surface p-2 shadow-lg",
+        "lg:top-auto lg:right-auto lg:bottom-4 lg:left-3 lg:z-[500] lg:flex lg:max-w-[calc(100%-4.5rem)] lg:bg-transparent lg:p-0 lg:shadow-none",
+        pinsOpen ? "flex" : "hidden")}>
         {fix && (
           <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[13px] font-bold">
             <span aria-hidden="true" className="size-2.5 rounded-full bg-primary" />
@@ -264,15 +315,15 @@ export default function ExploreMap({
         {(Object.keys(AMENITY_STYLE) as PinKind[])
           .filter((kind) => amenities.some((pin) => pin.kind === kind) || places.some((p) => p.kind === kind))
           .map((kind) => (
-            <li key={kind} className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[13px] font-bold">
-              <span aria-hidden="true" className="size-2.5 rounded-full" style={{ background: AMENITY_STYLE[kind].colour }} />
-              {AMENITY_STYLE[kind].legend}
+            <li key={kind}>
+              <KindToggle label={AMENITY_STYLE[kind].legend} colour={AMENITY_STYLE[kind].colour}
+                on={!hiddenKinds.includes(kind)} onToggle={() => toggleKind(kind)} />
             </li>
           ))}
         {(["slope", "roadworks", "lift", "amenity"] as HazardKind[]).map((kind) => (
-          <li key={kind} className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[13px] font-bold">
-            <span aria-hidden="true" className="size-2.5 rounded-full" style={{ background: COLOUR[kind] }} />
-            {HAZARD_LABEL[kind]}
+          <li key={kind}>
+            <KindToggle label={HAZARD_LABEL[kind]} colour={COLOUR[kind]} on={!hiddenKinds.includes(kind)}
+              onToggle={() => toggleKind(kind)} />
           </li>
         ))}
       </ul>
@@ -288,6 +339,12 @@ export default function ExploreMap({
         <button type="button" aria-label="Zoom out" onClick={() => map?.zoomOut()}
           className="flex size-12 items-center justify-center rounded-[12px] border border-line-strong bg-surface text-ink hover:bg-bg">
           <Minus aria-hidden="true" className="size-5" strokeWidth={2.4} />
+        </button>
+        <button type="button" aria-label="Choose pins" aria-expanded={pinsOpen} aria-controls="map-pin-kinds"
+          onClick={() => setPinsOpen((v) => !v)}
+          className={cn("flex size-12 items-center justify-center rounded-[12px] border lg:hidden",
+            pinsOpen ? "border-primary bg-primary text-white" : "border-line-strong bg-surface text-ink hover:bg-bg")}>
+          <Layers aria-hidden="true" className="size-5" strokeWidth={2.4} />
         </button>
       </div>
     </div>

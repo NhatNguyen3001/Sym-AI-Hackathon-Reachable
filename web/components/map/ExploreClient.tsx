@@ -99,6 +99,8 @@ export function ExploreClient() {
     setExpanded(false);
   }
 
+  const foldSheet = useCallback(() => setExpanded(false), []);
+
   function goToAmenity(pin: { placeId: string }) {
     saveProfile(profile);
     const from = startPlaceId(fix);
@@ -126,7 +128,7 @@ export function ExploreClient() {
       <p role="status" className="sr-only">{locationText}</p>
       <ExploreMap hazards={visible} selectedId={selected?.id ?? null} onSelect={setSelectedId} fix={fix}
         amenities={to ? [] : amenities} onAmenity={goToAmenity}
-        places={to ? [] : places} onPlace={goToAmenity} onView={onView} />
+        places={to ? [] : places} onPlace={goToAmenity} onView={onView} onPinOpen={foldSheet} />
 
       <div className="pointer-events-none absolute top-3 right-3 left-[4.5rem] z-[550] lg:top-3 lg:right-20 lg:left-auto lg:max-w-sm">
         <div className="pointer-events-auto">
