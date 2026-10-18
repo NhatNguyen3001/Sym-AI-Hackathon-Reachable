@@ -16,21 +16,24 @@ if ($missing) { throw "api/.env is missing: $($missing -join ', ')" }
 foreach ($k in $keys) {
   # The value goes through a temporary file so it never appears on screen or in the command line.
   $f = Join-Path $Temp "param.json"
-  @{ Name = "/reachable/$k"; Type = "SecureString"; Overwrite = $true; Value = $values[$k] } |
-    ConvertTo-Json | Set-Content -Encoding Ascii $f
-  Aws ssm put-parameter --cli-input-json "file://$f" | Out-Null
-  Remove-Item $f
+  try {
+    @{ Name = "/reachable/$k"; Type = "SecureString"; Overwrite = $true; Value = $values[$k] } |
+      ConvertTo-Json | Set-Content -Encoding Ascii $f
+    AwsCall ssm put-parameter --cli-input-json "file://$f" | Out-Null
+  } finally {
+    Remove-Item -Force -ErrorAction SilentlyContinue $f   # never leave a key on disk
+  }
   Say "saved $k (encrypted)"
 }
 
-$vpc = (Aws ec2 describe-vpcs --filters Name=isDefault,Values=true --query "Vpcs[0].VpcId" --output text).Trim()
-$subnets = ((Aws ec2 describe-subnets --filters Name=default-for-az,Values=true --query "Subnets[].SubnetId" --output text) -split "\s+") -join ","
-$pl = (Aws ec2 describe-managed-prefix-lists --filters Name=prefix-list-name,Values=com.amazonaws.global.cloudfront.origin-facing --query "PrefixLists[0].PrefixListId" --output text).Trim()
+$vpc = (AwsCall ec2 describe-vpcs --filters "Name=isDefault,Values=true" --query "Vpcs[0].VpcId" --output text).Trim()
+$subnets = ((AwsCall ec2 describe-subnets --filters "Name=default-for-az,Values=true" --query "Subnets[].SubnetId" --output text) -split "\s+") -join ","
+$pl = (AwsCall ec2 describe-managed-prefix-lists --filters "Name=prefix-list-name,Values=com.amazonaws.global.cloudfront.origin-facing" --query "PrefixLists[0].PrefixListId" --output text).Trim()
 $cors = if ($VercelUrl) { "[`"$($VercelUrl.TrimEnd('/'))`"]" } else { '["*"]' }
 $params = Join-Path $Temp "stack-params.json"
 @("VpcId=$vpc", "SubnetIds=$subnets", "CloudFrontPrefixList=$pl", "CorsOrigins=$cors") | ConvertTo-Json | Set-Content -Encoding Ascii $params
 Say "deploying the stack (first time takes ~5 minutes: CloudFront)..."
-Aws cloudformation deploy --stack-name $Stack --template-file (Join-Path $PSScriptRoot "aws\reachable.yaml") `
+AwsCall cloudformation deploy --stack-name $Stack --template-file (Join-Path $PSScriptRoot "aws\reachable.yaml") `
   --capabilities CAPABILITY_IAM --parameter-overrides "file://$params" --no-fail-on-empty-changeset | Out-Null
 Write-Host "Done. API address (fixed): $(StackOutput 'ApiUrl')"
 Write-Host "Next: deploy\push.ps1, then deploy\start.ps1"

@@ -3,10 +3,10 @@
 param([string]$Only = "")
 . "$PSScriptRoot\common.ps1"
 
-$account = (Aws sts get-caller-identity --query Account --output text).Trim()
+$account = (AwsCall sts get-caller-identity --query Account --output text).Trim()
 $registry = "$account.dkr.ecr.$Region.amazonaws.com"
 Write-Host "Signing in to $registry"
-(Aws ecr get-login-password) | docker login --username AWS --password-stdin $registry | Out-Null
+(AwsCall ecr get-login-password) | docker login --username AWS --password-stdin $registry | Out-Null
 if ($LASTEXITCODE -ne 0) { throw "docker login failed" }
 
 $images = @(

@@ -2,6 +2,6 @@
 #   powershell -File deploy\stop.ps1
 . "$PSScriptRoot\common.ps1"
 
-Aws ecs update-service --cluster $Cluster --service $Service --desired-count 0 | Out-Null
-try { Aws scheduler delete-schedule --name $Schedule | Out-Null } catch {}
+AwsCall ecs update-service --cluster $Cluster --service $Service --desired-count 0 | Out-Null
+try { AwsCall scheduler delete-schedule --name $Schedule | Out-Null } catch {}
 Write-Host "Reachable is stopping (the task ends within a minute). Nothing runs until deploy\start.ps1."
