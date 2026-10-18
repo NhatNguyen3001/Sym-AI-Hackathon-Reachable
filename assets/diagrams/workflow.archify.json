@@ -1,0 +1,285 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Reachable: one trip from needs to the door",
+    "locale": "en",
+    "output": "workflow.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "happy-path",
+        "label": "Plan to guidance",
+        "focus": [
+          "needs",
+          "search",
+          "plan",
+          "lifts",
+          "describe",
+          "guide"
+        ],
+        "note": "Tap your needs, pick a place, get a step-free trip described for you."
+      },
+      {
+        "id": "live-data",
+        "label": "Live data",
+        "focus": [
+          "photon",
+          "routing",
+          "liftfeed",
+          "live"
+        ],
+        "note": "Search, routes, trips and lift alerts come from live outside sources."
+      },
+      {
+        "id": "fallbacks",
+        "label": "When things go wrong",
+        "focus": [
+          "fallback",
+          "reroute"
+        ],
+        "note": "Search falls back to Transport for NSW; a broken lift moves the route to another exit."
+      }
+    ],
+    "viewBox": [
+      1200,
+      660
+    ]
+  },
+  "lanes": [
+    {
+      "id": "phone",
+      "label": "Judge's phone (web app)"
+    },
+    {
+      "id": "api",
+      "label": "Reachable API"
+    },
+    {
+      "id": "data",
+      "label": "Live outside data"
+    },
+    {
+      "id": "fallback_lane",
+      "label": "Fallbacks",
+      "variant": "exception"
+    }
+  ],
+  "phases": [
+    {
+      "id": "ask",
+      "label": "Ask",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "plan_phase",
+      "label": "Plan + check",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "go",
+      "label": "Explain + go",
+      "fromCol": 4,
+      "toCol": 5
+    }
+  ],
+  "mainPath": [
+    "needs",
+    "search",
+    "plan",
+    "lifts",
+    "describe",
+    "guide"
+  ],
+  "nodes": [
+    {
+      "id": "needs",
+      "lane": "phone",
+      "col": 0,
+      "type": "frontend",
+      "label": "Tap your needs",
+      "sublabel": "aid, how steep",
+      "width": 128
+    },
+    {
+      "id": "search",
+      "lane": "phone",
+      "col": 1,
+      "type": "frontend",
+      "label": "Find a place",
+      "sublabel": "from + to",
+      "width": 128
+    },
+    {
+      "id": "guide",
+      "lane": "phone",
+      "col": 5,
+      "type": "frontend",
+      "label": "Start",
+      "sublabel": "spoken steps",
+      "width": 128
+    },
+    {
+      "id": "plan",
+      "lane": "api",
+      "col": 2,
+      "type": "backend",
+      "label": "Plan the trip",
+      "sublabel": "step-free walk + PT",
+      "width": 128
+    },
+    {
+      "id": "lifts",
+      "lane": "api",
+      "col": 3,
+      "type": "backend",
+      "label": "Check lifts",
+      "sublabel": "per station exit",
+      "width": 128
+    },
+    {
+      "id": "describe",
+      "lane": "api",
+      "col": 4,
+      "type": "backend",
+      "label": "Describe it",
+      "sublabel": "how hard, for you",
+      "tag": "trust labels",
+      "width": 128
+    },
+    {
+      "id": "live",
+      "lane": "api",
+      "col": 5,
+      "type": "messagebus",
+      "label": "Live updates",
+      "sublabel": "SSE per phone",
+      "width": 128
+    },
+    {
+      "id": "photon",
+      "lane": "data",
+      "col": 1,
+      "type": "external",
+      "label": "Photon",
+      "sublabel": "address search",
+      "width": 128
+    },
+    {
+      "id": "routing",
+      "lane": "data",
+      "col": 2,
+      "type": "external",
+      "label": "Valhalla + TfNSW",
+      "sublabel": "routes, trips",
+      "width": 150
+    },
+    {
+      "id": "liftfeed",
+      "lane": "data",
+      "col": 3,
+      "type": "external",
+      "label": "TfNSW alerts",
+      "sublabel": "every 5 min",
+      "width": 128
+    },
+    {
+      "id": "fallback",
+      "lane": "fallback_lane",
+      "col": 1,
+      "type": "external",
+      "label": "TfNSW finder",
+      "sublabel": "if Photon is down",
+      "width": 128
+    },
+    {
+      "id": "reroute",
+      "lane": "fallback_lane",
+      "col": 4,
+      "type": "security",
+      "label": "Other exit",
+      "sublabel": "says why",
+      "width": 128
+    }
+  ],
+  "edges": [
+    {
+      "id": "needs-search",
+      "from": "needs",
+      "to": "search"
+    },
+    {
+      "id": "search-plan",
+      "from": "search",
+      "to": "plan",
+      "label": "route",
+      "variant": "emphasis"
+    },
+    {
+      "id": "search-photon",
+      "from": "search",
+      "to": "photon",
+      "label": "query",
+      "role": "branch"
+    },
+    {
+      "id": "photon-down",
+      "from": "photon",
+      "to": "fallback",
+      "label": "down",
+      "variant": "dashed",
+      "role": "error"
+    },
+    {
+      "id": "plan-routing",
+      "from": "plan",
+      "to": "routing",
+      "role": "branch"
+    },
+    {
+      "id": "plan-lifts",
+      "from": "plan",
+      "to": "lifts",
+      "variant": "emphasis"
+    },
+    {
+      "id": "feed-lifts",
+      "from": "liftfeed",
+      "to": "lifts",
+      "variant": "dashed",
+      "role": "async"
+    },
+    {
+      "id": "lift-out",
+      "from": "lifts",
+      "to": "reroute",
+      "label": "lift out",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "lifts-describe",
+      "from": "lifts",
+      "to": "describe",
+      "variant": "emphasis"
+    },
+    {
+      "id": "describe-guide",
+      "from": "describe",
+      "to": "guide",
+      "label": "Start",
+      "variant": "emphasis"
+    },
+    {
+      "id": "live-guide",
+      "from": "live",
+      "to": "guide",
+      "label": "reroute",
+      "variant": "dashed",
+      "role": "async"
+    }
+  ]
+}

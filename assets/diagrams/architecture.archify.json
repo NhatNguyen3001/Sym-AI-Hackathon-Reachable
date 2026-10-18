@@ -1,0 +1,358 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Reachable: demo hosting architecture",
+    "locale": "en",
+    "output": "architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1080,
+      640
+    ],
+    "views": [
+      {
+        "id": "request-path",
+        "label": "A judge's request",
+        "focus": [
+          "phone",
+          "vercel",
+          "cloudfront",
+          "api",
+          "valhalla",
+          "turso"
+        ],
+        "note": "The phone loads the app from Vercel and calls the API through CloudFront."
+      },
+      {
+        "id": "outside-data",
+        "label": "Live outside data",
+        "focus": [
+          "api",
+          "tfnsw",
+          "claude",
+          "photon",
+          "meteo",
+          "overpass"
+        ],
+        "note": "Trips, lifts, roadworks, search, weather and places come from open data and Claude."
+      },
+      {
+        "id": "on-demand",
+        "label": "On-demand backend",
+        "focus": [
+          "scheduler",
+          "api",
+          "valhalla"
+        ],
+        "note": "One Fargate task runs only when started; a schedule stops it after 9 hours."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "phone",
+      "type": "external",
+      "label": "Judge's phone",
+      "sublabel": "QR code, own session",
+      "pos": [
+        40,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "vercel",
+      "type": "frontend",
+      "label": "Web app",
+      "sublabel": "Next.js 16 on Vercel",
+      "pos": [
+        40,
+        490
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "brand": "vercel"
+    },
+    {
+      "id": "cloudfront",
+      "type": "cloud",
+      "label": "CloudFront",
+      "sublabel": "fixed HTTPS address",
+      "pos": [
+        260,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "tag": "places cached 5 min"
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "Reachable API",
+      "sublabel": "FastAPI :8000",
+      "pos": [
+        500,
+        295
+      ],
+      "size": [
+        170,
+        74
+      ],
+      "tag": "demo sandbox"
+    },
+    {
+      "id": "valhalla",
+      "type": "backend",
+      "label": "Valhalla",
+      "sublabel": "Sydney routes :8002",
+      "pos": [
+        760,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "turso",
+      "type": "database",
+      "label": "Turso",
+      "sublabel": "libsql local replica",
+      "pos": [
+        510,
+        490
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "overpass",
+      "type": "external",
+      "label": "OpenStreetMap",
+      "sublabel": "Overpass: places",
+      "pos": [
+        760,
+        490
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "scheduler",
+      "type": "cloud",
+      "label": "EventBridge Scheduler",
+      "sublabel": "auto-stop",
+      "pos": [
+        260,
+        490
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "tfnsw",
+      "type": "external",
+      "label": "Transport for NSW",
+      "sublabel": "trips, lifts, roadworks",
+      "pos": [
+        300,
+        110
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "claude",
+      "type": "external",
+      "label": "Claude",
+      "sublabel": "Anthropic API",
+      "pos": [
+        510,
+        110
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "brand": "anthropic"
+    },
+    {
+      "id": "photon",
+      "type": "external",
+      "label": "Photon",
+      "sublabel": "address search",
+      "pos": [
+        700,
+        110
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "meteo",
+      "type": "external",
+      "label": "Open-Meteo",
+      "sublabel": "rain now",
+      "pos": [
+        890,
+        110
+      ],
+      "size": [
+        150,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "AWS ap-southeast-2",
+      "wraps": [
+        "api",
+        "valhalla",
+        "turso",
+        "scheduler"
+      ]
+    },
+    {
+      "kind": "security-group",
+      "label": "Fargate task, 2 vCPU / 4 GB, CloudFront only",
+      "wraps": [
+        "api",
+        "valhalla"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "load-app",
+      "from": "phone",
+      "to": "vercel",
+      "label": "loads app",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        115,
+        427
+      ]
+    },
+    {
+      "id": "api-calls",
+      "from": "phone",
+      "to": "cloudfront",
+      "label": "HTTPS + SSE",
+      "variant": "emphasis"
+    },
+    {
+      "id": "to-task",
+      "from": "cloudfront",
+      "to": "api",
+      "label": "HTTP",
+      "variant": "emphasis"
+    },
+    {
+      "id": "routes",
+      "from": "api",
+      "to": "valhalla",
+      "label": "routes"
+    },
+    {
+      "id": "db",
+      "from": "api",
+      "to": "turso",
+      "label": "reads local, writes sync",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        585,
+        430
+      ]
+    },
+    {
+      "id": "transit",
+      "from": "api",
+      "to": "tfnsw",
+      "label": "5 req/s",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "llm",
+      "from": "api",
+      "to": "claude",
+      "label": "roadworks, trips",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "labelAt": [
+        585,
+        205
+      ]
+    },
+    {
+      "id": "search",
+      "from": "api",
+      "to": "photon",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "rain",
+      "from": "api",
+      "to": "meteo",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "places",
+      "from": "api",
+      "to": "overpass",
+      "label": "map agent",
+      "variant": "dashed"
+    },
+    {
+      "id": "autostop",
+      "from": "scheduler",
+      "to": "api",
+      "label": "stop after 9 h",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Backend on demand",
+      "items": [
+        "One Fargate task (API + Valhalla), auto-stop after 9 hours",
+        "Keys in SSM Parameter Store, never in images"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Built for 80 judges",
+      "items": [
+        "Per-phone sandbox; caches and a TfNSW rate limit",
+        "Load test: 4,360 requests, 0 errors"
+      ]
+    }
+  ]
+}
