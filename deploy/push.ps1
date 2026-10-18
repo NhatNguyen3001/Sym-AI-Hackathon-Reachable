@@ -6,8 +6,16 @@ param([string]$Only = "")
 $account = (AwsCall sts get-caller-identity --query Account --output text).Trim()
 $registry = "$account.dkr.ecr.$Region.amazonaws.com"
 Write-Host "Signing in to $registry"
-(AwsCall ecr get-login-password) | docker login --username AWS --password-stdin $registry | Out-Null
-if ($LASTEXITCODE -ne 0) { throw "docker login failed" }
+# Windows PowerShell 5.1 changes text piped into programs (line endings, encoding), which garbles the token: hand it
+# to Docker through a file that cmd feeds straight in, and delete it at once. (A 12-hour ECR token, never printed.)
+$tokenFile = Join-Path $Temp "ecr.txt"
+try {
+  [System.IO.File]::WriteAllText($tokenFile, ((AwsCall ecr get-login-password) -join "").Trim())
+  cmd /c "docker login --username AWS --password-stdin $registry < `"$tokenFile`"" | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw "docker login failed" }
+} finally {
+  Remove-Item -Force -ErrorAction SilentlyContinue $tokenFile
+}
 
 $images = @(
   @{ Name = "reachable-api"; File = (Join-Path $Root "api\Dockerfile"); Context = (Join-Path $Root "api") },
