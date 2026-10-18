@@ -74,5 +74,8 @@ def group_items(items: list[dict], exit_names: dict[str, str] | None = None) -> 
             conf = "Likely"
         else:
             conf = "Confirmed"
-        out.append({"icon": "alert" if g["unsure"] else ICONS[g["kind"]], "label": label, "confidence": conf, "lengthM": m})
+        # kind/slope/measured: the facts the web app uses to say how hard a stretch is for each person (cycle 6).
+        out.append({"icon": "alert" if g["unsure"] else ICONS[g["kind"]], "label": label, "confidence": conf, "lengthM": m,
+                    "kind": g["kind"], "slope": g["slope"] if g["kind"] == "slope" else None,
+                    "measured": bool(g.get("measured"))})
     return out
