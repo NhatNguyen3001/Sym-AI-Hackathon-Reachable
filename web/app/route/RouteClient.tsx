@@ -1,8 +1,8 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "cn";
-import { ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
+import { ChevronLeft, ChevronRight, CircleCheck, SlidersHorizontal, TriangleAlert } from "lucide-react";
 import { NeedsTicks } from "@/components/NeedsTicks";
 import { Button } from "@/components/ui/button";
 import { InfoBanner, SampleDataBanner, WarnBanner, WeatherBanner } from "@/components/Banners";
@@ -10,7 +10,7 @@ import { PlaceInput } from "@/components/PlaceInput";
 import { LegTimeline } from "@/components/LegTimeline";
 import { NavigationPanel } from "@/components/NavigationPanel";
 import { RouteSkeleton } from "@/components/RouteSkeleton";
-import { RouteStep } from "@/components/Rows";
+import { RouteStep, VenueCheckRow } from "@/components/Rows";
 import { StatusBadge } from "@/components/StatusBadge";
 import { TripOptions } from "@/components/TripOptions";
 import { RouteMap } from "@/components/map/RouteMap";
@@ -18,7 +18,7 @@ import { ApiError, getPlace, getRoute, getVenueCheck } from "@/lib/api";
 import { useEvents } from "@/lib/events";
 import { addTrip, loadProfile, rememberPlace, saveProfile } from "@/lib/profile";
 import { profile as defaultProfile } from "@/lib/placeholder";
-import { navFromLegs, navFromWalk } from "@/lib/navigation";
+import { navFromLegs, navFromWalk, type NavRoute } from "@/lib/navigation";
 import { routeFeatures } from "@/lib/routeFeatures";
 import { useGuidance } from "@/lib/useGuidance";
 import { useUserLocation } from "@/lib/useUserLocation";
@@ -72,6 +72,11 @@ export function RouteClient() {
   const [liftAnswers, setLiftAnswers] = useState<Record<string, "working" | "broken">>({});
   const [navigating, setNavigating] = useState(false);
   const [previewing, setPreviewing] = useState(false);
+  // While guiding, a failed re-plan (no signal underground) keeps the last route and says so, never a bare map.
+  const guiding = useRef(false);
+  const [navProblem, setNavProblem] = useState<string | null>(null);
+  const startButton = useRef<HTMLButtonElement>(null);
+  const backToStart = useRef(false);
   const { fix: userFix, status: locationStatus } = useUserLocation();
 
   /** Open the details (desktop side panel, phone sheet) so a problem with the trip is seen. */
@@ -84,6 +89,12 @@ export function RouteClient() {
     if (!fromId) return;
     try {
       const r = await getRoute(fromId, toId, p, { fresh });
+      // While guiding, an answer we can't use (no route, or the offline sample) never replaces the route being followed.
+      if (guiding.current && (!r.data.ok || r.sample)) {
+        setNavProblem("Couldn't update your route just now.");
+        return;
+      }
+      setNavProblem(null);
       setRoute(r.data);
       setPicked(null); // a reloaded route (live update, new filter) may have different alternatives
       if (!r.data.ok) showDetails(); // "no step-free route" must never hide in a closed panel
@@ -97,6 +108,10 @@ export function RouteClient() {
         addTrip({ fromId, from: f?.name ?? fromId, toId, to: t?.name ?? toId, minutes });
       }
     } catch (e) {
+      if (guiding.current) {
+        setNavProblem("Couldn't update your route just now.");
+        return;
+      }
       setRoute(null);
       showDetails();
       setError(e instanceof ApiError && e.code === "place_not_found"
@@ -116,8 +131,10 @@ export function RouteClient() {
     setProfile(p);
     setPicked(null);
     setPickedOption(null);
-    setRoute(null);   // a new trip: show placeholders, not the previous trip
-    showDetails();    // open the panel straight away so there's something to see while the route loads
+    if (!guiding.current) {
+      setRoute(null);   // a new trip: show placeholders, not the previous trip
+      showDetails();    // open the panel straight away so there's something to see while the route loads
+    }
     load(p);
     if (fromId) findPlace(fromId).then(setFrom);
     findPlace(toId).then(setTo);
@@ -155,8 +172,9 @@ export function RouteClient() {
   const selected = selectOption(options, pickedOption ?? urlOption);
   const transit = selected?.mode === "transit" ? selected : undefined;
   const cards = showsCards(options);   // with cards, the chosen card is the summary
-  const liftRows = useMemo(() => (selected?.liftStatus ?? route?.liftStatus ?? [])
-    .filter((l) => typeof l.lat === "number" && typeof l.lng === "number"), [selected, route]);
+  const allLifts = useMemo(() => selected?.liftStatus ?? route?.liftStatus ?? [], [selected, route]);
+  const liftRows = useMemo(() => allLifts
+    .filter((l) => typeof l.lat === "number" && typeof l.lng === "number"), [allLifts]);
   const lift = liftRows.find((l) => liftKey(l) === liftOpen) ?? null;
   const explanation = transit && selected !== options?.[0] ? selected?.explanation : route?.explanation;
   const acc = route?.ok && !transit ? route.accessible ?? undefined : undefined;
@@ -178,11 +196,20 @@ export function RouteClient() {
     if (transit) return navFromLegs(transit.legs);
     return active ? navFromWalk(active.geometry.coordinates, activeSteps) : null;
   }, [transit, active, activeSteps]);
-  const guide = useGuidance(navRoute, navigating, userFix, previewing);
+  // Keep guiding on the last good route if a re-plan leaves none for a moment.
+  const [heldNav, setHeldNav] = useState<NavRoute | null>(null);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- remember the last route that could be guided
+    if (navRoute) setHeldNav(navRoute);
+  }, [navRoute]);
+  const shownNav = navigating ? navRoute ?? heldNav : navRoute;
+  const guide = useGuidance(shownNav, navigating, userFix, previewing);
   // The recommended way counts as chosen: Start is there as soon as a route is.
   const canStart = !!route?.ok && !!navRoute;
 
   function startNav() {
+    guiding.current = true;
+    setNavProblem(null);
     setNavigating(true);
     setPreviewing(false);
     setSheetOpen(false);
@@ -191,10 +218,21 @@ export function RouteClient() {
   }
 
   function endNav() {
+    guiding.current = false;
+    setNavProblem(null);
     setNavigating(false);
     setPreviewing(false);
     setSearchOpen(true);
+    backToStart.current = true;
   }
+
+  // After End, focus goes back to Start (it was hidden while guiding).
+  useEffect(() => {
+    if (!navigating && backToStart.current) {
+      backToStart.current = false;
+      startButton.current?.focus();
+    }
+  }, [navigating]);
 
   function replanFromHere() {
     if (!userFix) return;
@@ -297,11 +335,11 @@ export function RouteClient() {
           walked={guide.walked}
           previewPoint={navigating && previewing ? guide.position : null}
         />
-        {navigating && navRoute && (
-          <NavigationPanel nav={navRoute} guide={guide} destination={to?.name ?? "your destination"}
+        {navigating && shownNav && (
+          <NavigationPanel nav={shownNav} guide={guide} destination={to?.name ?? "your destination"}
             minutes={transit?.minutes ?? active?.minutes ?? 0} arriveAt={transit?.arriveAt}
             locationStatus={locationStatus} previewing={previewing} onPreview={setPreviewing}
-            onReplan={replanFromHere} onEnd={endNav} />
+            onReplan={replanFromHere} onEnd={endNav} problem={navProblem} />
         )}
         {lift && !navigating && (
           <article aria-labelledby="lift-h"
@@ -385,7 +423,7 @@ export function RouteClient() {
               <SlidersHorizontal aria-hidden="true" className="size-5" strokeWidth={2.4} />
             </button>
             {canStart && (
-              <button type="button" onClick={startNav}
+              <button ref={startButton} type="button" onClick={startNav}
                 className="inline-flex min-h-11 items-center rounded-full bg-primary px-5 text-[15px] font-bold text-white">
                 Start
               </button>
@@ -429,8 +467,11 @@ export function RouteClient() {
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <p className="text-[32px] leading-none font-bold">{transit.minutes} min</p>
-                  <p className="mt-1 text-[15px] text-muted">{optionTimes(transit)}</p>
+                  <p className="mt-1 text-[15px] text-muted">
+                    {optionTimes(transit)} · {transit.stepFree ? "step-free" : "has steps"}
+                  </p>
                 </div>
+                {route?.status && <StatusBadge label={route.status} />}
               </div>
             </section>
           )}
@@ -441,9 +482,34 @@ export function RouteClient() {
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <p className="text-[32px] leading-none font-bold">{active.minutes} min</p>
-                  <p className="mt-1 text-[15px] text-muted">{active.distanceM} m</p>
+                  <p className="mt-1 text-[15px] text-muted">
+                    {active.distanceM} m · {active.stepFree ? "step-free" : "has steps"} ·{" "}
+                    {active.slopeEstimated ? "slopes estimated" : `max slope ${active.maxSlope}%`}
+                  </p>
                 </div>
+                {route?.status && !chosen && <StatusBadge label={route.status} />}
               </div>
+            </section>
+          )}
+
+          {/* Lift status as text too (the map pins aren't enough for a screen reader). */}
+          {route && allLifts.length > 0 && (
+            <section aria-labelledby="lifts-h">
+              <h2 id="lifts-h" className="mb-1 text-[13px] font-bold tracking-wide text-muted uppercase">Station lifts</h2>
+              <ul>
+                {allLifts.map((l) => (
+                  <li key={liftKey(l)} className="flex items-start gap-3 border-b border-line py-2.5 last:border-b-0">
+                    {l.status === "Working"
+                      ? <CircleCheck aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />
+                      : <TriangleAlert aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-warn" />}
+                    <div className="flex-1">
+                      <p className="text-[16px]">{l.exit}: {l.status}</p>
+                      <p className="text-[14px] text-muted">{l.source}, updated {l.updated}</p>
+                    </div>
+                    <StatusBadge label={l.status === "Working" ? "Confirmed" : l.status} />
+                  </li>
+                ))}
+              </ul>
             </section>
           )}
 
@@ -469,6 +535,16 @@ export function RouteClient() {
 
           {unmet.length > 0 && (
             <WarnBanner>This place may not meet your need for {unmet.join(" or ")}.</WarnBanner>
+          )}
+
+          {venue && (
+            <section aria-labelledby="dest-h">
+              <h2 id="dest-h" className="text-[13px] font-bold tracking-wide text-muted uppercase">Destination check: {venue.name}</h2>
+              <ul>{venue.checks.map((c) => <VenueCheckRow key={c.field} check={c} />)}</ul>
+              <p className="mt-1 text-[14px] text-muted">
+                {venue.sourceCount > 0 ? `Checked ${venue.checkedAgo}, using ${venue.sourceCount} sources.` : "No one has checked this place yet."}
+              </p>
+            </section>
           )}
 
           <Button type="button" size="lg" className="w-full" onClick={saveFilter} disabled={saving}>
