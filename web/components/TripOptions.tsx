@@ -1,28 +1,31 @@
 import { CircleCheck, TriangleAlert } from "lucide-react";
 import { cn } from "cn";
 import { StatusBadge } from "./StatusBadge";
-import { routeTrust } from "@/lib/wording";
+import { hillsSummary, routeTrust } from "@/lib/wording";
 import { groupWays, optionTimes, optionTitle, showsCards, timeOfDay } from "@/lib/trip";
-import type { TripOption } from "@/lib/types";
+import type { Profile, TripOption } from "@/lib/types";
 
-/** Arrival for public transport; distance and slope for a walk (what the summary block used to show). */
-function details(o: TripOption): string {
+/** Arrival for public transport; for a walk, how the hills are for this person (numbers stay on the route page). */
+function details(o: TripOption, profile?: Profile): string {
   if (o.mode !== "walk") return optionTimes(o);
   const leg = o.legs[0];
   if (!leg || leg.kind !== "walk") return "";
-  return `${leg.distanceM} m · ${leg.slopeEstimated ? "slopes estimated" : `max slope ${leg.maxSlope}%`}`;
+  if (!profile || leg.slopeEstimated) return "hills not measured";
+  return hillsSummary(leg.steps, profile);
 }
 
 /** "Ways to get there": one radio card per way to travel, with "Leave at" chips for its departures.
  *  The chosen card is the summary (time, how, step-free, the chosen departure's lift warnings). */
 export function TripOptions({
-  options, selected, onSelect, status,
+  options, selected, onSelect, status, profile,
 }: {
   options: TripOption[];
   selected?: string;
   onSelect: (id: string) => void;
   /** How sure we are about the route (e.g. "Some details not sure"), shown on the chosen card. */
   status?: string;
+  /** For how the hills are for this person. */
+  profile?: Profile;
 }) {
   if (!showsCards(options)) return null;
   return (
@@ -44,10 +47,10 @@ export function TripOptions({
                   <span className="block text-[15px] text-muted">
                     {o.mode === "walk" ? `Any time · ${o.summary}` : o.summary}
                   </span>
-                  <span className="block text-[15px] text-muted">{details(o)}</span>
+                  <span className="block text-[15px] text-muted">{details(o, profile)}</span>
                   {o.stepFree ? (
                     <span className="mt-1 flex items-center gap-1.5 text-[14px] font-bold text-primary">
-                      <CircleCheck aria-hidden="true" className="size-4" /> Step-free
+                      <CircleCheck aria-hidden="true" className="size-4" /> No steps
                     </span>
                   ) : (
                     <span className="mt-1 flex items-center gap-1.5 text-[14px] font-bold text-warn-strong">

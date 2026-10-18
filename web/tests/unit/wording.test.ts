@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import {
-  aboutMetres, difficulty, difficultyText, feelChoice, FEEL_CHOICES, fieldText, liftText, routeTrust, spokenText, stepText, trust,
+  aboutMetres, difficulty, difficultyText, feelChoice, FEEL_CHOICES, fieldText, hillsSummary, liftText, routeTrust, spokenText, stepText, trust,
 } from "@/lib/wording";
 import { profile as base } from "@/lib/placeholder";
 import type { Profile, Step } from "@/lib/types";
@@ -109,4 +109,14 @@ test("destination check fields in plain words", () => {
   expect(fieldText("Level entrance")).toBe("Entrance without steps");
   expect(fieldText("Step-free inside")).toBe("No steps inside");
   expect(fieldText("Accessible toilet")).toBe("Accessible toilet");
+});
+
+test("a whole route's hills in a few words, for this person", () => {
+  const s = (slope: number) => step({ kind: "slope", slope });
+  expect(hillsSummary([step({ kind: "flat" }), s(2)], withLimit(5))).toBe("easy all the way");
+  expect(hillsSummary([s(2), s(3.5)], withLimit(5))).toBe("a bit tiring in places");
+  expect(hillsSummary([s(2), s(5)], withLimit(5))).toBe("one hard bit");
+  expect(hillsSummary([s(5), s(4.9)], withLimit(5))).toBe("2 hard bits");
+  expect(hillsSummary([step({ kind: "path" })], withLimit(5))).toBe("hills not measured");
+  expect(hillsSummary([], withLimit(5))).toBe("hills not measured");
 });

@@ -35,8 +35,9 @@ test("the route says if it's step-free, how sure we are, the lifts and the desti
   await page.goto("/route?from=mq-station&to=library");
   await openDetails(page);
   const details = page.getByRole("complementary", { name: "Route details" });
-  await expect(details.getByText(/step-free|has steps/).first()).toBeVisible({ timeout: 20_000 });
-  await expect(details.getByText(/max slope \d+%|slopes estimated/).first()).toBeVisible();
+  // In plain words (cycle 6): steps or not, and how the hills are for this person.
+  await expect(details.getByText(/no steps|has steps/).first()).toBeVisible({ timeout: 20_000 });
+  await expect(details.getByText(/easy all the way|a bit tiring in places|hard bit|hills not measured/).first()).toBeVisible();
   await expect(details.getByRole("heading", { name: "Station lifts" })).toBeVisible();
   await expect(details.getByRole("heading", { name: /Destination check/ })).toBeVisible();
 });

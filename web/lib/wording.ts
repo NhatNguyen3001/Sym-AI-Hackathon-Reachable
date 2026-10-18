@@ -156,3 +156,15 @@ const FIELDS: Record<string, string> = {
 
 /** A destination check line in plain words (the API's field names stay as codes the route page matches on). */
 export const fieldText = (field: string) => FIELDS[field] ?? field;
+
+/** A whole route's hills in a few words: "easy all the way", "one hard bit", "hills not measured". */
+export function hillsSummary(steps: Step[], profile: Profile): string {
+  const walked = steps.filter((s) => s.kind === "flat" || s.kind === "slope" || s.kind === "path");
+  if (!walked.length || walked.some((s) => s.kind === "path")) return "hills not measured";
+  const levels = walked.map((s) => (s.kind === "flat" ? "flat" : difficulty(s.slope, profile.maxSlope, s.slope != null)));
+  const hard = levels.filter((d) => d === "hard" || d === "too-steep").length;
+  if (hard === 1) return "one hard bit";
+  if (hard > 1) return `${hard} hard bits`;
+  if (levels.includes("tiring")) return "a bit tiring in places";
+  return "easy all the way";
+}

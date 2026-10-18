@@ -21,7 +21,7 @@ import { addTrip, loadProfile, rememberPlace, saveProfile } from "@/lib/profile"
 import { profile as defaultProfile } from "@/lib/placeholder";
 import { navFromLegs, navFromWalk, type NavRoute } from "@/lib/navigation";
 import { routeFeatures } from "@/lib/routeFeatures";
-import { liftText, liftTrust, routeTrust } from "@/lib/wording";
+import { hillsSummary, liftText, liftTrust, routeTrust } from "@/lib/wording";
 import { useGuidance } from "@/lib/useGuidance";
 import { useUserLocation } from "@/lib/useUserLocation";
 import { optionTimes, selectOption, showsCards } from "@/lib/trip";
@@ -73,6 +73,7 @@ export function RouteClient() {
   const [liftOpen, setLiftOpen] = useState<string | null>(null);
   const [liftAnswers, setLiftAnswers] = useState<Record<string, "working" | "broken">>({});
   const [navigating, setNavigating] = useState(false);
+  const [showNumbers, setShowNumbers] = useState(false);
   const [previewing, setPreviewing] = useState(false);
   // While guiding, a failed re-plan (no signal underground) keeps the last route and says so, never a bare map.
   const guiding = useRef(false);
@@ -461,7 +462,8 @@ export function RouteClient() {
             </WarnBanner>
           )}
 
-          {options && <TripOptions options={options} selected={selected?.id} onSelect={chooseOption} status={route?.status} />}
+          {options && <TripOptions options={options} selected={selected?.id} onSelect={chooseOption} status={route?.status}
+            profile={profile} />}
 
           {transit && !cards && (
             <section aria-labelledby="summary-h">
@@ -470,7 +472,7 @@ export function RouteClient() {
                 <div>
                   <p className="text-[32px] leading-none font-bold">{transit.minutes} min</p>
                   <p className="mt-1 text-[15px] text-muted">
-                    {optionTimes(transit)} · {transit.stepFree ? "step-free" : "has steps"}
+                    {optionTimes(transit)} · {transit.stepFree ? "no steps" : "has steps"}
                   </p>
                 </div>
                 {route?.status && <StatusBadge label={routeTrust(route.status, transit.legs.flatMap((l) => (l.kind === "walk" ? l.steps : [])))} />}
@@ -485,12 +487,22 @@ export function RouteClient() {
                 <div>
                   <p className="text-[32px] leading-none font-bold">{active.minutes} min</p>
                   <p className="mt-1 text-[15px] text-muted">
-                    {active.distanceM} m · {active.stepFree ? "step-free" : "has steps"} ·{" "}
-                    {active.slopeEstimated ? "slopes estimated" : `max slope ${active.maxSlope}%`}
+                    {active.stepFree ? "no steps" : "has steps"} ·{" "}
+                    {active.slopeEstimated ? "hills not measured" : hillsSummary(activeSteps ?? [], profile)}
                   </p>
                 </div>
                 {route?.status && !chosen && <StatusBadge label={routeTrust(route.status, activeSteps ?? [])} />}
               </div>
+              {/* The numbers, for anyone who wants them (a carer, an expert): out of the way by default. */}
+              <button type="button" aria-expanded={showNumbers} onClick={() => setShowNumbers((v) => !v)}
+                className="mt-2 inline-flex min-h-11 items-center text-[15px] font-bold text-primary underline underline-offset-4">
+                Details
+              </button>
+              {showNumbers && (
+                <p className="text-[15px] text-muted">
+                  {active.slopeEstimated ? "Hills not measured" : `Steepest bit ${active.maxSlope}%`} · {active.distanceM} m
+                </p>
+              )}
             </section>
           )}
 

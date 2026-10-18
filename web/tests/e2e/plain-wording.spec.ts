@@ -97,3 +97,23 @@ test("the map key calls a reported barrier a 'Reported problem'", async ({ page 
   if ((page.viewportSize()?.width ?? 1440) < 1024) await page.getByRole("button", { name: "Choose pins" }).click({ timeout: 20_000 });
   await expect(page.getByRole("button", { name: "Reported problem pins" })).toBeVisible({ timeout: 20_000 });
 });
+
+test("the summary is plain, and the numbers wait under Details", async ({ page }) => {
+  await page.goto("/route?from=mq-station&to=library");
+  await openDetails(page);
+  const summary = page.getByRole("region", { name: "Summary" });
+  await expect(summary.getByText(/no steps · (easy all the way|a bit tiring in places|one hard bit|\d+ hard bits)/)).toBeVisible({ timeout: 20_000 });
+  expect(await summary.textContent()).not.toMatch(/%/);
+  const details = summary.getByRole("button", { name: "Details" });
+  await expect(details).toHaveAttribute("aria-expanded", "false");
+  await details.click();
+  await expect(summary.getByText(/Steepest bit \d+% · \d+ m/)).toBeVisible();
+});
+
+test("trip cards say 'No steps' rather than 'Step-free'", async ({ page }) => {
+  await page.goto("/route?from=library&to=mortarboard-cafe&option=transit-0");
+  await openDetails(page);
+  const ways = page.getByRole("group", { name: "Ways to get there" });
+  await expect(ways.getByText("No steps").first()).toBeVisible({ timeout: 20_000 });
+  expect(await ways.textContent()).not.toMatch(/max slope|%/);
+});
