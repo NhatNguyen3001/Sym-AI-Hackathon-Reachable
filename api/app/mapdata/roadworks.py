@@ -39,6 +39,19 @@ def _text(s: str | None) -> str:
     return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", s or ""))).strip()
 
 
+def _title(p: dict) -> str:
+    """A plain title. Live Traffic's displayName shouts its category ("SCHEDULED ROADWORK Mamre Road upgrade")."""
+    if _text(p.get("headline")):
+        return _text(p.get("headline"))
+    name, cat = _text(p.get("displayName")), _text(p.get("mainCategory"))
+    if cat and name.upper().startswith(cat.upper()):
+        rest = name[len(cat):].strip(" -:")
+        if "ROADWORK" in cat.upper():
+            return rest or "Roadworks"
+        return f"{cat.capitalize()}: {rest}" if rest else cat.capitalize()
+    return name or (cat.capitalize() if cat else "Roadworks")
+
+
 def notices(features: list[dict], bbox, today: date) -> list[dict]:
     """Point notices inside bbox that are in effect at some point today (Sydney time)."""
     w, s, e, n = bbox
@@ -57,7 +70,7 @@ def notices(features: list[dict], bbox, today: date) -> list[dict]:
         if (start is not None and start >= day_end) or (end is not None and end < day_start):
             continue
         road = (p.get("roads") or [{}])[0]
-        out.append({"id": f"lt-{f.get('id')}", "title": _text(p.get("headline")) or _text(p.get("displayName")),
+        out.append({"id": f"lt-{f.get('id')}", "title": _title(p),
                     "road": road.get("mainStreet") or "", "suburb": road.get("suburb") or "",
                     "advice": _text(p.get("otherAdvice")), "periods": p.get("periods") or [],
                     "url": p.get("webLinkUrl") or p.get("weblinkUrl"), "lat": lat, "lng": lng})

@@ -116,3 +116,14 @@ def test_judging_gets_more_time_than_a_page_request():
 
     judge(items(2), Timed())
     assert seen["timeout"] >= 120 and seen["max_retries"] >= 2
+
+
+def test_titles_drop_the_feeds_shouting_category():
+    """Live Traffic's displayName is "SCHEDULED ROADWORK <what>"; people should see just what it is."""
+    def title(**props):
+        return notices([feature(1, headline="", **props)], SYDNEY, TODAY)[0]["title"]
+    assert title(displayName="SCHEDULED ROADWORK Mamre Road upgrade", mainCategory="SCHEDULED ROADWORK") == "Mamre Road upgrade"
+    assert title(displayName="SCHEDULED ROADWORK", mainCategory="SCHEDULED ROADWORK") == "Roadworks"
+    assert title(displayName="BREAKDOWN Semi-trailer", mainCategory="BREAKDOWN") == "Breakdown: Semi-trailer"
+    assert title(displayName="Fun Run", mainCategory="SPECIAL EVENT") == "Fun Run"
+    assert title(displayName="", mainCategory="CHANGED TRAFFIC CONDITIONS") == "Changed traffic conditions"
