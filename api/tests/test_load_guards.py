@@ -114,3 +114,22 @@ def test_in_the_sandbox_opening_a_searched_place_saves_nothing(settings):
         assert c.get("/places/osm:N42", headers={"X-Session": "judge-a"}).status_code == 200
         time.sleep(0.2)
         assert writes == []
+
+
+def test_the_sydney_places_list_is_built_once_and_reused(client, app, monkeypatch):
+    """80 phones opening the map at once all ask for the same Sydney box: build it once, not 80 times."""
+    import app.routers.mapdata as m
+    built = []
+    real = m._build_places
+    monkeypatch.setattr(m, "_build_places", lambda session, box: built.append(box) or real(session, box))
+    for _ in range(5):
+        assert client.get("/map/places", params={"bbox": "150.5,-34.2,151.4,-33.4"}).status_code == 200
+    assert len(built) == 1
+
+
+def test_a_map_agent_run_refreshes_the_places_list(client, app):
+    import app.routers.mapdata as m
+    client.get("/map/places", params={"bbox": "150.5,-34.2,151.4,-33.4"})
+    assert app.state.places_cache
+    m.forget_places(app.state)
+    assert not app.state.places_cache
