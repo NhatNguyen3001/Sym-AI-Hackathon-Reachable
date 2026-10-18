@@ -1,5 +1,5 @@
 import { expect, request, test } from "@playwright/test";
-import { openDetails } from "./helpers";
+import { openDetails, startAtStation } from "./helpers";
 
 const API = "http://localhost:8100";
 const TFNSW = "http://localhost:8300";
@@ -18,7 +18,8 @@ test("a live lift alert reroutes an open route page without a reload", async ({ 
     await page.goto("/route?from=mq-station&to=library");
     await openDetails(page);
     const aside = page.getByRole("complementary", { name: "Route details" });
-    await expect(aside.getByText("South exit lift: Out of service")).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("region", { name: "Route map" }).getByTitle("South exit lift: Out of service"))
+      .toBeVisible({ timeout: 10_000 });
     await expect(aside.getByText("Lift at north exit")).toBeVisible();
 
     await tfnsw.post("/_mock/lifts", { data: { osmIds: [LIFT2, LIFT1] } });
@@ -34,7 +35,8 @@ test("a live lift alert reroutes an open route page without a reload", async ({ 
 
 test("plan a trip with the keyboard, then report a barrier", async ({ page }) => {
   await page.goto("/");
-  const to = page.getByRole("combobox", { name: "Where to?" });
+  await startAtStation(page);
+  const to = page.getByRole("combobox", { name: "Where to?" }).filter({ visible: true }).first();
   await to.focus();
   await to.fill("libr");
   await expect(page.getByRole("option", { name: /Waranara Library/ })).toBeVisible();

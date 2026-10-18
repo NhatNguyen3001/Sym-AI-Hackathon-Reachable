@@ -60,7 +60,8 @@ test("a Claude-checked roadwork shows what it means for you", async ({ page }) =
 
 test("the map says when its places were updated", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByText(/^OpenStreetMap places from \d+ \w+ \(saved copy\)$|^Places and roadworks updated/).first())
+  // Phones show the line above the search, desktop under the weather: only one is visible at a time.
+  await expect(page.getByText(/^OpenStreetMap places from \d+ \w+ \(saved copy\)$|^Places and roadworks updated/).filter({ visible: true }).first())
     .toBeVisible({ timeout: 20_000 });
 });
 

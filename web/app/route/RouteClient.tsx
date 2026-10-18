@@ -2,14 +2,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "cn";
-import { ChevronLeft, ChevronRight, CircleCheck, SlidersHorizontal, TriangleAlert } from "lucide-react";
+import { ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
 import { NeedsTicks } from "@/components/NeedsTicks";
 import { Button } from "@/components/ui/button";
 import { InfoBanner, SampleDataBanner, WarnBanner, WeatherBanner } from "@/components/Banners";
 import { PlaceInput } from "@/components/PlaceInput";
 import { LegTimeline } from "@/components/LegTimeline";
+import { NavigationPanel } from "@/components/NavigationPanel";
 import { RouteSkeleton } from "@/components/RouteSkeleton";
-import { RouteStep, VenueCheckRow } from "@/components/Rows";
+import { RouteStep } from "@/components/Rows";
 import { StatusBadge } from "@/components/StatusBadge";
 import { TripOptions } from "@/components/TripOptions";
 import { RouteMap } from "@/components/map/RouteMap";
@@ -17,9 +18,12 @@ import { ApiError, getPlace, getRoute, getVenueCheck } from "@/lib/api";
 import { useEvents } from "@/lib/events";
 import { addTrip, loadProfile, rememberPlace, saveProfile } from "@/lib/profile";
 import { profile as defaultProfile } from "@/lib/placeholder";
+import { navFromLegs, navFromWalk } from "@/lib/navigation";
 import { routeFeatures } from "@/lib/routeFeatures";
+import { useGuidance } from "@/lib/useGuidance";
+import { useUserLocation } from "@/lib/useUserLocation";
 import { optionTimes, selectOption, showsCards } from "@/lib/trip";
-import type { Place, Profile, RouteOption, RouteResult, VenueCheck } from "@/lib/types";
+import type { LiftRow, Place, Profile, RouteOption, RouteResult, VenueCheck } from "@/lib/types";
 
 interface LiveCard {
   title: string;
@@ -28,12 +32,24 @@ interface LiveCard {
 }
 
 const findPlace = (id: string) => getPlace(id);
+const liftKey = (l: LiftRow) => l.exitId ?? l.exit;
+const NO_ROUTES: RouteOption[] = [];
+
+function TryAgain({ busy, onClick }: { busy: boolean; onClick: () => void }) {
+  return (
+    <button type="button" onClick={onClick} disabled={busy}
+      className="mt-2 inline-flex min-h-11 items-center rounded-full border border-current px-4 text-[15px] font-bold disabled:opacity-60">
+      {busy ? "Trying again…" : "Try again"}
+    </button>
+  );
+}
 
 export function RouteClient() {
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const fromId = params.get("from") ?? "mq-station";
+  // No "from" when location is off: the person types where they're starting.
+  const fromId = params.get("from");
   const toId = params.get("to") ?? "library";
   const urlOption = params.get("option");
 
@@ -52,6 +68,11 @@ export function RouteClient() {
   const [picked, setPicked] = useState<number | null>(null);
   // Way to get there (walk or a public transport trip). Applies at once; the URL catches up for Back and sharing.
   const [pickedOption, setPickedOption] = useState<string | null>(null);
+  const [liftOpen, setLiftOpen] = useState<string | null>(null);
+  const [liftAnswers, setLiftAnswers] = useState<Record<string, "working" | "broken">>({});
+  const [navigating, setNavigating] = useState(false);
+  const [previewing, setPreviewing] = useState(false);
+  const { fix: userFix, status: locationStatus } = useUserLocation();
 
   /** Open the details (desktop side panel, phone sheet) so a problem with the trip is seen. */
   function showDetails() {
@@ -60,6 +81,7 @@ export function RouteClient() {
   }
 
   const load = useCallback(async (p: Profile, fresh = false) => {
+    if (!fromId) return;
     try {
       const r = await getRoute(fromId, toId, p, { fresh });
       setRoute(r.data);
@@ -97,7 +119,7 @@ export function RouteClient() {
     setRoute(null);   // a new trip: show placeholders, not the previous trip
     showDetails();    // open the panel straight away so there's something to see while the route loads
     load(p);
-    findPlace(fromId).then(setFrom);
+    if (fromId) findPlace(fromId).then(setFrom);
     findPlace(toId).then(setTo);
   }, [load, fromId, toId]);
 
@@ -133,7 +155,9 @@ export function RouteClient() {
   const selected = selectOption(options, pickedOption ?? urlOption);
   const transit = selected?.mode === "transit" ? selected : undefined;
   const cards = showsCards(options);   // with cards, the chosen card is the summary
-  const liftRows = selected?.liftStatus ?? route?.liftStatus ?? [];
+  const liftRows = useMemo(() => (selected?.liftStatus ?? route?.liftStatus ?? [])
+    .filter((l) => typeof l.lat === "number" && typeof l.lng === "number"), [selected, route]);
+  const lift = liftRows.find((l) => liftKey(l) === liftOpen) ?? null;
   const explanation = transit && selected !== options?.[0] ? selected?.explanation : route?.explanation;
   const acc = route?.ok && !transit ? route.accessible ?? undefined : undefined;
   // Memoised so the map only refits when the route itself changes, not on every render.
@@ -150,6 +174,34 @@ export function RouteClient() {
     () => routeFeatures(active?.geometry.coordinates, activeSteps, venue, to),
     [active, activeSteps, venue, to],
   );
+  const navRoute = useMemo(() => {
+    if (transit) return navFromLegs(transit.legs);
+    return active ? navFromWalk(active.geometry.coordinates, activeSteps) : null;
+  }, [transit, active, activeSteps]);
+  const guide = useGuidance(navRoute, navigating, userFix, previewing);
+  // The recommended way counts as chosen: Start is there as soon as a route is.
+  const canStart = !!route?.ok && !!navRoute;
+
+  function startNav() {
+    setNavigating(true);
+    setPreviewing(false);
+    setSheetOpen(false);
+    setSearchOpen(false);
+    setLiftOpen(null);
+  }
+
+  function endNav() {
+    setNavigating(false);
+    setPreviewing(false);
+    setSearchOpen(true);
+  }
+
+  function replanFromHere() {
+    if (!userFix) return;
+    const here = `coord:here:${userFix.lat.toFixed(5)},${userFix.lng.toFixed(5)}`;
+    router.replace(`${pathname}?from=${encodeURIComponent(here)}&to=${encodeURIComponent(toId)}`);
+  }
+
   const routeLabel = chosen
     ? chosen.summary
     : route?.ok && /fastest route/i.test(route.explanation)
@@ -189,6 +241,17 @@ export function RouteClient() {
   if (profile.destination.entrance && entrance?.status === "Not found") unmet.push("a level or ramped entrance");
 
   const [saving, setSaving] = useState(false);
+  const [retrying, setRetrying] = useState(false);
+
+  /** Transport for NSW is sometimes slow for a moment: ask again with a fresh request. */
+  async function retry() {
+    setRetrying(true);
+    try {
+      await load(profile, true);
+    } finally {
+      setRetrying(false);
+    }
+  }
 
   async function saveFilter() {
     saveProfile(profile);
@@ -209,7 +272,8 @@ export function RouteClient() {
         <button type="button" aria-expanded={searchOpen}
           aria-label={searchOpen ? "Hide route details" : "Show route details"}
           onClick={() => setSearchOpen((open) => !open)}
-          className="group absolute top-3 -left-[22px] z-[700] hidden size-11 items-center justify-center lg:inline-flex">
+          className={cn("group absolute top-3 -left-[22px] z-[700] hidden size-11 items-center justify-center",
+            !navigating && "lg:inline-flex")}>
           <span aria-hidden="true"
             className="flex size-7 items-center justify-center rounded-full border border-line-strong bg-surface text-ink shadow-sm group-hover:bg-bg group-focus-visible:outline-2 group-focus-visible:outline-primary">
             {searchOpen ? <ChevronLeft className="size-4" strokeWidth={2.6} /> : <ChevronRight className="size-4" strokeWidth={2.6} />}
@@ -218,15 +282,65 @@ export function RouteClient() {
         <RouteMap
           ends={ends}
           accessible={active}
-          fastest={route?.ok && !transit ? route.fastest : null}
-          alternatives={others}
+          fastest={route?.ok && !transit && !navigating ? route.fastest : null}
+          alternatives={navigating ? NO_ROUTES : others}
           barriers={route?.barriers ?? []}
           routeLabel={routeLabel}
           marks={features.marks}
           slopes={features.spans}
           onPick={chooseRoute}
           legs={transit?.legs}
+          lifts={liftRows}
+          selectedLift={liftOpen}
+          onLift={(key) => setLiftOpen(key)}
+          follow={navigating && !guide.farFromRoute ? guide.position : null}
+          walked={guide.walked}
+          previewPoint={navigating && previewing ? guide.position : null}
         />
+        {navigating && navRoute && (
+          <NavigationPanel nav={navRoute} guide={guide} destination={to?.name ?? "your destination"}
+            minutes={transit?.minutes ?? active?.minutes ?? 0} arriveAt={transit?.arriveAt}
+            locationStatus={locationStatus} previewing={previewing} onPreview={setPreviewing}
+            onReplan={replanFromHere} onEnd={endNav} />
+        )}
+        {lift && !navigating && (
+          <article aria-labelledby="lift-h"
+            className="absolute inset-x-3 top-[4.5rem] z-[700] rounded-[18px] bg-[#15201b] p-4 text-white shadow-lg lg:right-3 lg:left-auto lg:w-[360px]">
+            <p className="text-[14px] font-bold tracking-wide text-[#ffd7a8] uppercase">Station lift</p>
+            <div className="mt-1 flex items-start justify-between gap-3">
+              <div>
+                <h2 id="lift-h" className="text-[22px] leading-tight font-bold">{lift.exit}</h2>
+                <p className="text-[18px] font-bold">{lift.status}</p>
+              </div>
+              <button type="button" onClick={() => setLiftOpen(null)}
+                className="inline-flex min-h-11 items-center rounded-[12px] px-2 text-[15px] font-bold text-white underline">
+                Close
+              </button>
+            </div>
+            <p className="mt-1 text-[14px] text-[#d5ddd8]">{lift.source}, updated {lift.updated}</p>
+            {liftAnswers[liftKey(lift)] ? (
+              <p role="status" className="mt-3 text-[15px]">
+                Thanks. You said this lift is {liftAnswers[liftKey(lift)] === "working" ? "working" : "not working"}. That stays on this device.
+              </p>
+            ) : (
+              <>
+                <p className="mt-3 text-[16px] font-bold">
+                  {lift.status === "Out of service" ? "Is this lift still out of service?" : "Is this lift working?"}
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <button type="button" onClick={() => setLiftAnswers((a) => ({ ...a, [liftKey(lift)]: "broken" }))}
+                    className="inline-flex min-h-12 items-center rounded-full bg-[#e11d48] px-4 font-bold text-white">
+                    Not working
+                  </button>
+                  <button type="button" onClick={() => setLiftAnswers((a) => ({ ...a, [liftKey(lift)]: "working" }))}
+                    className="inline-flex min-h-12 items-center rounded-full bg-[#1d4fa8] px-4 font-bold text-white">
+                    Working
+                  </button>
+                </div>
+              </>
+            )}
+          </article>
+        )}
         <WeatherBanner weather={route?.weather} className="absolute top-3 right-3 z-[600] max-w-[340px]" />
         <div aria-live="polite" className="absolute top-3 left-[4.5rem] z-[600] max-w-[280px] lg:top-auto lg:bottom-6 lg:left-3 lg:max-w-[380px]">
           {live && (
@@ -243,55 +357,35 @@ export function RouteClient() {
       </div>
 
       <aside aria-label="Route details" className={cn(
-        "absolute inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[650] max-h-[58dvh] overflow-y-auto rounded-[22px] border border-line bg-surface px-4 py-3 shadow-lg",
+        "absolute inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[650] overflow-y-auto rounded-[22px] border border-line bg-surface px-4 py-3 shadow-lg",
+        sheetOpen && "max-h-[58dvh]",
         "lg:static lg:order-1 lg:bottom-auto lg:z-auto lg:h-full lg:max-h-full lg:max-w-[460px] lg:basis-[400px] lg:overflow-y-auto lg:rounded-none lg:border-0 lg:border-r lg:px-7 lg:py-6 lg:shadow-none",
         !searchOpen && "lg:hidden",
+        navigating && "hidden",
       )}>
         <h1 className="sr-only">Route and destination</h1>
         <button type="button" aria-expanded={sheetOpen}
           aria-label={sheetOpen ? "Hide route details" : "Show route details"}
           onClick={() => setSheetOpen((open) => !open)}
-          className="mx-auto mb-2 flex h-8 w-16 items-center justify-center rounded-full lg:hidden">
+          className="mx-auto mb-1 flex h-8 w-16 items-center justify-center rounded-full lg:hidden">
           <span aria-hidden="true" className="h-1.5 w-10 rounded-full bg-line-strong" />
         </button>
-        {!sheetOpen && (
-          <div className="lg:hidden">
-            <p className="text-[16px] font-bold">{from?.name ?? "From"} to {to?.name ?? "To"}</p>
-            {transit ? (
-              <p className="text-[15px] text-muted">
-                {transit.minutes} min · {transit.summary}
-              </p>
-            ) : active && (
-              <p className="text-[15px] text-muted">
-                {active.minutes} min · {active.stepFree ? "step-free" : "has steps"} · max slope {active.maxSlope}%
-              </p>
-            )}
-            <div className="mt-2 flex items-center gap-2">
-              <button type="button" aria-label="Filter" onClick={() => { setSheetOpen(true); setFiltersOpen(true); }}
-                className="inline-flex size-11 items-center justify-center rounded-full border border-line-strong text-ink">
-                <SlidersHorizontal aria-hidden="true" className="size-5" strokeWidth={2.4} />
-              </button>
-              {picked !== null && (
-                <button type="button"
-                  className="inline-flex min-h-11 items-center rounded-full bg-primary px-5 text-[15px] font-bold text-white">
-                  Start
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-        <div className={cn("space-y-4", !sheetOpen && "max-lg:hidden")}>
-          <PlaceInput label="From" value={from} onChange={(p) => { setFrom(p); go(p, to); }} />
-          <PlaceInput label="To" value={to} onChange={(p) => { setTo(p); go(from, p); }} />
+        {/* Collapsed on a phone, the sheet keeps just From, To, the filter and Start (about a third of the screen).
+            Typing in a box opens it, so the suggestions have room. */}
+        <div className={cn("space-y-4", !sheetOpen && "max-lg:space-y-2")}
+          onFocusCapture={() => setSheetOpen(true)}
+          onPointerDownCapture={(e) => { if ((e.target as HTMLElement).tagName === "INPUT") setSheetOpen(true); }}>
+          <PlaceInput label="From" compact={!sheetOpen} value={from} onChange={(p) => { setFrom(p); go(p, to); }} />
+          <PlaceInput label="To" compact={!sheetOpen} value={to} onChange={(p) => { setTo(p); go(from, p); }} />
           <div className="flex items-center gap-2">
             <button type="button" aria-expanded={filtersOpen} aria-label={filtersOpen ? "Hide filter" : "Filter"}
-              onClick={() => setFiltersOpen((open) => !open)}
+              onClick={() => { setSheetOpen(true); setFiltersOpen((open) => !open); }}
               className={cn("inline-flex size-11 items-center justify-center rounded-full border",
                 filtersOpen ? "border-primary bg-primary text-white" : "border-line-strong bg-surface text-ink")}>
               <SlidersHorizontal aria-hidden="true" className="size-5" strokeWidth={2.4} />
             </button>
-            {picked !== null && (
-              <button type="button"
+            {canStart && (
+              <button type="button" onClick={startNav}
                 className="inline-flex min-h-11 items-center rounded-full bg-primary px-5 text-[15px] font-bold text-white">
                 Start
               </button>
@@ -305,9 +399,20 @@ export function RouteClient() {
         <div className={cn("mt-5 space-y-4 border-t border-line pt-5", !sheetOpen && "max-lg:hidden")}>
           <SampleDataBanner show={sample} />
           {route?.note && <InfoBanner>{route.note}. Sydney-wide routing is unavailable right now.</InfoBanner>}
-          {route?.transitNote && <InfoBanner>{route.transitNote}</InfoBanner>}
-          {error && <WarnBanner alert>{error}</WarnBanner>}
-          {route === null && !error && <RouteSkeleton from={from?.name} to={to?.name} />}
+          {route?.transitNote && (
+            <InfoBanner>
+              <p>{route.transitNote}</p>
+              <TryAgain busy={retrying} onClick={retry} />
+            </InfoBanner>
+          )}
+          {error && (
+            <WarnBanner alert>
+              <p>{error}</p>
+              <TryAgain busy={retrying} onClick={retry} />
+            </WarnBanner>
+          )}
+          {!fromId && <InfoBanner>Type where you&apos;re starting from to see a route.</InfoBanner>}
+          {fromId && route === null && !error && <RouteSkeleton from={from?.name} to={to?.name} />}
 
           {route && !route.ok && (
             <WarnBanner alert>
@@ -324,11 +429,8 @@ export function RouteClient() {
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <p className="text-[32px] leading-none font-bold">{transit.minutes} min</p>
-                  <p className="mt-1 text-[15px] text-muted">
-                    {optionTimes(transit)} · {transit.stepFree ? "step-free" : "has steps"}
-                  </p>
+                  <p className="mt-1 text-[15px] text-muted">{optionTimes(transit)}</p>
                 </div>
-                {route?.status && <StatusBadge label={route.status} />}
               </div>
             </section>
           )}
@@ -339,33 +441,9 @@ export function RouteClient() {
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <p className="text-[32px] leading-none font-bold">{active.minutes} min</p>
-                  <p className="mt-1 text-[15px] text-muted">
-                    {active.distanceM} m · {active.stepFree ? "step-free" : "has steps"} ·{" "}
-                    {active.slopeEstimated ? "slopes estimated" : `max slope ${active.maxSlope}%`}
-                  </p>
+                  <p className="mt-1 text-[15px] text-muted">{active.distanceM} m</p>
                 </div>
-                {route?.status && !chosen && <StatusBadge label={route.status} />}
               </div>
-            </section>
-          )}
-
-          {route && liftRows.length > 0 && (
-            <section aria-labelledby="lifts-h">
-              <h2 id="lifts-h" className="mb-1 text-[13px] font-bold tracking-wide text-muted uppercase">Station lifts</h2>
-              <ul>
-                {liftRows.map((l) => (
-                  <li key={l.exit} className="flex items-start gap-3 border-b border-line py-2.5 last:border-b-0">
-                    {l.status === "Working"
-                      ? <CircleCheck aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />
-                      : <TriangleAlert aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-warn" />}
-                    <div className="flex-1">
-                      <p className="text-[16px]">{l.exit}: {l.status}</p>
-                      <p className="text-[14px] text-muted">{l.source}, updated {l.updated}</p>
-                    </div>
-                    <StatusBadge label={l.status === "Working" ? "Confirmed" : l.status} />
-                  </li>
-                ))}
-              </ul>
             </section>
           )}
 
@@ -391,16 +469,6 @@ export function RouteClient() {
 
           {unmet.length > 0 && (
             <WarnBanner>This place may not meet your need for {unmet.join(" or ")}.</WarnBanner>
-          )}
-
-          {venue && (
-            <section aria-labelledby="dest-h">
-              <h2 id="dest-h" className="text-[13px] font-bold tracking-wide text-muted uppercase">Destination check: {venue.name}</h2>
-              <ul>{venue.checks.map((c) => <VenueCheckRow key={c.field} check={c} />)}</ul>
-              <p className="mt-1 text-[14px] text-muted">
-                {venue.sourceCount > 0 ? `Checked ${venue.checkedAgo}, using ${venue.sourceCount} sources.` : "No one has checked this place yet."}
-              </p>
-            </section>
           )}
 
           <Button type="button" size="lg" className="w-full" onClick={saveFilter} disabled={saving}>

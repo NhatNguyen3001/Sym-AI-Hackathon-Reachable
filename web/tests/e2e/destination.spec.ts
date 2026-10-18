@@ -10,6 +10,5 @@ test("the route warns when the destination may not meet your needs", async ({ pa
   await page.goto("/route?from=mq-station&to=library-cafe");
   await openDetails(page);
   const aside = page.getByRole("complementary", { name: "Route details" });
-  await expect(aside.getByRole("heading", { name: /Destination check: Library Café/ })).toBeVisible({ timeout: 15_000 });
-  await expect(aside.getByText("This place may not meet your need for an accessible toilet.")).toBeVisible();
+  await expect(aside.getByText("This place may not meet your need for an accessible toilet.")).toBeVisible({ timeout: 15_000 });
 });

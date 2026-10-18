@@ -52,6 +52,9 @@ export interface LiftRow {
   status: "Working" | "Out of service" | "Not sure";
   source: string;
   updated: string;
+  /** Where to draw the lift on the map. Missing for stations we have no position for. */
+  lat?: number | null;
+  lng?: number | null;
 }
 
 export interface Weather {

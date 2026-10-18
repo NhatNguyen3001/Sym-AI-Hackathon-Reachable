@@ -204,3 +204,16 @@ def test_reads_keep_working_when_turso_drops(tmp_path):
         connect.made[0].fail_sync = True              # Turso goes away mid-run
         c.app.state.replica.sync_quietly()
         assert c.get("/updates").status_code == 200   # still served from the local copy
+
+
+def test_a_session_that_never_lets_go_does_not_stall_saves_for_good(tmp_path, monkeypatch, caplog):
+    monkeypatch.setattr("app.replica.LOCK_WAIT_S", 0.2)
+    r = Replica(tmp_path / "rep.db", "libsql://x.turso.io", TOKEN, connect=fake_connect())
+    r.start()
+    eng = make_engine("sqlite://", replica=r)
+    r.lock.acquire()              # a holder that is gone and will never release it
+    with caplog.at_level(logging.ERROR):
+        with eng.connect() as c:  # waits LOCK_WAIT_S, then takes the lock over
+            assert c.execute(text("select 1")).scalar() == 1
+        r.sync()                  # and the lock works normally afterwards
+    assert "taking it over" in caplog.text and not r.lock.locked()

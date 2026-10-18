@@ -36,9 +36,11 @@ export function ExploreClient() {
   const [thanks, setThanks] = useState<Record<string, number>>({});
   const [note, setNote] = useState("");
   const [to, setTo] = useState<Place | null>(null);
+  const [typedFrom, setTypedFrom] = useState<Place | null>(null);
   const [weather, setWeather] = useState<Weather | null>(null);
   const [amenities, setAmenities] = useState<AmenityPin[]>([]);
-  const [expanded, setExpanded] = useState(true);
+  // Phones: the panel starts folded (search only) so the map and its buttons stay clear; its handle opens the needs.
+  const [expanded, setExpanded] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const drag = useRef({ y: 0, moved: false });
   const [placeMap, setPlaceMap] = useState<Map<string, MapPlacePin>>(new Map());
@@ -101,19 +103,26 @@ export function ExploreClient() {
 
   const foldSheet = useCallback(() => setExpanded(false), []);
 
+  const here = startPlaceId(fix);
+  const needFrom = status !== "pending" && !here;
+  const fromId = here ?? typedFrom?.id ?? null;
+
+  function routeTo(toId: string) {
+    const start = fromId ? `from=${encodeURIComponent(fromId)}&` : "";
+    router.push(`/route?${start}to=${encodeURIComponent(toId)}`);
+  }
+
   function goToAmenity(pin: { placeId: string }) {
     saveProfile(profile);
-    const from = startPlaceId(fix);
-    router.push(`/route?from=${encodeURIComponent(from)}&to=${encodeURIComponent(pin.placeId)}`);
+    routeTo(pin.placeId);
   }
 
   function go(e: React.FormEvent) {
     e.preventDefault();
-    if (!to) return;
+    if (!to || !fromId) return;
     setGoing(true);  // say so at once; the route page takes over from here
     saveProfile(profile);
-    const from = startPlaceId(fix);
-    router.push(`/route?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to.id)}`);
+    routeTo(to.id);
   }
 
   const locationText = status === "ready"
@@ -121,6 +130,9 @@ export function ExploreClient() {
     : status === "pending"
       ? "Looking for your location."
       : "Location is off. The map stays on Macquarie University.";
+  const fromHint = status === "ready"
+    ? "You're outside Greater Sydney. Type where you're starting from."
+    : "Location is off. Type where you're starting from.";
 
   return (
     <div className="relative min-h-0 flex-1">
@@ -134,15 +146,18 @@ export function ExploreClient() {
         <div className="pointer-events-auto">
           <WeatherBanner weather={weather} />
           <MapFreshness status={mapStatus}
-            className="mt-2 ml-auto w-fit rounded-full border border-line bg-surface px-3 py-1 text-ink shadow-sm" />
+            className="mt-2 ml-auto hidden w-fit rounded-full border border-line bg-surface px-3 py-1 text-ink shadow-sm lg:block" />
         </div>
       </div>
 
       <div className="pointer-events-none absolute top-3 right-16 left-3 z-[600] hidden lg:block">
         <form onSubmit={go} className="pointer-events-none flex items-start gap-2">
           <div className="pointer-events-auto w-[min(100%,380px)] rounded-[18px] bg-surface p-3 shadow-lg">
-            {status !== "ready" && status !== "pending" && (
-              <p className="mb-2 text-[14px] text-muted">Location is off, so a route starts at Macquarie University station.</p>
+            {needFrom && (
+              <>
+                <p className="mb-2 text-[14px] text-muted">{fromHint}</p>
+                <div className="mb-2"><PlaceSearch label="From" value={typedFrom} onChange={setTypedFrom} /></div>
+              </>
             )}
             <PlaceSearch label="Where to?" value={to} onChange={setTo} />
             <button type="button" aria-expanded={filtersOpen} aria-label={filtersOpen ? "Hide filter" : "Filter"}
@@ -157,12 +172,15 @@ export function ExploreClient() {
                 <Button type="button" variant="secondary" size="lg" className="mt-3 w-full" onClick={saveFilter}>Save filter</Button>
               </div>
             )}
-            <Button type="submit" size="lg" className="mt-2 w-full" disabled={!to || going}>{going ? "Finding…" : "Show a step-free route"}</Button>
+            <Button type="submit" size="lg" className="mt-2 w-full" disabled={!to || !fromId || going}>{going ? "Finding…" : "Show a step-free route"}</Button>
           </div>
         </form>
       </div>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-3 z-[600] flex flex-col gap-3 px-3 pb-[env(safe-area-inset-bottom)] lg:bottom-4 lg:left-3 lg:max-w-md lg:pb-0">
+        {/* On a phone the top of the map holds the key, so when the pins were updated sits just above the search. */}
+        <MapFreshness status={mapStatus}
+          className="pointer-events-auto w-fit rounded-full border border-line bg-surface px-3 py-1 text-ink shadow-sm lg:hidden" />
         {selected && (
           <article className="pointer-events-auto rounded-[18px] bg-[#15201b] p-4 text-white shadow-lg">
             <p className="text-[14px] font-bold tracking-wide text-[#ffd7a8] uppercase">{HAZARD_LABEL[selected.kind]}</p>
@@ -229,8 +247,11 @@ export function ExploreClient() {
           >
             <span aria-hidden="true" className="h-1.5 w-10 rounded-full bg-line-strong" />
           </button>
-          {status !== "ready" && status !== "pending" && (
-            <p className="mb-2 px-1 text-[14px] text-muted">Location is off, so a route starts at Macquarie University station.</p>
+          {needFrom && (
+            <>
+              <p className="mb-2 px-1 text-[14px] text-muted">{fromHint}</p>
+              <div className="mb-2"><PlaceSearch label="From" value={typedFrom} onChange={setTypedFrom} /></div>
+            </>
           )}
           <PlaceSearch label="Where to?" value={to} onChange={setTo} />
           {expanded && (
@@ -240,7 +261,7 @@ export function ExploreClient() {
             </div>
           )}
           {(expanded || to) && (
-            <Button type="submit" size="lg" className="mt-3 w-full" disabled={!to || going}>{going ? "Finding…" : "Show a step-free route"}</Button>
+            <Button type="submit" size="lg" className="mt-3 w-full" disabled={!to || !fromId || going}>{going ? "Finding…" : "Show a step-free route"}</Button>
           )}
         </form>
         <p role="status" className="sr-only">{note}</p>

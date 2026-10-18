@@ -41,5 +41,5 @@ def lift_rows(session: Session, places, station_id: str, feed) -> list[dict]:
         else:
             status, updated = ("Not sure" if unsure or not feed.fresh() else "Working"), feed.updated()
         rows.append({"exitId": e["exitId"], "exit": f"{e['name']} lift", "status": status, "source": feed.source(),
-                     "updated": updated})
+                     "updated": updated, "lat": e["lat"], "lng": e["lng"]})
     return rows

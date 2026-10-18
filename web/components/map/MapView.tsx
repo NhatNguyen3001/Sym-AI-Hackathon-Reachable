@@ -3,12 +3,14 @@
 import "leaflet/dist/leaflet.css";
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import L from "leaflet";
+import { cn } from "cn";
 import { Circle, CircleMarker, MapContainer, Marker, Polyline, TileLayer } from "react-leaflet";
 import { Minus, Plus } from "lucide-react";
 import { guardMap } from "./guardMap";
 import { useVisibleMount } from "./useVisibleMount";
 import type { PlaceMark, SlopeSpan } from "@/lib/routeFeatures";
-import type { Leg, MapBarrier, RouteOption, RouteOut } from "@/lib/types";
+import { lineColour } from "@/lib/lineColours";
+import type { Leg, LiftRow, MapBarrier, RouteOption, RouteOut } from "@/lib/types";
 import { useUserLocation } from "@/lib/useUserLocation";
 
 const PRIMARY = "#1D4FA8";
@@ -67,6 +69,23 @@ function placeIcon(mark: PlaceMark) {
   });
 }
 
+const LIFT_COLOUR: Record<LiftRow["status"], string> = { Working: PRIMARY, "Out of service": "#BE123C", "Not sure": "#6B746F" };
+const LIFT_SVG = '<path d="M7 3h10v18H7z"/><path d="M12 3v18"/><path d="M9.5 9.5 12 7l2.5 2.5M9.5 14.5 12 17l2.5-2.5"/>';
+
+function liftIcon(lift: LiftRow, selected: boolean) {
+  const colour = LIFT_COLOUR[lift.status];
+  const cross = lift.status === "Out of service"
+    ? '<span style="position:absolute;right:-4px;top:-4px;display:flex;width:18px;height:18px;align-items:center;justify-content:center;border-radius:999px;background:#fff;color:#BE123C;font:800 13px/1 sans-serif">!</span>'
+    : "";
+  return L.divIcon({
+    className: "",
+    iconSize: [44, 44],
+    iconAnchor: [22, 22],
+    html: `<span style="position:relative;display:flex;width:44px;height:44px;align-items:center;justify-content:center;border-radius:12px;background:${colour};border:3px solid #fff;box-shadow:0 2px 8px rgba(21,32,27,.35);outline:${selected ? "3px solid " + colour : "none"};outline-offset:2px">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LIFT_SVG}</svg>${cross}</span>`,
+  });
+}
+
 const userIcon = L.divIcon({
   className: "",
   iconSize: [22, 22],
@@ -98,6 +117,7 @@ function sameLine(a?: RouteOut | null, b?: RouteOut | null) {
 
 export default function MapView({
   accessible, fastest, alternatives = [], barriers = [], routeLabel = "", marks = [], slopes = [], onPick, legs, ends,
+  lifts = [], selectedLift = null, onLift, follow = null, walked = [], previewPoint = null,
 }: {
   accessible?: RouteOut | null;
   fastest?: RouteOut | null;
@@ -111,6 +131,16 @@ export default function MapView({
   legs?: Leg[];
   /** Start and destination, shown as pins before the route arrives. */
   ends?: { from?: [number, number]; to?: [number, number] };
+  /** Station lifts on this trip. Tapping one opens its status card. */
+  lifts?: LiftRow[];
+  selectedLift?: string | null;
+  onLift?: (key: string) => void;
+  /** While guiding: keep this point in the middle of the map. */
+  follow?: LatLng | null;
+  /** While guiding: the part of the route already behind you, drawn grey. */
+  walked?: LatLng[];
+  /** While previewing the walk: where the preview has got to. */
+  previewPoint?: LatLng | null;
 }) {
   const [map, setMap] = useState<L.Map | null>(null);
   const [legendOpen, setLegendOpen] = useState(false);
@@ -132,17 +162,19 @@ export default function MapView({
 
   const trip = useMemo(() => {
     const walks: LatLng[][] = [];
-    const rides: LatLng[][] = [];
+    const rides: { line: LatLng[]; colour: string; label: string }[] = [];
     const stops: LatLng[] = [];
     for (const l of legs ?? []) {
       if (l.kind === "walk") walks.push(toLatLng(l));
       if (l.kind === "ride") {
-        rides.push(toLatLng(l));
+        rides.push({ line: toLatLng(l), colour: lineColour(l), label: l.label });
         stops.push([l.from.lat, l.from.lng], [l.to.lat, l.to.lng]);
       }
     }
-    return { walks: walks.filter((w) => w.length > 1), rides: rides.filter((r) => r.length > 1), stops };
+    return { walks: walks.filter((w) => w.length > 1), rides: rides.filter((r) => r.line.length > 1), stops };
   }, [legs]);
+  // One legend row per line on the trip ("Train T2" in blue), in the order you ride them.
+  const rideKey = useMemo(() => trip.rides.filter((r, i, all) => all.findIndex((x) => x.label === r.label) === i), [trip]);
   const hasTrip = trip.rides.length > 0;
   const pins = useMemo(() => [
     ...(ends?.from ? [[ends.from, "route-start"] as const] : []),
@@ -159,7 +191,7 @@ export default function MapView({
   }, [map]);
 
   useEffect(() => {
-    const line = [...acc, ...extras.flatMap((alt) => toLatLng(alt)), ...trip.walks.flat(), ...trip.rides.flat()];
+    const line = [...acc, ...extras.flatMap((alt) => toLatLng(alt)), ...trip.walks.flat(), ...trip.rides.flatMap((r) => r.line)];
     const pts = line.length > 1 ? line : pins.map(([pt]) => pt as LatLng);
     if (map && pts.length > 1) {
       // The whole trip in view. On phones the route sheet covers up to 58% of the screen from the bottom.
@@ -172,6 +204,12 @@ export default function MapView({
       });
     }
   }, [map, acc, extras, trip, pins]);
+
+  const guiding = follow !== null;
+  useEffect(() => {
+    if (!map || !follow) return;
+    map.setView(follow, Math.max(map.getZoom(), 18), { animate: !reduced });
+  }, [map, follow, reduced]);
 
   return (
     <div role="region" aria-label="Route map" className="relative h-full min-h-[240px] w-full">
@@ -215,11 +253,15 @@ export default function MapView({
               pathOptions={{ color: PRIMARY, weight: 8, opacity: 1 }} />
           </>
         )}
+        {/* On a public transport trip, rides are solid (in the line's colour; buses in ink) and walks dashed. */}
         {trip.rides.map((r, i) => (
-          <Polyline key={`ride-${i}`} positions={r} pathOptions={{ color: RIDE, weight: 6, dashArray: "2 10", opacity: 0.9 }} />
+          <Fragment key={`ride-${i}`}>
+            <Polyline positions={r.line} interactive={false} pathOptions={{ color: "#fff", weight: 10, opacity: 1 }} />
+            <Polyline positions={r.line} interactive={false} pathOptions={{ color: r.colour, weight: 6, opacity: 1 }} />
+          </Fragment>
         ))}
         {trip.walks.map((w, i) => (
-          <Polyline key={`walk-${i}`} positions={w} pathOptions={{ color: PRIMARY, weight: 8, opacity: 1 }} />
+          <Polyline key={`walk-${i}`} positions={w} pathOptions={{ color: PRIMARY, weight: 6, dashArray: "8 10", opacity: 1 }} />
         ))}
         {trip.stops.map((pt, i) => (
           <CircleMarker key={`stop-${i}`} center={pt} radius={7} pathOptions={{ color: RIDE, weight: 3, fillColor: "#fff", fillOpacity: 1 }} />
@@ -227,7 +269,14 @@ export default function MapView({
         {slopes.map((span) => (
           <Polyline key={span.id} positions={span.positions} pathOptions={{ color: SLOPE, weight: 8, opacity: 1 }} />
         ))}
-        {routeLabel && acc.length > 1 && (
+        {walked.length > 1 && (
+          <Polyline positions={walked} interactive={false} pathOptions={{ color: "#8A938E", weight: 9, opacity: 1 }} />
+        )}
+        {previewPoint && (
+          <CircleMarker center={previewPoint} radius={11} interactive={false}
+            pathOptions={{ color: "#fff", weight: 4, fillColor: PRIMARY, fillOpacity: 1 }} />
+        )}
+        {routeLabel && !guiding && acc.length > 1 && (
           <Marker position={acc[Math.floor(acc.length / 2)]} icon={labelIcon(routeLabel)} alt={routeLabel} title={routeLabel} keyboard={false} zIndexOffset={600} />
         )}
         {marks.map((mark) => (
@@ -248,6 +297,14 @@ export default function MapView({
         {barriers.map((b) => (
           <Marker key={b.id} position={[b.lat, b.lng]} icon={barrierIcon(b)} title={b.title} alt={b.title} keyboard={false} />
         ))}
+        {lifts.map((l) => {
+          const key = l.exitId ?? l.exit;
+          return (
+            <Marker key={`lift-${key}`} position={[l.lat as number, l.lng as number]} icon={liftIcon(l, key === selectedLift)}
+              title={`${l.exit}: ${l.status}`} alt={`${l.exit}: ${l.status}`} zIndexOffset={800}
+              eventHandlers={{ click: () => onLift?.(key) }} />
+          );
+        })}
         {fix && fix.accuracy > 0 && fix.accuracy < 1500 && (
           <Circle center={[fix.lat, fix.lng]} radius={fix.accuracy}
             pathOptions={{ color: PRIMARY, weight: 1, fillColor: PRIMARY, fillOpacity: 0.12 }} />
@@ -257,7 +314,7 @@ export default function MapView({
         )}
       </MapContainer>}
 
-      <div className="absolute top-3 left-[4.5rem] z-[500] lg:top-16 lg:left-3">
+      <div className={cn("absolute top-3 left-[4.5rem] z-[500] lg:top-16 lg:left-3", guiding && "hidden")}>
         <button type="button" aria-expanded={legendOpen} aria-controls="route-legend" aria-label="Map legend"
           onClick={() => setLegendOpen((open) => !open)}
           className="inline-flex size-12 items-center justify-center rounded-[12px] border-2 border-ink bg-surface text-[22px] font-bold text-ink shadow-sm">
@@ -268,13 +325,17 @@ export default function MapView({
             <p className="sr-only">Map legend</p>
             <ul className="space-y-1">
               <li className="flex items-center gap-2">
-                <span aria-hidden="true" className="h-1.5 w-7 rounded bg-primary" />{hasTrip ? "Your walk or roll" : "Your route"}
+                {hasTrip
+                  ? <span aria-hidden="true" className="w-7 border-t-[3px] border-dashed border-primary" />
+                  : <span aria-hidden="true" className="h-1.5 w-7 rounded bg-primary" />}
+                {hasTrip ? "Your walk or roll" : "Your route"}
               </li>
-              {hasTrip && (
-                <li className="flex items-center gap-2">
-                  <span aria-hidden="true" className="w-7 border-t-[3px] border-dotted border-ink" />Public transport
+              {rideKey.map((r) => (
+                <li key={r.label} className="flex items-center gap-2">
+                  <span aria-hidden="true" className="h-1.5 w-7 rounded" style={{ background: r.colour }} />
+                  {r.label}
                 </li>
-              )}
+              ))}
               {extras.length > 0 && (
                 <li className="flex items-center gap-2">
                   <span aria-hidden="true" className="w-7 border-t-[3px] border-dashed" style={{ borderColor: ALT[0] }} />Other routes
@@ -290,13 +351,21 @@ export default function MapView({
                 <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-full" style={{ background: PRIMARY }} />Level entrance</li>
               )}
               <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-[4px] bg-warn" />Barrier</li>
+              {(Object.keys(LIFT_COLOUR) as LiftRow["status"][])
+                .filter((status) => lifts.some((l) => l.status === status))
+                .map((status) => (
+                  <li key={status} className="flex items-center gap-2">
+                    <span aria-hidden="true" className="size-3.5 rounded-[4px]" style={{ background: LIFT_COLOUR[status] }} />
+                    Lift: {status.toLowerCase()}
+                  </li>
+                ))}
               {fix && <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-full border-2 border-white bg-primary" />You</li>}
             </ul>
           </div>
         )}
       </div>
 
-      <div className="absolute right-3 bottom-44 z-[500] flex flex-col gap-2 lg:bottom-6">
+      <div className="absolute right-3 bottom-72 z-[500] flex flex-col gap-2 lg:bottom-6">
         <button type="button" aria-label="Zoom in" onClick={() => map?.zoomIn()}
           className="flex size-12 items-center justify-center rounded-[12px] border border-line-strong bg-surface text-ink hover:bg-bg">
           <Plus aria-hidden="true" className="size-5" strokeWidth={2.4} />

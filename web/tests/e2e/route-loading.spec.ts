@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { startAtStation } from "./helpers";
 
 /** Hold the route request for `ms` so the loading state can be seen. */
 async function slowRoute(page: Page, ms = 1500) {
@@ -37,7 +38,8 @@ test("placeholders don't shimmer with reduced motion", async ({ page }) => {
 test("buttons that start work say so at once", async ({ page }) => {
   await slowRoute(page, 3000);
   await page.goto("/");
-  const to = page.getByRole("combobox", { name: "Where to?" });
+  await startAtStation(page);
+  const to = page.getByRole("combobox", { name: "Where to?" }).filter({ visible: true }).first();
   await to.fill("waranara");
   await page.getByRole("option", { name: /Waranara Library/ }).click();
   const go = page.getByRole("button", { name: /Show a step-free route|Finding…/ });

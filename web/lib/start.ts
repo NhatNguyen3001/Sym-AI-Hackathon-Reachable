@@ -13,7 +13,7 @@ export function opensOn(fix: { lat: number; lng: number; accuracy: number } | nu
   return !!fix && fix.accuracy <= TRUSTED_M && insideSydney(fix);
 }
 
-/** Where a trip starts: your location when it's inside Greater Sydney, otherwise Macquarie University station. */
-export function startPlaceId(fix: { lat: number; lng: number } | null | undefined): string {
-  return fix && insideSydney(fix) ? `coord:here:${fix.lat.toFixed(5)},${fix.lng.toFixed(5)}` : "mq-station";
+/** Where a trip starts: your location when it's inside Greater Sydney. Null means the person types a start. */
+export function startPlaceId(fix: { lat: number; lng: number } | null | undefined): string | null {
+  return fix && insideSydney(fix) ? `coord:here:${fix.lat.toFixed(5)},${fix.lng.toFixed(5)}` : null;
 }
