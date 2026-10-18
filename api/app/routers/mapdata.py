@@ -3,7 +3,7 @@ import asyncio
 import hmac
 import logging
 
-from fastapi import APIRouter, Depends, Header, Request
+from fastapi import APIRouter, Depends, Header, Request, Response
 from fastapi.responses import JSONResponse
 from sqlmodel import Session, select
 
@@ -57,7 +57,9 @@ def map_status(request: Request, session: Session = Depends(get_session)):
 
 
 @router.get("/map/places")
-def map_places(bbox: str, session: Session = Depends(get_session)):
+def map_places(bbox: str, response: Response, session: Session = Depends(get_session)):
+    # The same for everyone and only changes when the owner runs the map agent: let CloudFront and phones keep it.
+    response.headers["Cache-Control"] = "public, max-age=300"
     try:
         w, s, e, n = (float(v) for v in bbox.split(","))
     except ValueError:

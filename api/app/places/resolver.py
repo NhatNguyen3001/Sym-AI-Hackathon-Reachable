@@ -101,6 +101,9 @@ class PlaceResolver:
     def claim_save(self, place: Place) -> bool:
         """True for the one caller that should save this place; others see it's already on its way.
         Opening a place fires /places/{from}, /places/{to} and /route at once, and each Turso write pauses the API."""
+        from app.sandbox import current_box
+        if current_box() is not None:   # demo sandbox: keep searched places in memory only, no database write
+            return False
         with self._claims:
             if not self.unsaved(place):
                 return False

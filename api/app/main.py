@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session
@@ -145,6 +146,7 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
             app.state.last_request_end = time.monotonic()
     app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["*"], allow_headers=["*"],
                        expose_headers=["X-Search-Limited"])
+    app.add_middleware(GZipMiddleware, minimum_size=1000)  # the Sydney places list; the live stream is left alone
     app.add_exception_handler(ApiError, api_error_handler)
     app.add_exception_handler(RequestValidationError, validation_handler)
     app.add_exception_handler(Exception, server_error_handler)
