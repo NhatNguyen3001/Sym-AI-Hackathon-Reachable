@@ -14,11 +14,24 @@ def test_seed_is_idempotent(tmp_path):
         lifts = s.exec(select(Barrier).where(Barrier.type == "lift_outage")).all()
         assert lifts == []  # lift status is live from Transport for NSW, never seeded
         barriers = s.exec(select(Barrier)).all()
-        assert len(barriers) == 3
+        assert len(barriers) == 2
+        assert not any(b.title == "Footpath works, detour in place" for b in barriers)  # real roadworks now
         assert all("(demo data)" in src["label"] for b in barriers for src in b.sources if src["kind"] != "user")
         assert all(b.edge_id for b in barriers if b.type != "lift_outage")
         assert s.get(Venue, "library") is not None and s.get(Venue, "library-cafe") is not None
-        assert len(s.exec(select(AgentRun)).all()) == 4
+        assert len(s.exec(select(AgentRun)).all()) == 3
+
+
+def test_old_demo_roadworks_are_retired(tmp_path):
+    eng = make_engine(f"sqlite:///{tmp_path / 'rw.db'}")
+    init_db(eng)
+    with Session(eng) as s:
+        s.add(Barrier(type="blocked", title="Footpath works, detour in place", place="Management Drive", lat=-33.77215,
+                      lng=151.1159, update_type="roadworks",
+                      sources=[{"kind": "feed", "label": "Live Traffic NSW (demo data)"}]))
+        s.commit()
+        seed(s, G, PL)
+        assert not s.exec(select(Barrier).where(Barrier.title == "Footpath works, detour in place")).all()
 
 
 def test_old_demo_lift_outage_is_retired(tmp_path):

@@ -7,7 +7,7 @@ from sqlmodel import Session
 from app.agents import ago
 from app.db import get_session
 from app.errors import ApiError
-from app.llm.explain import explain_route, explain_transit, template_transit
+from app.llm.explain import explain_transit, template_explanation, template_transit
 from app.routing.graph import dist_m
 from app.routing.profile import DEFAULT_PROFILE, Profile
 from app.routing.router import CAMPUS_NOTE
@@ -156,7 +156,7 @@ def plan_route(body: RouteIn, request: Request, tasks: BackgroundTasks, session:
         if st.transit and far and "transitNote" not in extra and r["reason"] == TOO_LONG:
             r = {**r, "reason": NO_TRANSIT_TRIP}
         return {**r, **extra, "options": [], "liftStatus": lifts, "weather": weather,
-                "explanation": explain_route({"ok": False}, None)}
+                "explanation": template_explanation({"ok": False})}
 
     if not r["ok"]:  # too far to walk, but public transport works
         walks = [leg for leg in top["legs"] if leg["kind"] == "walk"]
@@ -184,6 +184,7 @@ def plan_route(body: RouteIn, request: Request, tasks: BackgroundTasks, session:
                 for b in active_barriers(session)
                 if b.type != "lift_outage" and _near(b, (acc, fast, *r.get("alternatives", [])))]
     out = {k: v for k, v in r.items() if k != "edges"}
-    explanation = explain_transit(top, st.llm) if top["mode"] == "transit" else explain_route(facts, st.llm)
+    # The page shows Claude's words only for public transport; a walk route's summary line comes from the template.
+    explanation = explain_transit(top, st.llm) if top["mode"] == "transit" else template_explanation(facts)
     return {**out, **extra, "options": options, "liftStatus": lifts, "barriers": barriers, "explanation": explanation,
             "status": _status(r["steps"], acc.get("slopeEstimated")), "weather": weather}

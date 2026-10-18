@@ -82,3 +82,16 @@ class PlaceCache(SQLModel, table=True):
     detail: str = ""
     exits: list | None = Field(default=None, sa_column=Column(JSON))
     seen_at: datetime = Field(default_factory=now)
+
+
+class MapPlace(SQLModel, table=True):
+    """An accessible place from OpenStreetMap, gathered by the map agent (or loaded from the dated snapshot)."""
+    id: str = Field(primary_key=True)  # place:osm-n123
+    osm_id: str
+    name: str
+    kind: str  # toilet | parking | entrance | venue
+    lat: float = Field(index=True)
+    lng: float = Field(index=True)
+    tags: dict = Field(default_factory=dict, sa_column=Column(JSON))
+    tile: str = Field(index=True)
+    seen_at: datetime = Field(default_factory=now)

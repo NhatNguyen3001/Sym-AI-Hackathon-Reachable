@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { API_URL, ApiError, getPlace, getPlaces, getRoute, getUpdates, labelPhoto, parseProfile, searchPlaces, sendReport } from "@/lib/api";
+import { API_URL, ApiError, getPlace, getPlaces, getRoute, getUpdates, labelPhoto, searchPlaces, sendReport } from "@/lib/api";
 import { profile } from "@/lib/placeholder";
 
 afterEach(() => vi.unstubAllGlobals());
@@ -36,7 +36,7 @@ test("reads return live data and pass the filter", async () => {
 test("writes throw ApiError when the API is down", async () => {
   vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
   await expect(sendReport({ photoUrl: null, lat: 0, lng: 0, userLabel: "blocked", note: "" })).rejects.toBeInstanceOf(ApiError);
-  await expect(parseProfile("walker")).rejects.toMatchObject({ code: "network" });
+  await expect(sendReport({ photoUrl: null, lat: 0, lng: 0, userLabel: "fine", note: "" })).rejects.toMatchObject({ code: "network" });
 });
 
 test("write errors carry the server message", async () => {

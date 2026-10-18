@@ -26,7 +26,7 @@ pytestmark = [pytest.mark.valhalla, pytest.mark.skipif(not _up(), reason="Valhal
 def live(tmp_path):
     settings = Settings(database_url=f"sqlite:///{tmp_path / 'live.db'}", anthropic_api_key="", uploads_dir=tmp_path / "u",
                         router="valhalla", photon_url="", tfnsw_api_key="",
-                    turso_database_url="")
+                    turso_database_url="", osm_snapshot_path="")
     app = create_app(settings, graph=G, places=PL, weather_service=WeatherService(http_get=lambda *a, **k: _Dry()))
     with TestClient(app) as c:
         yield c

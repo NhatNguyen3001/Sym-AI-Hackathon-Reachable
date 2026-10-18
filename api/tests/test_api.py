@@ -53,7 +53,7 @@ def test_rain_toggle(client):
     assert "weather" in types
 
 
-def test_updates_feed_and_filter(client, lifts_live):
+def test_updates_feed_and_filter(client, lifts_live, campus_roadwork):
     items = client.get("/updates").json()
     assert len(items) >= 5
     first = items[0]
@@ -103,9 +103,8 @@ def test_station_lifts(client):
     assert client.get("/stations/library/lifts").status_code == 404
 
 
-def test_profile_parse(client):
-    p = client.post("/profile/parse", json={"text": "power wheelchair, need parking"}).json()
-    assert p["aid"] == "power_wheelchair" and p["destination"]["parking"] is True and p["maxSlope"] == 8
+def test_old_needs_parser_is_gone(client):
+    assert client.post("/profile/parse", json={"text": "power wheelchair"}).status_code == 404
 
 
 def test_updates_run_logs(client):
@@ -146,3 +145,26 @@ def test_report_save_failure_is_friendly(client, app, monkeypatch):
     r = client.post("/reports", json={"lat": -33.776, "lng": 151.114, "userLabel": "stairs"})
     assert r.status_code == 503
     assert r.json()["error"] == {"code": "save_failed", "message": "Couldn't save your report right now. Please try again."}
+
+
+class CountingClaude:
+    """Counts Claude requests; answers like Claude would."""
+    def __init__(self):
+        self.calls = 0
+        counter = self
+
+        class M:
+            @staticmethod
+            def create(**kw):
+                counter.calls += 1
+                from types import SimpleNamespace
+                return SimpleNamespace(stop_reason="end_turn", content=[SimpleNamespace(type="text", text="From Claude.")])
+        self.messages = M
+
+
+def test_a_walk_route_never_asks_claude_for_an_explanation_nobody_sees(client):
+    client.app.state.llm = CountingClaude()
+    r = client.post("/route", json={"from": "mq-station", "to": "library"}).json()
+    assert r["ok"] and client.app.state.llm.calls == 0
+    assert r["explanation"] and r["explanation"] != "From Claude."
+    assert "fastest route" in r["explanation"] or "longer than the fastest" in r["explanation"]

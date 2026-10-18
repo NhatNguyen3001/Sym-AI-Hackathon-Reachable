@@ -12,6 +12,8 @@ export interface Hazard {
   status: string;
   lat: number;
   lng: number;
+  /** What it means for someone walking (Claude's sentence for a roadwork). */
+  detail?: string;
 }
 
 export const HAZARD_LABEL: Record<HazardKind, string> = {
@@ -51,6 +53,7 @@ export function hazardsFromUpdates(items: UpdateItem[]): Hazard[] {
       status: item.status,
       lat: item.lat,
       lng: item.lng,
+      ...(item.detail ? { detail: item.detail } : {}),
     });
   }
   if (!out.some((h) => h.kind === "slope")) out.push(CAMPUS_SLOPE);

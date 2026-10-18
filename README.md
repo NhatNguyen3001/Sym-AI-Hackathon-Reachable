@@ -116,11 +116,30 @@ TURSO_DATABASE_URL=libsql://<db>-<org>.turso.io
 TURSO_AUTH_TOKEN=<token>
 ```
 
-On the first start the API creates the tables (`agentrun`, `barrier`, `placecache`, `report`, `venue`) and seeds the demo data. `/health` says which database is in use (`"db": "turso"` or `"sqlite"`). Clear `TURSO_DATABASE_URL` to go back to local SQLite. Live check (read only): `pytest -m turso`.
+On the first start the API creates the tables (`agentrun`, `barrier`, `mapplace`, `placecache`, `report`, `venue`) and seeds the demo data. `/health` says which database is in use (`"db": "turso"` or `"sqlite"`). Clear `TURSO_DATABASE_URL` to go back to local SQLite. Live check (read only): `pytest -m turso`.
 
 **Local copy (embedded replica).** With Turso, the API keeps a local copy of the database in `api/turso-replica.db` (gitignored; `TURSO_REPLICA_PATH`). Reads come from the copy, so they never wait on the network; writes go straight to Turso and show up locally at once. The copy syncs every 15 s (`TURSO_SYNC_SECONDS`), at a moment when no request is running. If Turso can't be reached at start-up, the API starts from the last copy, read-only (reports say "Couldn't save your report right now. Please try again.") until Turso is back. With no copy yet it refuses to start and says why.
 
 Why the care about writes: the `libsql` driver holds Python's global lock during network calls, so every Turso round trip pauses the whole API (a write about 0.6 s, a sync 0.1-0.3 s). That's why searches write nothing, routes aren't logged, and the lift checker writes only when something changed.
+
+## Map pins across Sydney (map agent)
+
+The map shows accessible toilets, step-free entrances, accessible parking and wheelchair-accessible places across
+Greater Sydney from OpenStreetMap, plus the Live Traffic NSW roadworks and events that affect people walking or using
+a wheelchair. **Claude decides** which roadworks matter ("blocks the path", "may affect", or car-only and dropped)
+and writes one plain sentence for each. Zoomed out, pins join into number bubbles.
+
+The agent runs **only when the owner asks** (no schedule):
+1. Set `ADMIN_KEY=<a long random key of your own>` in `api/.env` and restart the API.
+2. On **Live updates**, open **Owner**, enter the key once (it stays in that browser only, never in a URL) and press
+   **Update map now**. A run takes a few minutes (OpenStreetMap is often busy and is retried) and saves everything in
+   one write. The map and Live updates say when it last ran.
+3. To freeze the map (for a demo), set `MAP_AGENT_PAUSED=true` and restart: the button shows "Map updates are paused".
+
+Roadworks need `TFNSW_API_KEY` (same key as public transport) and `ANTHROPIC_API_KEY`; without Claude the agent keeps
+the roadworks it has and adds none. If the map has never been updated, it shows the saved OpenStreetMap copy in
+`api/data/osm_places_snapshot.json` (dated; "© OpenStreetMap contributors, ODbL"). Refresh that copy with
+`cd api && PYTHONPATH=. .venv/Scripts/python scripts/build_osm_snapshot.py`.
 
 ## Sydney-wide routing (Valhalla)
 
@@ -167,7 +186,7 @@ Station exits and hand-measured slopes live in `api/data/overrides.json`; the el
 
 ## Deploy (not done yet)
 
-`api/Dockerfile` builds the API image. Set `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` and `TFNSW_API_KEY` as secrets on the host.
+`api/Dockerfile` builds the API image. Set `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `TFNSW_API_KEY`, `ANTHROPIC_API_KEY` and `ADMIN_KEY` as secrets on the host.
 
 - **Run the API as a long-running server with a writable disk** (AWS App Runner, Render, Fly.io, Railway and similar), not as serverless functions: it keeps the local Turso copy and runs the lift checker in the background. The disk doesn't have to survive restarts; the copy is rebuilt from Turso on start.
 - **Set `NEXT_PUBLIC_API_URL` to the API's public address before `npm run build`.** Next.js bakes it into the web app at build time (local development uses `http://127.0.0.1:8000`).

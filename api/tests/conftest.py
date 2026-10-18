@@ -27,7 +27,7 @@ class _Dry:
 def settings(tmp_path):
     return Settings(database_url=f"sqlite:///{tmp_path / 't.db'}", anthropic_api_key="", uploads_dir=tmp_path / "uploads",
                     router="campus", photon_url="", tfnsw_api_key="",
-                    turso_database_url="")
+                    turso_database_url="", osm_snapshot_path="")
 
 
 @pytest.fixture
@@ -55,3 +55,18 @@ def lifts_live(app, client):
             sync.sync(s, alerts)
     set_alerts([SOUTH_OUT])
     return set_alerts
+
+
+@pytest.fixture
+def campus_roadwork(app, client):
+    """A Claude-checked roadwork on Management Drive (what the map agent stores), for report-checker tests."""
+    from sqlmodel import Session
+    from app.models import Barrier
+    from app.routing.graph import nearest_edge
+    edge, _ = nearest_edge(app.state.graph, -33.77215, 151.11590)
+    with Session(app.state.engine) as s:
+        s.add(Barrier(id="lt-test-1", type="roadworks", title="Footpath works", place="Management Drive, Macquarie Park",
+                      lat=-33.77215, lng=151.11590, edge_id=edge, status="confirmed", confidence=0.8,
+                      update_type="roadworks", sources=[{"kind": "feed", "label": "Live Traffic NSW, checked by Claude",
+                                                         "url": None, "text": "The footpath is closed; use the other side."}]))
+        s.commit()

@@ -10,6 +10,9 @@ from sqlalchemy.dialects.sqlite.pysqlite import SQLiteDialect_pysqlite
 class LibsqlDialect(SQLiteDialect_pysqlite):
     driver = "libsql"
     supports_statement_cache = True
+    # libsql runs executemany one row at a time, and on Turso every write is a network round trip with the GIL held.
+    # Send many rows as a few multi-row INSERT ... VALUES statements instead (5,500 map places: 6 statements).
+    use_insertmanyvalues_wo_returning = True
 
     @classmethod
     def import_dbapi(cls):

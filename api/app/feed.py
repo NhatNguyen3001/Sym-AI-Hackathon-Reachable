@@ -17,6 +17,8 @@ def build_updates(session: Session, weather: dict, type_: str | None = None) -> 
             "id": b.id, "type": b.update_type, "title": b.title, "place": b.place, "time": ago(b.last_confirmed),
             "source": _labels(b.sources), "status": STATUS.get(b.status, b.status),
             "tone": "primary" if b.status == "resolved" else "warn",
+            **({"detail": b.sources[-1]["text"]} if b.sources and b.sources[-1].get("text")
+               and b.type == "roadworks" else {}),
             **({"lat": None, "lng": None} if b.lat == 0 and b.lng == 0 else {"lat": b.lat, "lng": b.lng})}))
     for v in session.exec(select(Venue)).all():
         items.append((aware(v.checked_at), {

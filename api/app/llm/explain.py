@@ -1,7 +1,4 @@
 MODEL = "claude-sonnet-5-5"
-SYSTEM = ("Write a plain-English route explanation for a person with mobility needs, in at most two short sentences. "
-          "Say which station exit or lift to use and why, how many minutes longer than the fastest route it is, and what "
-          "it avoids. Use only the facts given. No greetings, no markdown.")
 
 
 def template_explanation(f: dict) -> str:
@@ -28,18 +25,6 @@ def template_explanation(f: dict) -> str:
             s += ", and it avoids " + ", ".join(avoided)
     parts.append(s + ".")
     return " ".join(parts)
-
-
-def explain_route(facts: dict, client) -> str:
-    if client is None or not facts.get("ok"):
-        return template_explanation(facts)
-    try:
-        r = client.messages.create(model=MODEL, max_tokens=1024, system=SYSTEM,
-                                   messages=[{"role": "user", "content": f"Facts: {facts}"}])
-        text = next((b.text for b in r.content if b.type == "text"), "").strip()
-        return text if r.stop_reason != "refusal" and text else template_explanation(facts)
-    except Exception:
-        return template_explanation(facts)
 
 
 TRANSIT_SYSTEM = ("Write a plain-English trip explanation for a person with mobility needs, in at most two short sentences. "

@@ -2,13 +2,15 @@
 // GET /v1/tp/add_info   current lift alerts (default: Macquarie University station Lift 2 = south exit out)
 // POST /_mock/lifts     {"osmIds": [...], "stops": [{id, text}]} replaces the broken lifts (stops: alerts at other stops)
 // GET /v1/tp/trip       a small campus journey (Library -> bus 141 -> Mortarboard Cafe), times relative to now
-// GET /v1/tp/stop_finder  nothing
+// GET /v1/tp/stop_finder  coordinates for the stops in STOP_COORDS, else nothing
 import http from "node:http";
 
 const PORT = Number(process.env.TFNSW_MOCK_PORT ?? 8300);
 const LIFTS = { 9756349221: "Lift 1 to the Herring Rd west entry", 9756349250: "Lift 2 to the Herring Rd east entry", 9756349262: "Lift 3 to the platform" };
 let broken = [9756349250];
 let stopAlerts = [];
+// Where other stations are, for alerts at them (Central).
+const STOP_COORDS = { 200060: [-33.884, 151.2062] };
 
 const alert = (osm) => ({
   id: `ems-e2e-${osm}`,
@@ -76,7 +78,10 @@ http.createServer((req, res) => {
       affected: { stops: [{ id: a.id, name: "Stop" }] } }));
     return send(res, { infos: { current: [...broken.map(alert), ...atStops] } });
   }
-  if (url.pathname === "/v1/tp/stop_finder") return send(res, { locations: [] });
+  if (url.pathname === "/v1/tp/stop_finder") {
+    const at = STOP_COORDS[url.searchParams.get("name_sf")];
+    return send(res, { locations: at ? [{ coord: at }] : [] });
+  }
   if (url.pathname === "/v1/tp/trip") {
     const o = coordOf(url.searchParams.get("name_origin"));
     const d = coordOf(url.searchParams.get("name_destination"));

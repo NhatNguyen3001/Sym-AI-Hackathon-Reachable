@@ -16,7 +16,7 @@ from app.errors import ApiError, api_error_handler
 from app.events import Broadcaster
 from app.replica import Replica
 from app.llm.client import get_client
-from app.routers import agents, demo, events, health, places, profile, reports, route, stations, updates, venue, weather
+from app.routers import agents, demo, events, health, mapdata, places, reports, route, stations, updates, venue, weather
 from app.routing.graph import load_graph
 from app.routing.places import Places
 from app.routing.router import CampusRouter, get_router
@@ -25,13 +25,16 @@ from app.places.overpass import OverpassClient
 from app.places.photon import PhotonClient
 from app.places.resolver import PlaceResolver
 from app.seed import seed
+from app.mapdata.agent import MapAgent
+from app.mapdata.snapshot import load_snapshot
 from app.transit.lifts import LiftAlertSync, LiftFeed, LiftPoller
 from app.transit.plan import TransitPlanner
 from app.transit.tfnsw import TfnswClient
 from app.weather import WeatherService
 
 log = logging.getLogger("reachable")
-ROUTERS = [m.router for m in (health, places, profile, route, venue, reports, updates, agents, weather, stations, events, demo)]
+ROUTERS = [m.router for m in (health, places, route, venue, reports, updates, agents, mapdata, weather, stations,
+                               events, demo)]
 
 
 async def validation_handler(_: Request, exc: RequestValidationError):
@@ -87,6 +90,7 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
         st.resolver = PlaceResolver(st.places, PhotonClient(settings.photon_url) if settings.photon_url else None,
                                     OverpassClient(settings.overpass_url) if settings.router == "valhalla" else None,
                                     st.engine, parse_bbox(settings.coverage_bbox))
+        st.resolver.read_engine = st.read_engine  # map places are read from the local copy
         st.broadcaster = Broadcaster()
         st.llm = get_client(settings.anthropic_api_key)
         st.photo_labels = {}
@@ -100,6 +104,17 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
                                      st.broadcaster, settings.lift_poll_seconds) if st.tfnsw else None)
         st.transit = (TransitPlanner(st.tfnsw, st.places.station_stop_id, frozenset(st.places.lift_osm_ids))
                       if st.tfnsw else None)
+        # Map agent (cycle 5): runs only when the owner asks. The snapshot fills a map that was never updated.
+        load_snapshot(st.engine, settings.osm_snapshot_path)
+        agent_cls = MapAgent
+        if settings.seed_map_places or settings.map_agent_fake:
+            from app.mapdata import e2e
+            if settings.seed_map_places:
+                e2e.seed_map_places(st.engine)
+            if settings.map_agent_fake:
+                agent_cls = e2e.FakeMapAgent
+        st.map_agent = agent_cls(st.engine, OverpassClient(settings.overpass_url) if settings.overpass_url else None,
+                                 st.tfnsw, st.llm, st.graph, quiet=lambda: _quiet(st))
         task = asyncio.create_task(st.lift_poller.run()) if st.lift_poller and settings.lift_poll_seconds > 0 else None
         yield
         for t in (task, sync_task):
@@ -111,7 +126,9 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
 
     @app.middleware("http")
     async def track_requests(request: Request, call_next):
-        if request.url.path == "/events":  # the live stream stays open; it isn't "busy"
+        # The live stream stays open, and the map status is a tiny local read polled while the map updates:
+        # neither counts as "busy" (the map agent and Turso sync wait for a quiet moment).
+        if request.url.path in ("/events", "/agents/map/status"):
             return await call_next(request)
         app.state.requests_in_flight += 1
         try:

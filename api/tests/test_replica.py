@@ -179,7 +179,7 @@ def replica_app(tmp_path, connect):
     from tests.conftest import _Dry
     from tests.test_campus_graph import G, PL
     s = Settings(database_url=f"sqlite:///{tmp_path / 'unused.db'}", anthropic_api_key="", uploads_dir=tmp_path / "u",
-                 router="campus", photon_url="", tfnsw_api_key="", turso_database_url="", lift_poll_seconds=0)
+                 router="campus", photon_url="", tfnsw_api_key="", turso_database_url="", osm_snapshot_path="", lift_poll_seconds=0)
     rep = Replica(tmp_path / "rep.db", "libsql://x.turso.io", TOKEN, connect=connect)
     return TestClient(create_app(s, graph=G, places=PL, replica=rep,
                                  weather_service=WeatherService(http_get=lambda *a, **k: _Dry())))
@@ -211,10 +211,9 @@ def test_a_session_that_never_lets_go_does_not_stall_saves_for_good(tmp_path, mo
     r = Replica(tmp_path / "rep.db", "libsql://x.turso.io", TOKEN, connect=fake_connect())
     r.start()
     eng = make_engine("sqlite://", replica=r)
-    lost = eng.connect()          # checked out (lock held) and never closed
+    r.lock.acquire()              # a holder that is gone and will never release it
     with caplog.at_level(logging.ERROR):
         with eng.connect() as c:  # waits LOCK_WAIT_S, then takes the lock over
             assert c.execute(text("select 1")).scalar() == 1
         r.sync()                  # and the lock works normally afterwards
-    assert "taking it over" in caplog.text
-    del lost
+    assert "taking it over" in caplog.text and not r.lock.locked()

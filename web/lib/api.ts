@@ -2,7 +2,8 @@
 // render when the API is down; writes throw ApiError so pages can say what went wrong.
 import * as sample from "./placeholder";
 import type {
-  AgentCardData, AmenityPin, Fetched, Place, Profile, ReportIn, RouteResult, UpdateItem, UpdateType, VenueCheck, Weather,
+  AgentCardData, AmenityPin, Fetched, MapPlacePin, MapStatus, Place, Profile, ReportIn, RouteResult, UpdateItem, UpdateType,
+  VenueCheck, Weather,
 } from "./types";
 
 // 127.0.0.1, not localhost: on Windows "localhost" tries IPv6 first and adds ~0.2 s to every request.
@@ -113,6 +114,17 @@ export const getVenueCheck = (id: string) => read<VenueCheck>(`/venue/${encodeUR
 
 export const getAmenities = () => read<AmenityPin[]>("/amenities", sample.amenities);
 
+/** OpenStreetMap places in a box (west, south, east, north). Empty when the API is down. */
+export const getMapPlaces = (bbox: [number, number, number, number]) =>
+  read<MapPlacePin[]>(`/map/places?bbox=${bbox.map((v) => v.toFixed(4)).join(",")}`, []);
+
+/** Owner only: start a map update (the key travels in a header, never the URL). */
+export const runMapAgent = (key: string) =>
+  request<{ started: boolean }>("/agents/map/run", { method: "POST", headers: { "X-Admin-Key": key } });
+
+/** When the map agent last ran. Null when the API is down. */
+export const getMapStatus = () => read<MapStatus | null>("/agents/map/status", null);
+
 export const getUpdates = (type?: UpdateType | "all") =>
   read<UpdateItem[]>(type && type !== "all" ? `/updates?type=${type}` : "/updates",
     type && type !== "all" ? sample.updates.filter((u) => u.type === type) : sample.updates);
@@ -121,7 +133,6 @@ export const getAgents = () => read<AgentCardData[]>("/agents/status", sample.ag
 
 export const getWeather = () => read<Weather>("/weather", sample.weather);
 
-export const parseProfile = (text: string) => request<Profile>("/profile/parse", jsonBody({ text }));
 
 export function labelPhoto(file: File) {
   const form = new FormData();

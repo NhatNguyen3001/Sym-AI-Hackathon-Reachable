@@ -329,3 +329,11 @@ def test_forbidden_edge_exclusion_covers_whole_edge_and_parallel_ways():
     beside = (-33.87302, 151.2066 + 6 / (111_320 * 0.8302))  # 6 m east of the middle of the steps
     assert _inside([beside[1], beside[0]], ring)
     assert not _inside([151.2066, -33.8702], ring)  # the footway's far end stays usable
+
+
+def test_only_barriers_near_the_trip_are_sent():
+    c = FakeClient([trip()], [trace()])
+    far = (-33.7765, 151.1160, "confirmed")  # Macquarie Park, 12 km from this CBD trip
+    near = (-33.8717, 151.2066, "confirmed")
+    router(c).plan(START, END, P, Context(barrier_points=[far, near]))
+    assert len(accessible_bodies(c)[0]["exclude_polygons"]) == 1

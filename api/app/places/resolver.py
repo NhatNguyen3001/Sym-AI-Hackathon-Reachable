@@ -5,7 +5,7 @@ from collections import OrderedDict
 
 from sqlmodel import Session, select
 
-from app.models import PlaceCache, now
+from app.models import MapPlace, PlaceCache, now
 from app.places.ids import BadPlaceId, parse_coord_id
 from app.places.photon import SearchUnavailable
 from app.routing.places import Place, Places
@@ -19,6 +19,7 @@ RECENT_MAX = 500  # searched places kept in memory; only the ones someone opens 
 class PlaceResolver:
     def __init__(self, known: Places, photon, overpass, engine, bbox):
         self.known, self.photon, self.overpass, self.engine, self.bbox = known, photon, overpass, engine, bbox
+        self.read_engine = engine
         self._recent: OrderedDict[str, Place] = OrderedDict()
         self._saved: set[str] = set()
         self._saving: set[str] = set()
@@ -64,6 +65,10 @@ class PlaceResolver:
             p = Place(id=row.id, name=row.name, kind=row.kind, lat=row.lat, lng=row.lng, detail=row.detail)
             p.exit_points = list(row.exits or [])
             return p
+        if place_id.startswith("place:"):  # an accessible place the map agent found (OpenStreetMap)
+            with Session(self.read_engine) as s:
+                row = s.get(MapPlace, place_id)
+            return Place(id=row.id, name=row.name, kind="place", lat=row.lat, lng=row.lng) if row else None
         return self.known.get(place_id)
 
     def ensure_exits(self, place: Place) -> None:
