@@ -15,10 +15,17 @@ test("a live lift alert reroutes an open route page without a reload", async ({ 
   const tfnsw = await request.newContext({ baseURL: TFNSW });
   try {
     await tfnsw.post("/_mock/lifts", { data: { osmIds: [LIFT2] } });
+    // Wait until the API has picked this up (an earlier test may have just changed the lifts), then open the page.
+    const api = await request.newContext({ baseURL: API });
+    await expect.poll(async () => {
+      const rows = await (await api.get("/stations/mq-station/lifts")).json();
+      return rows.map((r: { exitId: string; status: string }) => `${r.exitId}:${r.status}`).sort().join(",");
+    }, { timeout: 10_000 }).toBe("north:Working,south:Out of service");
+    await api.dispose();
     await page.goto("/route?from=mq-station&to=library");
     await openDetails(page);
     const aside = page.getByRole("complementary", { name: "Route details" });
-    await expect(page.getByRole("region", { name: "Route map" }).getByTitle("South exit lift: Out of service"))
+    await expect(page.getByRole("region", { name: "Route map" }).getByTitle("South exit lift: Not working"))
       .toBeVisible({ timeout: 10_000 });
     await expect(aside.getByText("Use the lift at the north exit")).toBeVisible();
 

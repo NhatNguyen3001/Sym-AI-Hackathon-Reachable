@@ -72,5 +72,5 @@ test("the chosen card keeps the safety details: steps, arrival time and how sure
   const card = ways.locator("[data-way]").filter({ has: page.getByRole("radio", { name: /Bus 141/ }) });
   await expect(card.getByText("Has steps")).toBeVisible({ timeout: 20_000 });
   await expect(card.getByText(/arrive \d/)).toBeVisible();
-  await expect(card.getByText("Some details not sure")).toBeVisible();
+  await expect(card.getByText(/we couldn't check/)).toBeVisible();   // "Some details not sure", in plain words
 });

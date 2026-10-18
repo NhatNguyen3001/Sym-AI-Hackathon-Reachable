@@ -10,7 +10,7 @@ const KIND: Record<UpdateType, string> = {
 
 const STATUS: Record<string, string> = {
   Confirmed: "In effect",
-  "Needs checking": "Unconfirmed",
+  "Needs checking": "Someone reported this",
   Resolved: "Cleared",
   Active: "Happening now",
   Updated: "Refreshed",

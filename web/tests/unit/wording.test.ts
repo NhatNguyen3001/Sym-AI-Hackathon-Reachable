@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import {
-  aboutMetres, difficulty, difficultyText, feelChoice, FEEL_CHOICES, liftText, spokenText, stepText, trust,
+  aboutMetres, difficulty, difficultyText, feelChoice, FEEL_CHOICES, liftText, routeTrust, spokenText, stepText, trust,
 } from "@/lib/wording";
 import { profile as base } from "@/lib/placeholder";
 import type { Profile, Step } from "@/lib/types";
@@ -95,4 +95,12 @@ test("spoken steps use the same words, as whole sentences", () => {
   expect(spokenText(step({ kind: "crossing", confidence: "Not sure", label: "Kerb ramp at crossing" }), withLimit(5)))
     .toBe("Crossing ahead. The kerb ramp is not confirmed, check before you cross");
   expect(spokenText(step({ kind: "lift", label: "Lift at north exit" }), withLimit(5))).toBe("Use the lift at the north exit");
+});
+
+test("a route's trust badge in plain words", () => {
+  const steps = [step({ confidence: "Not sure" }), step({ confidence: "Confirmed" }), step({ confidence: "Not sure" })];
+  expect(routeTrust("Some details not sure", steps)).toBe("2 things we couldn't check");
+  expect(routeTrust("Some details not sure", [step({ confidence: "Not sure" })])).toBe("1 thing we couldn't check");
+  expect(routeTrust("Slopes estimated", [])).toBe("Hills not measured");
+  expect(routeTrust("Confirmed today", [])).toBe("Checked today");
 });

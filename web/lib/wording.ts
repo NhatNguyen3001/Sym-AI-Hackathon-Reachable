@@ -133,3 +133,18 @@ export function spokenText(step: Step, profile: Profile): string {
       return step.label;
   }
 }
+
+/** A whole route's trust badge: how many things we couldn't check, rather than "Some details not sure". */
+export function routeTrust(status: string, steps: Step[]): string {
+  if (status === "Some details not sure") {
+    const n = steps.filter((s) => s.confidence === "Not sure").length;
+    if (n === 0) return "Some things we couldn't check";
+    return `${n} thing${n === 1 ? "" : "s"} we couldn't check`;
+  }
+  if (status === "Slopes estimated") return "Hills not measured";
+  if (status === "Confirmed today") return "Checked today";
+  return status;
+}
+
+/** The trust code to show next to a lift: we know it's working or not, unless we haven't heard. */
+export const liftTrust = (status: string) => (status === "Not sure" ? "Not sure" : "Confirmed");

@@ -33,3 +33,28 @@ test("the voice says the same words as the screen", async ({ page }) => {
   const said = (await page.evaluate(() => (window as unknown as { __said: string[] }).__said)).join(" | ");
   expect(said).not.toMatch(/%|percent|footpath/);
 });
+
+test("the destination check for a public-map place says 'Probably OK' and where it's from", async ({ page }) => {
+  await page.goto("/route?from=mq-station&to=place%3Aosm-n900001");
+  await openDetails(page);
+  const check = page.getByRole("region", { name: /Destination check/ });
+  await expect(check.getByText("Probably OK").first()).toBeVisible({ timeout: 20_000 });
+  await expect(check.getByText(/OpenStreetMap, \d+ \w+/).first()).toBeVisible();
+  expect(await check.textContent()).not.toMatch(/\bLikely\b/);
+});
+
+test("station lifts say 'Not working', and the route badge never says 'Some details not sure'", async ({ page }) => {
+  await page.goto("/route?from=mq-station&to=library");
+  await openDetails(page);
+  const lifts = page.getByRole("region", { name: "Station lifts" });
+  await expect(lifts.getByText(/South exit lift: Not working/)).toBeVisible({ timeout: 20_000 });
+  expect(await lifts.textContent()).not.toMatch(/Out of service/);
+  await expect(page.getByText("Some details not sure")).toHaveCount(0);
+});
+
+test("Live updates uses the same three words in the key and on each update", async ({ page }) => {
+  await page.goto("/live");
+  const key = page.getByRole("region", { name: "How to read an update" });
+  for (const word of ["In effect", "Someone reported this", "Cleared"]) await expect(key.getByText(word, { exact: true })).toBeVisible();
+  await expect(page.getByText("Unconfirmed")).toHaveCount(0);
+});

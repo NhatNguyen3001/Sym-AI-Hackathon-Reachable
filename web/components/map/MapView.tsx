@@ -12,6 +12,7 @@ import type { PlaceMark, SlopeSpan } from "@/lib/routeFeatures";
 import { lineColour } from "@/lib/lineColours";
 import type { Leg, LiftRow, MapBarrier, RouteOption, RouteOut } from "@/lib/types";
 import { useUserLocation } from "@/lib/useUserLocation";
+import { liftText } from "@/lib/wording";
 
 const PRIMARY = "#1D4FA8";
 const ALT = ["#6B746F", "#0F766E", "#6D28D9"];
@@ -301,7 +302,7 @@ export default function MapView({
           const key = l.exitId ?? l.exit;
           return (
             <Marker key={`lift-${key}`} position={[l.lat as number, l.lng as number]} icon={liftIcon(l, key === selectedLift)}
-              title={`${l.exit}: ${l.status}`} alt={`${l.exit}: ${l.status}`} zIndexOffset={800}
+              title={`${l.exit}: ${liftText(l.status)}`} alt={`${l.exit}: ${liftText(l.status)}`} zIndexOffset={800}
               eventHandlers={{ click: () => onLift?.(key) }} />
           );
         })}
@@ -356,7 +357,7 @@ export default function MapView({
                 .map((status) => (
                   <li key={status} className="flex items-center gap-2">
                     <span aria-hidden="true" className="size-3.5 rounded-[4px]" style={{ background: LIFT_COLOUR[status] }} />
-                    Lift: {status.toLowerCase()}
+                    Lift: {liftText(status).toLowerCase()}
                   </li>
                 ))}
               {fix && <li className="flex items-center gap-2"><span aria-hidden="true" className="size-3.5 rounded-full border-2 border-white bg-primary" />You</li>}

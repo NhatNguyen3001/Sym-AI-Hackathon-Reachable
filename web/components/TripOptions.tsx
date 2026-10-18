@@ -1,6 +1,7 @@
 import { CircleCheck, TriangleAlert } from "lucide-react";
 import { cn } from "cn";
 import { StatusBadge } from "./StatusBadge";
+import { routeTrust } from "@/lib/wording";
 import { groupWays, optionTimes, optionTitle, showsCards, timeOfDay } from "@/lib/trip";
 import type { TripOption } from "@/lib/types";
 
@@ -53,7 +54,7 @@ export function TripOptions({
                       <TriangleAlert aria-hidden="true" className="size-4" /> Has steps
                     </span>
                   )}
-                  {on && status && <StatusBadge label={status} className="mt-1.5" />}
+                  {on && status && <StatusBadge label={routeTrust(status, o.legs.flatMap((l) => (l.kind === "walk" ? l.steps : [])))} className="mt-1.5" />}
                   {o.warnings[0] && (
                     <span className="mt-1 flex items-start gap-1.5 text-[14px] text-warn-strong">
                       <TriangleAlert aria-hidden="true" className="mt-0.5 size-4 shrink-0" /> {o.warnings[0]}

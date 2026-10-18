@@ -12,6 +12,7 @@ import { NavigationPanel } from "@/components/NavigationPanel";
 import { RouteSkeleton } from "@/components/RouteSkeleton";
 import { RouteStep, VenueCheckRow } from "@/components/Rows";
 import { StatusBadge } from "@/components/StatusBadge";
+import { TrustBadge } from "@/components/TrustBadge";
 import { TripOptions } from "@/components/TripOptions";
 import { RouteMap } from "@/components/map/RouteMap";
 import { ApiError, getPlace, getRoute, getVenueCheck } from "@/lib/api";
@@ -20,6 +21,7 @@ import { addTrip, loadProfile, rememberPlace, saveProfile } from "@/lib/profile"
 import { profile as defaultProfile } from "@/lib/placeholder";
 import { navFromLegs, navFromWalk, type NavRoute } from "@/lib/navigation";
 import { routeFeatures } from "@/lib/routeFeatures";
+import { liftText, liftTrust, routeTrust } from "@/lib/wording";
 import { useGuidance } from "@/lib/useGuidance";
 import { useUserLocation } from "@/lib/useUserLocation";
 import { optionTimes, selectOption, showsCards } from "@/lib/trip";
@@ -471,7 +473,7 @@ export function RouteClient() {
                     {optionTimes(transit)} · {transit.stepFree ? "step-free" : "has steps"}
                   </p>
                 </div>
-                {route?.status && <StatusBadge label={route.status} />}
+                {route?.status && <StatusBadge label={routeTrust(route.status, transit.legs.flatMap((l) => (l.kind === "walk" ? l.steps : [])))} />}
               </div>
             </section>
           )}
@@ -487,7 +489,7 @@ export function RouteClient() {
                     {active.slopeEstimated ? "slopes estimated" : `max slope ${active.maxSlope}%`}
                   </p>
                 </div>
-                {route?.status && !chosen && <StatusBadge label={route.status} />}
+                {route?.status && !chosen && <StatusBadge label={routeTrust(route.status, activeSteps ?? [])} />}
               </div>
             </section>
           )}
@@ -503,10 +505,10 @@ export function RouteClient() {
                       ? <CircleCheck aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />
                       : <TriangleAlert aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-warn" />}
                     <div className="flex-1">
-                      <p className="text-[16px]">{l.exit}: {l.status}</p>
+                      <p className="text-[16px]">{l.exit}: {liftText(l.status)}</p>
                       <p className="text-[14px] text-muted">{l.source}, updated {l.updated}</p>
                     </div>
-                    <StatusBadge label={l.status === "Working" ? "Confirmed" : l.status} />
+                    <TrustBadge code={liftTrust(l.status)} className="mt-0.5" />
                   </li>
                 ))}
               </ul>

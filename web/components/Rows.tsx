@@ -31,7 +31,7 @@ export function VenueCheckRow({ check }: { check: VenueCheck["checks"][number] }
         <p className="text-[16px]">{check.field}</p>
         <p className="text-[14px] text-muted">{check.source}</p>
       </div>
-      <StatusBadge label={check.status} />
+      <TrustBadge code={check.status} className="mt-0.5" />
     </li>
   );
 }

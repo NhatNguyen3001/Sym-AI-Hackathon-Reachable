@@ -57,7 +57,7 @@ export function LiveClient() {
         <h2 className="text-[18px] font-bold">How to read an update</h2>
         <ul className="mt-2 space-y-1 text-[16px]">
           <li><strong>In effect</strong> — checked, and it is in the way now.</li>
-          <li><strong>Unconfirmed</strong> — someone reported it. It has not been checked yet.</li>
+          <li><strong>Someone reported this</strong> — it has not been checked yet.</li>
           <li><strong>Cleared</strong> — the problem is gone. People should be able to get through.</li>
         </ul>
       </section>
