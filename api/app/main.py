@@ -104,6 +104,7 @@ def create_app(settings: Settings | None = None, graph=None, places=None, weathe
         # Transport for NSW: live lift alerts (and, in /route, public transport options). Off without a key.
         st.tfnsw = tfnsw or (TfnswClient(settings.tfnsw_url, settings.tfnsw_api_key) if settings.tfnsw_api_key else None)
         st.lift_feed = LiftFeed(enabled=st.tfnsw is not None)
+        st.resolver.fallback = st.tfnsw   # address search falls back to Transport for NSW when Photon is down
         st.lift_poller = (LiftPoller(st.tfnsw, LiftAlertSync(st.places, st.tfnsw.stop_coord), st.lift_feed, st.engine,
                                      st.broadcaster, settings.lift_poll_seconds) if st.tfnsw else None)
         st.transit = (TransitPlanner(st.tfnsw, st.places.station_stop_id, frozenset(st.places.lift_osm_ids))

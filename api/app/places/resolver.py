@@ -20,6 +20,7 @@ class PlaceResolver:
     def __init__(self, known: Places, photon, overpass, engine, bbox):
         self.known, self.photon, self.overpass, self.engine, self.bbox = known, photon, overpass, engine, bbox
         self.read_engine = engine
+        self.fallback = None   # Transport for NSW place finder, used when Photon is down (set at startup)
         self._recent: OrderedDict[str, Place] = OrderedDict()
         self._saved: set[str] = set()
         self._saving: set[str] = set()
@@ -40,7 +41,11 @@ class PlaceResolver:
                     self._recent.popitem(last=False)
                 results += found
             except SearchUnavailable:
-                limited = True
+                found = self._fallback_search(q)
+                if found is None:
+                    limited = True
+                else:
+                    results += found
         seen, merged = set(), []
         for p in results:
             if p.id not in seen:
@@ -48,6 +53,21 @@ class PlaceResolver:
                 merged.append(p)
         merged.sort(key=lambda p: p.kind != "station")  # stable: keeps known-then-Photon order within each group
         return merged[:LIMIT], limited
+
+    def _fallback_search(self, q: str) -> list[Place] | None:
+        """Photon is down: ask Transport for NSW instead. None when there's no fallback or it can't answer."""
+        if self.fallback is None:
+            return None
+        try:
+            found = self.fallback.find_places(q.strip(), self.bbox, LIMIT)
+        except SearchUnavailable:
+            return None
+        for p in found:
+            self._recent[p.id] = p
+            self._recent.move_to_end(p.id)
+        while len(self._recent) > RECENT_MAX:
+            self._recent.popitem(last=False)
+        return found
 
     def get(self, place_id: str) -> Place | None:
         if place_id.startswith("coord:"):
@@ -65,6 +85,8 @@ class PlaceResolver:
             p = Place(id=row.id, name=row.name, kind=row.kind, lat=row.lat, lng=row.lng, detail=row.detail)
             p.exit_points = list(row.exits or [])
             return p
+        if place_id.startswith("tf:"):   # found through Transport for NSW: kept in memory only
+            return self._recent.get(place_id)
         if place_id.startswith("place:"):  # an accessible place the map agent found (OpenStreetMap)
             with Session(self.read_engine) as s:
                 row = s.get(MapPlace, place_id)

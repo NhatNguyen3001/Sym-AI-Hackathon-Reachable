@@ -133,3 +133,66 @@ def test_a_map_agent_run_refreshes_the_places_list(client, app):
     assert app.state.places_cache
     m.forget_places(app.state)
     assert not app.state.places_cache
+
+
+# --- When Photon is down (found 2026-10-18 during the demo prep: Photon refused every connection) ----------------
+
+class TfFinder:
+    """Transport for NSW stop_finder: suburbs, places, stops, streets and addresses."""
+    def __init__(self, fail=False):
+        self.calls, self.fail = 0, fail
+
+    def get(self, url, params=None, headers=None):
+        self.calls += 1
+        if self.fail:
+            return httpx.Response(503, request=httpx.Request("GET", url))
+        return httpx.Response(200, request=httpx.Request("GET", url), json={"locations": [
+            {"id": "poi-1", "type": "poi", "name": "Macquarie Centre Shopping Centre, Macquarie Park",
+             "disassembledName": "Macquarie Centre Shopping Centre", "coord": [-33.7768, 151.1205],
+             "parent": {"name": "Macquarie Park"}},
+            {"id": "200060", "type": "stop", "name": "Central Station, Sydney", "disassembledName": "Central Station",
+             "coord": [-33.8840, 151.2062], "parent": {"name": "Sydney"}},
+            {"id": "far", "type": "poi", "name": "Somewhere far", "coord": [-28.0, 153.4]},
+        ]})
+
+
+def test_transport_for_nsw_finds_places_in_sydney():
+    http = TfFinder()
+    c = TfnswClient("https://x", "k", http=http)
+    found = c.find_places("macquarie centre", (149.97, -34.33, 151.63, -32.99))
+    assert [(p.id, p.name, p.kind, p.detail) for p in found] == [
+        ("tf:poi-1", "Macquarie Centre Shopping Centre", "venue", "Macquarie Park"),
+        ("tf:200060", "Central Station", "station", "Sydney"),
+    ]   # the one outside Greater Sydney is left out
+    c.find_places("Macquarie Centre ", (149.97, -34.33, 151.63, -32.99))
+    assert http.calls == 1   # remembered
+
+
+def test_when_photon_is_down_search_uses_transport_for_nsw(client, app):
+    from app.places.photon import SearchUnavailable
+
+    class DownPhoton:
+        def search(self, *a, **k):
+            raise SearchUnavailable("down")
+
+    st = app.state
+    st.resolver.photon = DownPhoton()
+    st.resolver.fallback = TfnswClient("https://x", "k", http=TfFinder())
+    r = client.get("/places", params={"q": "macquarie centre"})
+    assert r.headers.get("X-Search-Limited") != "1"
+    assert "Macquarie Centre Shopping Centre" in [p["name"] for p in r.json()]
+    # and the place can be routed to (resolved from memory)
+    assert st.resolver.get("tf:poi-1").name == "Macquarie Centre Shopping Centre"
+
+
+def test_when_both_are_down_search_says_it_is_limited(client, app):
+    from app.places.photon import SearchUnavailable
+
+    class DownPhoton:
+        def search(self, *a, **k):
+            raise SearchUnavailable("down")
+
+    app.state.resolver.photon = DownPhoton()
+    app.state.resolver.fallback = TfnswClient("https://x", "k", http=TfFinder(fail=True))
+    r = client.get("/places", params={"q": "macquarie centre"})
+    assert r.headers.get("X-Search-Limited") == "1"

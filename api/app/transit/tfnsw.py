@@ -23,6 +23,7 @@ class TransitUnavailable(Exception):
 RATE_PER_S = 5
 LIMIT_WAIT_S = 10
 TRIP_CACHE_S = 60
+FIND_CACHE_S = 600
 
 
 class _Limiter:
@@ -32,8 +33,8 @@ class _Limiter:
         self._times: list[float] = []
         self._lock = threading.Lock()
 
-    def take(self) -> None:
-        deadline = time.monotonic() + LIMIT_WAIT_S
+    def take(self, wait: float | None = None) -> None:
+        deadline = time.monotonic() + (LIMIT_WAIT_S if wait is None else wait)
         while True:
             with self._lock:
                 now = time.monotonic()
@@ -55,9 +56,10 @@ class TfnswClient:
         self._limiter = _Limiter()
         self._trips: dict[tuple, tuple[float, Future]] = {}   # same trip asked again within a minute
         self._trips_lock = threading.Lock()
+        self._finds: dict[tuple, tuple[float, list]] = {}       # place searches, remembered 10 minutes
 
-    def _get(self, path: str, params: dict) -> dict:
-        self._limiter.take()
+    def _get(self, path: str, params: dict, wait: float | None = None) -> dict:
+        self._limiter.take(wait)
         for attempt in range(TRIES):
             try:
                 r = self.http.get(f"{self.base}{path}", params={**COMMON, **params}, headers=self.headers)
@@ -73,6 +75,37 @@ class TfnswClient:
             return r.json()
         except ValueError as e:
             raise TransitUnavailable("TfNSW sent invalid JSON") from e
+
+    def find_places(self, q: str, bbox, limit: int = 8) -> list:
+        """Places, suburbs, stops, streets and addresses by name (Transport for NSW stop_finder): the search
+        fallback when Photon is down (2026-10-18). Waits at most 2 s for a turn under the rate limit, so trip
+        planning comes first. Raises SearchUnavailable when it can't answer."""
+        from app.places.photon import SearchUnavailable
+        from app.routing.places import Place
+        key = (q.strip().lower(), tuple(bbox), limit)
+        hit = self._finds.get(key)
+        if hit and time.monotonic() - hit[0] < FIND_CACHE_S:
+            return list(hit[1])
+        try:
+            raw = self._get("/v1/tp/stop_finder", {"type_sf": "any", "name_sf": q.strip(), "TfNSWSF": "true"}, wait=2)
+        except TransitUnavailable as e:
+            raise SearchUnavailable(str(e)) from e
+        w, s, e, n = bbox
+        out = []
+        for loc in raw.get("locations") or []:
+            c = loc.get("coord") or []
+            if len(c) != 2 or not (s <= c[0] <= n and w <= c[1] <= e):
+                continue
+            kind = {"stop": "station", "poi": "venue"}.get(loc.get("type"), "place")
+            name = loc.get("disassembledName") or loc.get("name") or "Place"
+            out.append(Place(id=f"tf:{loc.get('id')}", name=name, kind=kind, lat=c[0], lng=c[1],
+                             detail=(loc.get("parent") or {}).get("name") or ""))
+            if len(out) >= limit:
+                break
+        self._finds[key] = (time.monotonic(), out)
+        while len(self._finds) > 500:
+            self._finds.pop(next(iter(self._finds)))
+        return list(out)
 
     def live_hazards(self, kind: str) -> list[dict]:
         """Open Live Traffic NSW notices of one kind (roadwork, incident, majorevent) as GeoJSON features."""
