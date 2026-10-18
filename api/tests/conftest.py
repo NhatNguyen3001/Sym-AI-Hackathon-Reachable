@@ -27,7 +27,7 @@ class _Dry:
 def settings(tmp_path):
     return Settings(database_url=f"sqlite:///{tmp_path / 't.db'}", anthropic_api_key="", uploads_dir=tmp_path / "uploads",
                     router="campus", photon_url="", tfnsw_api_key="",
-                    turso_database_url="", osm_snapshot_path="")
+                    turso_database_url="", osm_snapshot_path="", admin_key="", map_agent_paused=False)
 
 
 @pytest.fixture

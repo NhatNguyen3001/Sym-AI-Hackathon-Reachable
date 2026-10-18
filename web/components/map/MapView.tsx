@@ -9,7 +9,7 @@ import { Minus, Plus } from "lucide-react";
 import { guardMap } from "./guardMap";
 import { useVisibleMount } from "./useVisibleMount";
 import type { PlaceMark, SlopeSpan } from "@/lib/routeFeatures";
-import { DEFAULT_RIDE_COLOUR, lineColour } from "@/lib/lineColours";
+import { lineColour } from "@/lib/lineColours";
 import type { Leg, LiftRow, MapBarrier, RouteOption, RouteOut } from "@/lib/types";
 import { useUserLocation } from "@/lib/useUserLocation";
 
@@ -253,16 +253,15 @@ export default function MapView({
               pathOptions={{ color: PRIMARY, weight: 8, opacity: 1 }} />
           </>
         )}
-        {trip.rides.map((r, i) => r.colour === DEFAULT_RIDE_COLOUR ? (
-          <Polyline key={`ride-${i}`} positions={r.line} pathOptions={{ color: RIDE, weight: 6, dashArray: "2 10", opacity: 0.9 }} />
-        ) : (
+        {/* On a public transport trip, rides are solid (in the line's colour; buses in ink) and walks dashed. */}
+        {trip.rides.map((r, i) => (
           <Fragment key={`ride-${i}`}>
             <Polyline positions={r.line} interactive={false} pathOptions={{ color: "#fff", weight: 10, opacity: 1 }} />
             <Polyline positions={r.line} interactive={false} pathOptions={{ color: r.colour, weight: 6, opacity: 1 }} />
           </Fragment>
         ))}
         {trip.walks.map((w, i) => (
-          <Polyline key={`walk-${i}`} positions={w} pathOptions={{ color: PRIMARY, weight: 8, opacity: 1 }} />
+          <Polyline key={`walk-${i}`} positions={w} pathOptions={{ color: PRIMARY, weight: 6, dashArray: "8 10", opacity: 1 }} />
         ))}
         {trip.stops.map((pt, i) => (
           <CircleMarker key={`stop-${i}`} center={pt} radius={7} pathOptions={{ color: RIDE, weight: 3, fillColor: "#fff", fillOpacity: 1 }} />
@@ -326,13 +325,14 @@ export default function MapView({
             <p className="sr-only">Map legend</p>
             <ul className="space-y-1">
               <li className="flex items-center gap-2">
-                <span aria-hidden="true" className="h-1.5 w-7 rounded bg-primary" />{hasTrip ? "Your walk or roll" : "Your route"}
+                {hasTrip
+                  ? <span aria-hidden="true" className="w-7 border-t-[3px] border-dashed border-primary" />
+                  : <span aria-hidden="true" className="h-1.5 w-7 rounded bg-primary" />}
+                {hasTrip ? "Your walk or roll" : "Your route"}
               </li>
               {rideKey.map((r) => (
                 <li key={r.label} className="flex items-center gap-2">
-                  {r.colour === DEFAULT_RIDE_COLOUR
-                    ? <span aria-hidden="true" className="w-7 border-t-[3px] border-dotted border-ink" />
-                    : <span aria-hidden="true" className="h-1.5 w-7 rounded" style={{ background: r.colour }} />}
+                  <span aria-hidden="true" className="h-1.5 w-7 rounded" style={{ background: r.colour }} />
                   {r.label}
                 </li>
               ))}

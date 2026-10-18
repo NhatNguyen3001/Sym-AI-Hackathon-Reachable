@@ -11,6 +11,11 @@ const LINES: Record<string, string> = {
   T7: "#6F818E", // Olympic Park: grey
   T8: "#00954C", // Airport & South
   T9: "#D11F2F", // Northern: red
+  BMT: "#F99D1C", // Blue Mountains
+  CCN: "#D11F2F", // Central Coast & Newcastle
+  HUN: "#833134", // Hunter
+  SCO: "#005AA3", // South Coast
+  SHL: "#00954C", // Southern Highlands
   M1: "#168388", // Metro North West & Bankstown
   L1: "#BE1622",
   L2: "#DD1E25",

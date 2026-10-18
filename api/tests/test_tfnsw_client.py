@@ -45,6 +45,18 @@ def test_failures_raise_transit_unavailable_without_the_key(handler):
     assert "secret-key" not in str(e.value)
 
 
+def test_a_timed_out_request_is_tried_once_more():
+    calls = []
+
+    def h(req):
+        calls.append(1)
+        if len(calls) == 1:
+            raise httpx.ReadTimeout("slow")
+        return httpx.Response(200, json=load("trip_townhall_chatswood"))
+
+    assert client(h).trip(0, 0, 1, 1)["journeys"] and len(calls) == 2
+
+
 def test_stop_coord():
     raw = {"locations": [{"id": "204420", "coord": [-33.914459, 151.166526]}]}
     assert client(lambda req: httpx.Response(200, json=raw)).stop_coord("204420") == (-33.914459, 151.166526)

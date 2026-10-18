@@ -4,6 +4,10 @@ The API key only ever travels in the Authorization header; errors never include 
 import httpx
 
 COMMON = {"outputFormat": "rapidJSON", "coordOutputFormat": "EPSG:4326", "version": "10.2.1.42"}
+# The Trip Planner usually answers in 2-5 s but sometimes takes over 8; a slow answer is worth waiting for, and
+# one timed-out try is often fine on the next.
+TIMEOUT = httpx.Timeout(15, connect=5)
+TRIES = 2
 
 
 class TransitUnavailable(Exception):
@@ -13,14 +17,19 @@ class TransitUnavailable(Exception):
 class TfnswClient:
     def __init__(self, base_url: str, api_key: str, http: httpx.Client | None = None):
         self.base = base_url.rstrip("/")
-        self.http = http or httpx.Client(timeout=8)
+        self.http = http or httpx.Client(timeout=TIMEOUT)
         self.headers = {"Authorization": f"apikey {api_key}"}
 
     def _get(self, path: str, params: dict) -> dict:
-        try:
-            r = self.http.get(f"{self.base}{path}", params={**COMMON, **params}, headers=self.headers)
-        except httpx.HTTPError as e:
-            raise TransitUnavailable(type(e).__name__) from e
+        for attempt in range(TRIES):
+            try:
+                r = self.http.get(f"{self.base}{path}", params={**COMMON, **params}, headers=self.headers)
+                break
+            except httpx.TimeoutException as e:
+                if attempt == TRIES - 1:
+                    raise TransitUnavailable(type(e).__name__) from e
+            except httpx.HTTPError as e:
+                raise TransitUnavailable(type(e).__name__) from e
         if r.status_code >= 300:
             raise TransitUnavailable(f"TfNSW HTTP {r.status_code}")
         try:

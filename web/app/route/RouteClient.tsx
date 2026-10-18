@@ -35,6 +35,15 @@ const findPlace = (id: string) => getPlace(id);
 const liftKey = (l: LiftRow) => l.exitId ?? l.exit;
 const NO_ROUTES: RouteOption[] = [];
 
+function TryAgain({ busy, onClick }: { busy: boolean; onClick: () => void }) {
+  return (
+    <button type="button" onClick={onClick} disabled={busy}
+      className="mt-2 inline-flex min-h-11 items-center rounded-full border border-current px-4 text-[15px] font-bold disabled:opacity-60">
+      {busy ? "Trying again…" : "Try again"}
+    </button>
+  );
+}
+
 export function RouteClient() {
   const params = useSearchParams();
   const router = useRouter();
@@ -232,6 +241,17 @@ export function RouteClient() {
   if (profile.destination.entrance && entrance?.status === "Not found") unmet.push("a level or ramped entrance");
 
   const [saving, setSaving] = useState(false);
+  const [retrying, setRetrying] = useState(false);
+
+  /** Transport for NSW is sometimes slow for a moment: ask again with a fresh request. */
+  async function retry() {
+    setRetrying(true);
+    try {
+      await load(profile, true);
+    } finally {
+      setRetrying(false);
+    }
+  }
 
   async function saveFilter() {
     saveProfile(profile);
@@ -379,8 +399,18 @@ export function RouteClient() {
         <div className={cn("mt-5 space-y-4 border-t border-line pt-5", !sheetOpen && "max-lg:hidden")}>
           <SampleDataBanner show={sample} />
           {route?.note && <InfoBanner>{route.note}. Sydney-wide routing is unavailable right now.</InfoBanner>}
-          {route?.transitNote && <InfoBanner>{route.transitNote}</InfoBanner>}
-          {error && <WarnBanner alert>{error}</WarnBanner>}
+          {route?.transitNote && (
+            <InfoBanner>
+              <p>{route.transitNote}</p>
+              <TryAgain busy={retrying} onClick={retry} />
+            </InfoBanner>
+          )}
+          {error && (
+            <WarnBanner alert>
+              <p>{error}</p>
+              <TryAgain busy={retrying} onClick={retry} />
+            </WarnBanner>
+          )}
           {!fromId && <InfoBanner>Type where you&apos;re starting from to see a route.</InfoBanner>}
           {fromId && route === null && !error && <RouteSkeleton from={from?.name} to={to?.name} />}
 
