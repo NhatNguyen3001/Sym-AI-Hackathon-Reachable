@@ -304,7 +304,8 @@ def test_trace_failure_still_returns_route_with_unsure_step():
     c = FakeClient([trip()], [NoPath("443")])
     r = router(c).plan(START, END, P, Context())
     assert r["ok"] is True and r["accessible"]["distanceM"] == 330
-    assert r["steps"] == [{"icon": "alert", "label": "Footpath, 330 m", "confidence": "Not sure", "lengthM": 330}]
+    assert r["steps"] == [{"icon": "alert", "label": "Footpath, 330 m", "confidence": "Not sure", "lengthM": 330,
+                           "kind": "path", "slope": None, "measured": False}]
 
 
 def _inside(pt_lnglat, ring):
