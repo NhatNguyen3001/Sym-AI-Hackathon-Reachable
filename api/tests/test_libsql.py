@@ -67,3 +67,40 @@ def test_many_rows_go_in_a_few_statements_not_one_each(tmp_path):
     inserts = [q for q in statements if q.lstrip().upper().startswith("INSERT")]
     # A few multi-row INSERT ... VALUES (...), (...) statements, not one single-row statement run 2,500 times.
     assert 1 <= len(inserts) <= 6 and all("), (" in q for q in inserts)
+
+
+def test_reads_under_load_never_crash_libsql(tmp_path):
+    """Found 2026-10-18 ("search, then another search doesn't work"): the read engine's default pool closed its extra
+    connections under load and libsql panicked (Option::unwrap on None), leaving the pool broken for later requests.
+    A fixed pool that never closes connections while running has no panics."""
+    import collections
+    import time
+    from app.db import make_read_engine
+    from app.models import MapPlace
+    path = tmp_path / "t.db"   # local_libsql() makes this file
+    eng = local_libsql(tmp_path)
+    init_db(eng)
+    with Session(eng) as s:
+        s.add(MapPlace(id="place:osm-n1", osm_id="node/1", name="Toilet", kind="toilet", lat=-33.77, lng=151.11,
+                       tags={}, tile="t"))
+        s.commit()
+
+    class Rep:
+        def read_connect(self):
+            return libsql.connect(f"file:{path.as_posix()}?mode=ro", _uri=True, _check_same_thread=False)
+
+    read = make_read_engine(Rep())
+    errors, stop = collections.Counter(), time.time() + 3
+
+    def work():
+        while time.time() < stop:
+            try:
+                with Session(read) as s:
+                    s.exec(select(MapPlace)).first()
+            except BaseException as e:  # libsql's panic is a BaseException
+                errors[type(e).__name__] += 1
+
+    threads = [threading.Thread(target=work) for _ in range(20)]
+    [t.start() for t in threads]
+    [t.join() for t in threads]
+    assert dict(errors) == {}
