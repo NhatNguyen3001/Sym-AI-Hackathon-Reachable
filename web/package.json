@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "e2e:showcase": "playwright test -c playwright.showcase.config.ts"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

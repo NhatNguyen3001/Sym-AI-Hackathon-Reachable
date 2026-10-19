@@ -124,6 +124,7 @@ export function RouteClient() {
         // Not a recorded trip (an old link) or a recording that didn't load: offer the recorded trips instead.
         setRoute(null);
         setShowcaseNote(e.message);
+        showDetails();
         return;
       }
       if (guiding.current) {
@@ -152,6 +153,7 @@ export function RouteClient() {
     loadManifest().then((m) => current && setRecordedOn(m?.recordedOn ?? null));
     if (!fromId) {
       setShowcaseNote("Pick one of these trips.");
+      showDetails();
       return;
     }
     getShowcaseRecording(fromId, toId, tripId).then((r) => {
@@ -163,7 +165,11 @@ export function RouteClient() {
       setRoute(null);
       showDetails();
       load(r.trip.profile);
-    }, (e: unknown) => current && setShowcaseNote(e instanceof ApiError ? e.message : "This example couldn't load."));
+    }, (e: unknown) => {
+      if (!current) return;
+      setShowcaseNote(e instanceof ApiError ? e.message : "This example couldn't load.");
+      showDetails();
+    });
     return () => {
       current = false;
     };
