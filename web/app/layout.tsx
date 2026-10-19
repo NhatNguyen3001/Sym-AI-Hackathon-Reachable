@@ -10,9 +10,19 @@ const atkinson = Atkinson_Hyperlegible({
   variable: "--font-atkinson",
 });
 
+const SHARE_TITLE = "Reachable: from the stop to the door";
+const SHARE_TEXT = "Step-free trips across Sydney, with live lift status and plain-language guidance.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://reachable-five.vercel.app"),
   title: { template: "%s · Reachable", default: "Reachable" },
   description: "Step-free routes from the stop to the door, with live lift status and destination checks.",
+  // What LinkedIn and other sites show when the link is shared.
+  openGraph: {
+    type: "website", title: SHARE_TITLE, description: SHARE_TEXT, url: "/",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "A step-free route from Macquarie University station to Waranara Library" }],
+  },
+  twitter: { card: "summary_large_image", title: SHARE_TITLE, description: SHARE_TEXT, images: ["/og.png"] },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -7,7 +7,7 @@
 
   <p>
     <img src="https://img.shields.io/badge/Sym%20AI%20Open%202026-Macquarie%20University-A6192E" alt="Sym AI Open 2026">
-    <a href="https://reachable-five.vercel.app"><img src="https://img.shields.io/badge/live%20demo-Vercel-000000" alt="Live demo"></a>
+    <a href="https://reachable-five.vercel.app"><img src="https://img.shields.io/badge/showcase-Vercel-000000" alt="Showcase"></a>
     <img src="https://img.shields.io/badge/python-3.11-blue" alt="Python">
     <img src="https://img.shields.io/badge/Next.js-16-black" alt="Next.js 16">
     <img src="https://img.shields.io/badge/Claude-Sonnet%205.5-1E1E5D" alt="Claude Sonnet 5.5">
@@ -15,7 +15,7 @@
     <img src="https://img.shields.io/badge/tests-312%20API%20%7C%2074%20unit%20%7C%20136%20e2e-brightgreen" alt="Tests">
   </p>
 
-  <p><b>Live Demo:</b> <a href="https://reachable-five.vercel.app">https://reachable-five.vercel.app</a> (the backend runs only during demo sessions)</p>
+  <p><b>Showcase:</b> <a href="https://reachable-five.vercel.app">https://reachable-five.vercel.app</a> (real trips recorded with the live app; run it live with the Quickstart below)</p>
 
   <p>Built for the Sym AI Open 2026 at Macquarie University.</p>
 </div>
@@ -337,7 +337,7 @@ Two design decisions came from measurement. The default SQLAlchemy connection po
 - **Photo reports are switched off.** The upload and Claude labelling code remains behind `PHOTO_UPLOADS`; photos would need object storage before a real launch.
 - **One API instance.** Search results and live updates are held in that server's memory, so a second instance behind a load balancer would not share them.
 - **The demo sandbox forgets.** In demo mode, reports and rain live in memory per phone and vanish when the task stops.
-- **The hosted backend is on demand.** Outside demo sessions the live site loads, but searches and routes fail until `start.ps1` runs.
+- **The public site is a recorded showcase.** https://reachable-five.vercel.app plays back five trips recorded with the live app (built with `NEXT_PUBLIC_SHOWCASE=1`, no backend). The live app runs locally (Quickstart) or on the on-demand AWS backend (`deploy/`).
 
 ---
 
