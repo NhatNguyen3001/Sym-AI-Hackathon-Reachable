@@ -5,7 +5,7 @@ import trips from "../../lib/showcase-trips.json";
 import type { RouteResult, TripOption } from "../../lib/types";
 
 export const RECORDED_ON = "19 Oct 2026";
-const WHEN = `when recorded (${RECORDED_ON}, Sydney time)`;
+const WHEN = `when recorded (${RECORDED_ON})`;
 
 const ends: Record<string, [string, string]> = {
   campus: ["mq-station", "library"],

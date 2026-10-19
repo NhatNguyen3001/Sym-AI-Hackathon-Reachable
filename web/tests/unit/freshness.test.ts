@@ -32,14 +32,14 @@ test("a run that couldn't reach OpenStreetMap says so", () => {
     .toBe("Places and roadworks updated today, 9:42 am; couldn't reach OpenStreetMap last time");
 });
 
-test("the showcase gives the full date and Sydney time, never 'today'", async () => {
+test("the showcase gives the full date and time zone, never 'today'", async () => {
   vi.stubEnv("NEXT_PUBLIC_SHOWCASE", "1");
   vi.resetModules();
   try {
     const f = await import("@/lib/freshness");
     const s = { ...base, places: 5534, lastRun: "2026-10-19T05:05:00+00:00" };
-    expect(f.freshnessLine(s, new Date("2026-10-19T06:00:00Z"))).toBe("Places and roadworks updated 19 Oct 2026, 4:05 pm (Sydney time)");
-    expect(f.freshnessLine(s, new Date("2026-11-30T06:00:00Z"))).toBe("Places and roadworks updated 19 Oct 2026, 4:05 pm (Sydney time)");
+    expect(f.freshnessLine(s, new Date("2026-10-19T06:00:00Z"))).toBe("Places and roadworks updated 19 Oct 2026, 4:05 pm AEDT");
+    expect(f.freshnessLine(s, new Date("2026-11-30T06:00:00Z"))).toBe("Places and roadworks updated 19 Oct 2026, 4:05 pm AEDT");
   } finally {
     vi.unstubAllEnvs();
   }

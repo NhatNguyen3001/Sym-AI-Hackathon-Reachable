@@ -1,5 +1,5 @@
 import { expect, test, vi } from "vitest";
-import { legTitle, optionTimes, optionTitle, rideDetail, selectOption, timeOfDay } from "@/lib/trip";
+import { legTitle, optionTimes, optionTitle, rideDetail, selectOption, timeOfDay, zoneName } from "@/lib/trip";
 import type { RideLeg, TripOption } from "@/lib/types";
 
 const geometry = { type: "LineString" as const, coordinates: [] as [number, number][] };
@@ -48,14 +48,19 @@ test("options group into ways, keeping the API's order", async () => {
   ]);
 });
 
-test("the showcase labels departure times as Sydney time", async () => {
+test("the showcase labels departure times with the Sydney time zone (AEDT)", async () => {
   vi.stubEnv("NEXT_PUBLIC_SHOWCASE", "1");
   vi.resetModules();
   try {
     const t = await import("@/lib/trip");
-    expect(t.optionTimes(transit)).toBe("Leave 5:05 pm, arrive 5:29 pm (Sydney)");
-    expect(t.rideDetail(ride)).toBe("Platform 2 · departs 5:12 pm (Sydney) · 5 stops · wheelchair accessible");
+    expect(t.optionTimes(transit)).toBe("Leave 5:05 pm, arrive 5:29 pm AEDT");
+    expect(t.rideDetail(ride)).toBe("Platform 2 · departs 5:12 pm AEDT · 5 stops · wheelchair accessible");
   } finally {
     vi.unstubAllEnvs();
   }
+});
+
+test("the zone name follows daylight saving", () => {
+  expect(zoneName("2026-10-19T05:05:00Z")).toBe("AEDT");
+  expect(zoneName("2026-07-01T02:00:00Z")).toBe("AEST");
 });

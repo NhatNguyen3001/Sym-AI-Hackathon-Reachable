@@ -1413,7 +1413,7 @@
       "exit": "North exit lift",
       "status": "Working",
       "source": "Transport for NSW",
-      "updated": "when recorded (19 Oct 2026, Sydney time)",
+      "updated": "when recorded (19 Oct 2026)",
       "lat": -33.7771612,
       "lng": 151.1180777
      },
@@ -1422,7 +1422,7 @@
       "exit": "South exit lift",
       "status": "Working",
       "source": "Transport for NSW",
-      "updated": "when recorded (19 Oct 2026, Sydney time)",
+      "updated": "when recorded (19 Oct 2026)",
       "lat": -33.7774328,
       "lng": 151.1184521
      }
@@ -1435,7 +1435,7 @@
     "exit": "North exit lift",
     "status": "Working",
     "source": "Transport for NSW",
-    "updated": "when recorded (19 Oct 2026, Sydney time)",
+    "updated": "when recorded (19 Oct 2026)",
     "lat": -33.7771612,
     "lng": 151.1180777
    },
@@ -1444,7 +1444,7 @@
     "exit": "South exit lift",
     "status": "Working",
     "source": "Transport for NSW",
-    "updated": "when recorded (19 Oct 2026, Sydney time)",
+    "updated": "when recorded (19 Oct 2026)",
     "lat": -33.7774328,
     "lng": 151.1184521
    }
@@ -1480,7 +1480,7 @@
    }
   ],
   "checkedBy": "Sym agent",
-  "checkedAgo": "when recorded (19 Oct 2026, Sydney time)",
+  "checkedAgo": "when recorded (19 Oct 2026)",
   "sourceCount": 3,
   "sources": [
    {

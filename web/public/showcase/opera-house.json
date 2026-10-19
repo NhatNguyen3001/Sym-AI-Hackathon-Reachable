@@ -1965,7 +1965,7 @@
       "exit": "North exit lift",
       "status": "Working",
       "source": "Transport for NSW",
-      "updated": "when recorded (19 Oct 2026, Sydney time)",
+      "updated": "when recorded (19 Oct 2026)",
       "lat": -33.7771612,
       "lng": 151.1180777
      },
@@ -1974,7 +1974,7 @@
       "exit": "South exit lift",
       "status": "Working",
       "source": "Transport for NSW",
-      "updated": "when recorded (19 Oct 2026, Sydney time)",
+      "updated": "when recorded (19 Oct 2026)",
       "lat": -33.7774328,
       "lng": 151.1184521
      },
@@ -1983,7 +1983,7 @@
       "exit": "Martin Place Station lifts",
       "status": "Working",
       "source": "Transport for NSW",
-      "updated": "when recorded (19 Oct 2026, Sydney time)",
+      "updated": "when recorded (19 Oct 2026)",
       "lat": -33.867135,
       "lng": 151.210568
      }
@@ -3907,7 +3907,7 @@
       "exit": "North exit lift",
       "status": "Working",
       "source": "Transport for NSW",
-      "updated": "when recorded (19 Oct 2026, Sydney time)",
+      "updated": "when recorded (19 Oct 2026)",
       "lat": -33.7771612,
       "lng": 151.1180777
      },
@@ -3916,7 +3916,7 @@
       "exit": "South exit lift",
       "status": "Working",
       "source": "Transport for NSW",
-      "updated": "when recorded (19 Oct 2026, Sydney time)",
+      "updated": "when recorded (19 Oct 2026)",
       "lat": -33.7774328,
       "lng": 151.1184521
      },
@@ -3925,7 +3925,7 @@
       "exit": "Martin Place Station lifts",
       "status": "Working",
       "source": "Transport for NSW",
-      "updated": "when recorded (19 Oct 2026, Sydney time)",
+      "updated": "when recorded (19 Oct 2026)",
       "lat": -33.867135,
       "lng": 151.210568
      }
@@ -5849,7 +5849,7 @@
       "exit": "North exit lift",
       "status": "Working",
       "source": "Transport for NSW",
-      "updated": "when recorded (19 Oct 2026, Sydney time)",
+      "updated": "when recorded (19 Oct 2026)",
       "lat": -33.7771612,
       "lng": 151.1180777
      },
@@ -5858,7 +5858,7 @@
       "exit": "South exit lift",
       "status": "Working",
       "source": "Transport for NSW",
-      "updated": "when recorded (19 Oct 2026, Sydney time)",
+      "updated": "when recorded (19 Oct 2026)",
       "lat": -33.7774328,
       "lng": 151.1184521
      },
@@ -5867,7 +5867,7 @@
       "exit": "Martin Place Station lifts",
       "status": "Working",
       "source": "Transport for NSW",
-      "updated": "when recorded (19 Oct 2026, Sydney time)",
+      "updated": "when recorded (19 Oct 2026)",
       "lat": -33.867135,
       "lng": 151.210568
      }
@@ -7826,7 +7826,7 @@
       "exit": "North exit lift",
       "status": "Working",
       "source": "Transport for NSW",
-      "updated": "when recorded (19 Oct 2026, Sydney time)",
+      "updated": "when recorded (19 Oct 2026)",
       "lat": -33.7771612,
       "lng": 151.1180777
      },
@@ -7835,7 +7835,7 @@
       "exit": "South exit lift",
       "status": "Working",
       "source": "Transport for NSW",
-      "updated": "when recorded (19 Oct 2026, Sydney time)",
+      "updated": "when recorded (19 Oct 2026)",
       "lat": -33.7774328,
       "lng": 151.1184521
      },
@@ -7844,7 +7844,7 @@
       "exit": "Martin Place Station lifts",
       "status": "Working",
       "source": "Transport for NSW",
-      "updated": "when recorded (19 Oct 2026, Sydney time)",
+      "updated": "when recorded (19 Oct 2026)",
       "lat": -33.867135,
       "lng": 151.210568
      }
@@ -7857,7 +7857,7 @@
     "exit": "North exit lift",
     "status": "Working",
     "source": "Transport for NSW",
-    "updated": "when recorded (19 Oct 2026, Sydney time)",
+    "updated": "when recorded (19 Oct 2026)",
     "lat": -33.7771612,
     "lng": 151.1180777
    },
@@ -7866,7 +7866,7 @@
     "exit": "South exit lift",
     "status": "Working",
     "source": "Transport for NSW",
-    "updated": "when recorded (19 Oct 2026, Sydney time)",
+    "updated": "when recorded (19 Oct 2026)",
     "lat": -33.7774328,
     "lng": 151.1184521
    },
@@ -7875,7 +7875,7 @@
     "exit": "Martin Place Station lifts",
     "status": "Working",
     "source": "Transport for NSW",
-    "updated": "when recorded (19 Oct 2026, Sydney time)",
+    "updated": "when recorded (19 Oct 2026)",
     "lat": -33.867135,
     "lng": 151.210568
    }
@@ -7894,7 +7894,7 @@
   "id": "osm:R9596872",
   "name": "Sydney Opera House",
   "checkedBy": "Not checked yet",
-  "checkedAgo": "when recorded (19 Oct 2026, Sydney time)",
+  "checkedAgo": "when recorded (19 Oct 2026)",
   "sourceCount": 0,
   "sources": [],
   "checks": [

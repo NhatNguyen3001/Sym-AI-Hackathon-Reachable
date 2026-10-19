@@ -1,4 +1,5 @@
 import { SHOWCASE } from "./showcase";
+import { zoneName } from "./trip";
 import type { MapStatus } from "./types";
 
 const TZ = "Australia/Sydney";
@@ -26,7 +27,7 @@ export function freshnessLine(s: MapStatus, now: Date): string {
   if (s.lastRun && SHOWCASE) {
     // Seen long after it was recorded, from anywhere: the full date and whose clock, never "today".
     const run = new Date(s.lastRun);
-    line = `Places and roadworks updated ${dayMonth(run)} ${sydneyDay(run).slice(0, 4)}, ${clock(run)} (Sydney time)`;
+    line = `Places and roadworks updated ${dayMonth(run)} ${sydneyDay(run).slice(0, 4)}, ${clock(run)} ${zoneName(s.lastRun)}`;
   } else if (s.lastRun) {
     const run = new Date(s.lastRun);
     line = sydneyDay(run) === sydneyDay(now)

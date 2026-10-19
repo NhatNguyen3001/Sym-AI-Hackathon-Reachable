@@ -59,7 +59,7 @@ for (const trip of TRIPS) {
     await expect(page.getByText(/can't reach|couldn't plan/i)).toHaveCount(0);
     const text = await page.locator("body").innerText();
     expect(text).not.toMatch(/\bago\b|Leave in/);
-    if (trip.id === "opera-house" && !REAL) expect(text).toContain("(Sydney)");
+    if (trip.id === "opera-house" && !REAL) expect(text).toMatch(/\d [ap]m AE[DS]T/);
   });
 }
 
@@ -130,7 +130,7 @@ test("needs can't be saved over the visitor's own", async ({ page }) => {
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem("reachable.profile") ?? "{}").aid)).toBe("cane");
 });
 
-test("guidance on a recorded public transport trip counts down by distance, in Sydney time", async ({ page }) => {
+test("guidance on a recorded public transport trip counts down by distance, in AEDT", async ({ page }) => {
   await setup(page);
   const trip = TRIPS.find((t) => t.id === "opera-house")!;
   // Through the picker: the real recordings' place ids differ from the fixtures'.
@@ -142,7 +142,7 @@ test("guidance on a recorded public transport trip counts down by distance, in S
   await expect(progress).toBeVisible();
   const text = await progress.innerText();
   expect(text).not.toMatch(/^0 min/m);
-  expect(text).toContain("(Sydney)");
+  expect(text).toMatch(/\d [ap]m AE[DS]T/);
   await expect(page.getByRole("button", { name: "Stop preview" })).toHaveCount(0);
 });
 
@@ -176,7 +176,7 @@ test("GitHub is offered as the code, not a live version", async ({ page }) => {
 test("the map says when its places and roadworks were updated", async ({ page }) => {
   await setup(page);
   await page.goto("/");
-  await expect(page.getByText(/Places and roadworks updated \d+ \w+ \d{4}, .* \(Sydney time\)/).locator("visible=true").first()).toBeVisible();
+  await expect(page.getByText(/Places and roadworks updated \d+ \w+ \d{4}, .* AE[DS]T/).locator("visible=true").first()).toBeVisible();
 });
 
 test("from a trip, a link goes back to all the trips", async ({ page }) => {

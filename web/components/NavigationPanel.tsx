@@ -8,7 +8,7 @@ import {
   distanceText, navKey, nextTurn, spokenStep, turnPhrase, turnsOf, type NavIcon, type NavRoute,
 } from "@/lib/navigation";
 import { readStored, writeStored } from "@/lib/storage";
-import { timeOfDay } from "@/lib/trip";
+import { timeOfDay, zoneName } from "@/lib/trip";
 import type { Guidance } from "@/lib/useGuidance";
 import type { LocationStatus } from "@/lib/useUserLocation";
 import { SHOWCASE } from "@/lib/showcase";
@@ -125,12 +125,12 @@ export function NavigationPanel({
 
   const left = p ? p.remainingM : nav.total;
   // A recorded trip's times are from the day it was recorded: count down by distance, and show its recorded arrival
-  // (in Sydney time) rather than one worked out from the visitor's clock.
+  // (with its time zone, AEDT or AEST) rather than one worked out from the visitor's clock.
   const minsLeft = arriveAt && !SHOWCASE
     ? Math.max(0, Math.round((new Date(arriveAt).getTime() - now) / 60000))
     : Math.max(0, Math.ceil(minutes * (nav.total > 0 ? left / nav.total : 1)));
   const eta = arriveAt ?? new Date(now + minsLeft * 60000).toISOString();
-  const arrive = !SHOWCASE ? ` · arrive ${timeOfDay(eta)}` : arriveAt ? ` · arrive ${timeOfDay(arriveAt)} (Sydney)` : "";
+  const arrive = !SHOWCASE ? ` · arrive ${timeOfDay(eta)}` : arriveAt ? ` · arrive ${timeOfDay(arriveAt)} ${zoneName(arriveAt)}` : "";
   const Icon = p ? ICONS[p.current.icon] ?? Navigation : Navigation;
   const NextIcon = p?.next ? ICONS[p.next.icon] ?? Navigation : Flag;
 
