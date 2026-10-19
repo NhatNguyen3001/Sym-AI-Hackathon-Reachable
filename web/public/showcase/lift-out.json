@@ -1,0 +1,1629 @@
+{
+ "trip": {
+  "id": "lift-out",
+  "title": "The same trip, with a station lift out",
+  "blurb": "The north exit lift is out, so the route uses the south exit and says why.",
+  "needsText": "Manual wheelchair, gentle slopes only",
+  "staged": "Example: lift out of service",
+  "fromId": "mq-station",
+  "toId": "library",
+  "profile": {
+   "aid": "manual_wheelchair",
+   "maxSlope": 5,
+   "avoid": {
+    "stairs": true,
+    "kerbsNoRamp": true,
+    "slipperyWhenWet": true,
+    "uneven": true
+   },
+   "destination": {
+    "entrance": true,
+    "toilet": true,
+    "parking": false
+   },
+   "text": ""
+  }
+ },
+ "from": {
+  "id": "mq-station",
+  "name": "Macquarie University station",
+  "kind": "station",
+  "lat": -33.77735,
+  "lng": 151.11825
+ },
+ "to": {
+  "id": "library",
+  "name": "Waranara Library",
+  "kind": "venue",
+  "lat": -33.775688,
+  "lng": 151.113509
+ },
+ "route": {
+  "ok": true,
+  "accessible": {
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      151.11825,
+      -33.77735
+     ],
+     [
+      151.1184521,
+      -33.7774328
+     ],
+     [
+      151.1183853,
+      -33.7773862
+     ],
+     [
+      151.1183478,
+      -33.777419
+     ],
+     [
+      151.1182803,
+      -33.7773726
+     ],
+     [
+      151.118183,
+      -33.7773057
+     ],
+     [
+      151.1180935,
+      -33.7772442
+     ],
+     [
+      151.1180673,
+      -33.7772648
+     ],
+     [
+      151.1177082,
+      -33.7770009
+     ],
+     [
+      151.1172909,
+      -33.776671
+     ],
+     [
+      151.1170187,
+      -33.776477
+     ],
+     [
+      151.1169686,
+      -33.7764428
+     ],
+     [
+      151.1168845,
+      -33.7763854
+     ],
+     [
+      151.1168238,
+      -33.7763439
+     ],
+     [
+      151.1168035,
+      -33.7763664
+     ],
+     [
+      151.1167377,
+      -33.7763564
+     ],
+     [
+      151.1166818,
+      -33.7763353
+     ],
+     [
+      151.1166439,
+      -33.7763165
+     ],
+     [
+      151.1166,
+      -33.7762878
+     ],
+     [
+      151.1163834,
+      -33.7760746
+     ],
+     [
+      151.1160617,
+      -33.775947
+     ],
+     [
+      151.1159506,
+      -33.7759432
+     ],
+     [
+      151.1158902,
+      -33.7759238
+     ],
+     [
+      151.1156186,
+      -33.7759199
+     ],
+     [
+      151.1155387,
+      -33.7758441
+     ],
+     [
+      151.1154596,
+      -33.7758446
+     ],
+     [
+      151.1154029,
+      -33.7758503
+     ],
+     [
+      151.1153805,
+      -33.775853
+     ],
+     [
+      151.1153467,
+      -33.7758659
+     ],
+     [
+      151.1153078,
+      -33.7758763
+     ],
+     [
+      151.1152115,
+      -33.7758859
+     ],
+     [
+      151.1146092,
+      -33.7758851
+     ],
+     [
+      151.1145612,
+      -33.7758778
+     ],
+     [
+      151.1144946,
+      -33.7758637
+     ],
+     [
+      151.1144325,
+      -33.7758537
+     ],
+     [
+      151.1143992,
+      -33.7758694
+     ],
+     [
+      151.1143871,
+      -33.7758801
+     ],
+     [
+      151.1143687,
+      -33.7758973
+     ],
+     [
+      151.114349,
+      -33.7759116
+     ],
+     [
+      151.1143256,
+      -33.7759171
+     ],
+     [
+      151.1141843,
+      -33.7759171
+     ],
+     [
+      151.1139064,
+      -33.7759191
+     ],
+     [
+      151.1138973,
+      -33.775659
+     ],
+     [
+      151.1138976,
+      -33.7755985
+     ],
+     [
+      151.1138913,
+      -33.7755379
+     ],
+     [
+      151.1138779,
+      -33.7754875
+     ],
+     [
+      151.1138454,
+      -33.7754288
+     ],
+     [
+      151.1136962,
+      -33.7753646
+     ],
+     [
+      151.1136342,
+      -33.7753627
+     ],
+     [
+      151.1136049,
+      -33.7753633
+     ],
+     [
+      151.1135439,
+      -33.7754681
+     ]
+    ]
+   },
+   "distanceM": 608,
+   "minutes": 11,
+   "maxSlope": 3,
+   "stepFree": true
+  },
+  "fastest": {
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      151.11825,
+      -33.77735
+     ],
+     [
+      151.1180777,
+      -33.7771612
+     ],
+     [
+      151.1181087,
+      -33.7771853
+     ],
+     [
+      151.118137,
+      -33.7772073
+     ],
+     [
+      151.1180935,
+      -33.7772442
+     ],
+     [
+      151.1180673,
+      -33.7772648
+     ],
+     [
+      151.1177082,
+      -33.7770009
+     ],
+     [
+      151.1172909,
+      -33.776671
+     ],
+     [
+      151.1170187,
+      -33.776477
+     ],
+     [
+      151.1169686,
+      -33.7764428
+     ],
+     [
+      151.1168845,
+      -33.7763854
+     ],
+     [
+      151.1168238,
+      -33.7763439
+     ],
+     [
+      151.1168035,
+      -33.7763664
+     ],
+     [
+      151.1167377,
+      -33.7763564
+     ],
+     [
+      151.1166818,
+      -33.7763353
+     ],
+     [
+      151.1166439,
+      -33.7763165
+     ],
+     [
+      151.1166,
+      -33.7762878
+     ],
+     [
+      151.1163834,
+      -33.7760746
+     ],
+     [
+      151.1160617,
+      -33.775947
+     ],
+     [
+      151.1159506,
+      -33.7759432
+     ],
+     [
+      151.1158902,
+      -33.7759238
+     ],
+     [
+      151.1156186,
+      -33.7759199
+     ],
+     [
+      151.1155387,
+      -33.7758441
+     ],
+     [
+      151.1154596,
+      -33.7758446
+     ],
+     [
+      151.1154029,
+      -33.7758503
+     ],
+     [
+      151.1153805,
+      -33.775853
+     ],
+     [
+      151.1153467,
+      -33.7758659
+     ],
+     [
+      151.1153078,
+      -33.7758763
+     ],
+     [
+      151.1152115,
+      -33.7758859
+     ],
+     [
+      151.1146092,
+      -33.7758851
+     ],
+     [
+      151.1145612,
+      -33.7758778
+     ],
+     [
+      151.1144946,
+      -33.7758637
+     ],
+     [
+      151.1144325,
+      -33.7758537
+     ],
+     [
+      151.1143992,
+      -33.7758694
+     ],
+     [
+      151.1143871,
+      -33.7758801
+     ],
+     [
+      151.1143687,
+      -33.7758973
+     ],
+     [
+      151.114349,
+      -33.7759116
+     ],
+     [
+      151.1143256,
+      -33.7759171
+     ],
+     [
+      151.1141843,
+      -33.7759171
+     ],
+     [
+      151.1139064,
+      -33.7759191
+     ],
+     [
+      151.1138973,
+      -33.775659
+     ],
+     [
+      151.1138976,
+      -33.7755985
+     ],
+     [
+      151.1138913,
+      -33.7755379
+     ],
+     [
+      151.1138779,
+      -33.7754875
+     ],
+     [
+      151.1138454,
+      -33.7754288
+     ],
+     [
+      151.1136962,
+      -33.7753646
+     ],
+     [
+      151.1136342,
+      -33.7753627
+     ],
+     [
+      151.1136049,
+      -33.7753633
+     ],
+     [
+      151.1135439,
+      -33.7754681
+     ]
+    ]
+   },
+   "distanceM": 578,
+   "minutes": 10,
+   "maxSlope": 3,
+   "stepFree": true
+  },
+  "minutesLonger": 1,
+  "steps": [
+   {
+    "icon": "lift",
+    "label": "Lift at south exit",
+    "confidence": "Confirmed",
+    "lengthM": 20,
+    "kind": "lift",
+    "slope": null,
+    "measured": false
+   },
+   {
+    "icon": "check",
+    "label": "Flat footpath, 13 m",
+    "confidence": "Confirmed",
+    "lengthM": 13,
+    "kind": "flat",
+    "slope": null,
+    "measured": false
+   },
+   {
+    "icon": "alert",
+    "label": "Kerb ramp at crossing",
+    "confidence": "Not sure",
+    "lengthM": 30,
+    "kind": "crossing",
+    "slope": null,
+    "measured": false
+   },
+   {
+    "icon": "check",
+    "label": "Flat footpath, 48 m",
+    "confidence": "Confirmed",
+    "lengthM": 48,
+    "kind": "flat",
+    "slope": null,
+    "measured": false
+   },
+   {
+    "icon": "slope",
+    "label": "Gentle slope, up to 3%, 92 m",
+    "confidence": "Confirmed",
+    "lengthM": 92,
+    "kind": "slope",
+    "slope": 3,
+    "measured": false
+   },
+   {
+    "icon": "alert",
+    "label": "Kerb ramp at crossing",
+    "confidence": "Not sure",
+    "lengthM": 17,
+    "kind": "crossing",
+    "slope": null,
+    "measured": false
+   },
+   {
+    "icon": "check",
+    "label": "Flat footpath, 24 m",
+    "confidence": "Confirmed",
+    "lengthM": 24,
+    "kind": "flat",
+    "slope": null,
+    "measured": false
+   },
+   {
+    "icon": "slope",
+    "label": "Gentle slope, up to 3%, 271 m",
+    "confidence": "Confirmed",
+    "lengthM": 271,
+    "kind": "slope",
+    "slope": 3,
+    "measured": false
+   },
+   {
+    "icon": "check",
+    "label": "Flat footpath, 92 m",
+    "confidence": "Confirmed",
+    "lengthM": 92,
+    "kind": "flat",
+    "slope": null,
+    "measured": false
+   }
+  ],
+  "exitUsed": "south",
+  "alternatives": [
+   {
+    "geometry": {
+     "type": "LineString",
+     "coordinates": [
+      [
+       151.11825,
+       -33.77735
+      ],
+      [
+       151.1184521,
+       -33.7774328
+      ],
+      [
+       151.1183853,
+       -33.7773862
+      ],
+      [
+       151.1183478,
+       -33.777419
+      ],
+      [
+       151.1182803,
+       -33.7773726
+      ],
+      [
+       151.1182069,
+       -33.7774451
+      ],
+      [
+       151.1181131,
+       -33.7773748
+      ],
+      [
+       151.1180459,
+       -33.7774414
+      ],
+      [
+       151.1179864,
+       -33.7775026
+      ],
+      [
+       151.1179671,
+       -33.7775206
+      ],
+      [
+       151.1176423,
+       -33.7778132
+      ],
+      [
+       151.1175631,
+       -33.7777515
+      ],
+      [
+       151.1167708,
+       -33.7784846
+      ],
+      [
+       151.1163946,
+       -33.778832
+      ],
+      [
+       151.1163165,
+       -33.7789044
+      ],
+      [
+       151.1157975,
+       -33.7784804
+      ],
+      [
+       151.1157134,
+       -33.7783494
+      ],
+      [
+       151.1157134,
+       -33.7782145
+      ],
+      [
+       151.1157092,
+       -33.777822
+      ],
+      [
+       151.1157312,
+       -33.7777778
+      ],
+      [
+       151.1157695,
+       -33.7777581
+      ],
+      [
+       151.1152794,
+       -33.7771537
+      ],
+      [
+       151.1152791,
+       -33.7771121
+      ],
+      [
+       151.1152788,
+       -33.7770606
+      ],
+      [
+       151.1152785,
+       -33.7770238
+      ],
+      [
+       151.115214,
+       -33.7770293
+      ],
+      [
+       151.1150346,
+       -33.7770238
+      ],
+      [
+       151.1148956,
+       -33.7769211
+      ],
+      [
+       151.1148735,
+       -33.7768956
+      ],
+      [
+       151.1147763,
+       -33.7769777
+      ],
+      [
+       151.1147546,
+       -33.7769749
+      ],
+      [
+       151.1147328,
+       -33.7769771
+      ],
+      [
+       151.1147126,
+       -33.7769843
+      ],
+      [
+       151.1146956,
+       -33.7769959
+      ],
+      [
+       151.1145987,
+       -33.7769875
+      ],
+      [
+       151.1144846,
+       -33.7769863
+      ],
+      [
+       151.1144831,
+       -33.7769221
+      ],
+      [
+       151.1144516,
+       -33.7768175
+      ],
+      [
+       151.11444,
+       -33.7767466
+      ],
+      [
+       151.1144374,
+       -33.7759702
+      ],
+      [
+       151.1144325,
+       -33.7758537
+      ],
+      [
+       151.1143992,
+       -33.7758694
+      ],
+      [
+       151.1143871,
+       -33.7758801
+      ],
+      [
+       151.1143687,
+       -33.7758973
+      ],
+      [
+       151.114349,
+       -33.7759116
+      ],
+      [
+       151.1143256,
+       -33.7759171
+      ],
+      [
+       151.1141843,
+       -33.7759171
+      ],
+      [
+       151.1139064,
+       -33.7759191
+      ],
+      [
+       151.1138973,
+       -33.775659
+      ],
+      [
+       151.1138976,
+       -33.7755985
+      ],
+      [
+       151.1138913,
+       -33.7755379
+      ],
+      [
+       151.1138779,
+       -33.7754875
+      ],
+      [
+       151.1138454,
+       -33.7754288
+      ],
+      [
+       151.1136962,
+       -33.7753646
+      ],
+      [
+       151.1136342,
+       -33.7753627
+      ],
+      [
+       151.1136049,
+       -33.7753633
+      ],
+      [
+       151.1135439,
+       -33.7754681
+      ]
+     ]
+    },
+    "distanceM": 912,
+    "minutes": 16,
+    "maxSlope": 3,
+    "stepFree": true,
+    "summary": "A longer way around, about 5 min slower, with the same slope",
+    "steps": [
+     {
+      "icon": "lift",
+      "label": "Lift at south exit",
+      "confidence": "Confirmed",
+      "lengthM": 20,
+      "kind": "lift",
+      "slope": null,
+      "measured": false
+     },
+     {
+      "icon": "check",
+      "label": "Flat footpath, 13 m",
+      "confidence": "Confirmed",
+      "lengthM": 13,
+      "kind": "flat",
+      "slope": null,
+      "measured": false
+     },
+     {
+      "icon": "alert",
+      "label": "Kerb ramp at crossing",
+      "confidence": "Not sure",
+      "lengthM": 8,
+      "kind": "crossing",
+      "slope": null,
+      "measured": false
+     },
+     {
+      "icon": "check",
+      "label": "Flat footpath, 43 m",
+      "confidence": "Confirmed",
+      "lengthM": 43,
+      "kind": "flat",
+      "slope": null,
+      "measured": false
+     },
+     {
+      "icon": "slope",
+      "label": "Gentle slope, up to 3%, 216 m",
+      "confidence": "Confirmed",
+      "lengthM": 216,
+      "kind": "slope",
+      "slope": 3,
+      "measured": false
+     },
+     {
+      "icon": "check",
+      "label": "Flat footpath, 244 m",
+      "confidence": "Confirmed",
+      "lengthM": 244,
+      "kind": "flat",
+      "slope": null,
+      "measured": false
+     },
+     {
+      "icon": "alert",
+      "label": "Kerb ramp at crossing",
+      "confidence": "Not sure",
+      "lengthM": 14,
+      "kind": "crossing",
+      "slope": null,
+      "measured": false
+     },
+     {
+      "icon": "slope",
+      "label": "Gentle slope, up to 2%, 23 m",
+      "confidence": "Confirmed",
+      "lengthM": 23,
+      "kind": "slope",
+      "slope": 2,
+      "measured": false
+     },
+     {
+      "icon": "check",
+      "label": "Flat footpath, 17 m",
+      "confidence": "Confirmed",
+      "lengthM": 17,
+      "kind": "flat",
+      "slope": null,
+      "measured": false
+     },
+     {
+      "icon": "alert",
+      "label": "Kerb ramp at crossing",
+      "confidence": "Not sure",
+      "lengthM": 3,
+      "kind": "crossing",
+      "slope": null,
+      "measured": false
+     },
+     {
+      "icon": "check",
+      "label": "Flat footpath, 30 m",
+      "confidence": "Confirmed",
+      "lengthM": 30,
+      "kind": "flat",
+      "slope": null,
+      "measured": false
+     },
+     {
+      "icon": "slope",
+      "label": "Gentle slope, up to 2%, 11 m",
+      "confidence": "Confirmed",
+      "lengthM": 11,
+      "kind": "slope",
+      "slope": 2,
+      "measured": false
+     },
+     {
+      "icon": "alert",
+      "label": "Kerb ramp at crossing",
+      "confidence": "Not sure",
+      "lengthM": 7,
+      "kind": "crossing",
+      "slope": null,
+      "measured": false
+     },
+     {
+      "icon": "check",
+      "label": "Flat footpath, 132 m",
+      "confidence": "Confirmed",
+      "lengthM": 132,
+      "kind": "flat",
+      "slope": null,
+      "measured": false
+     },
+     {
+      "icon": "slope",
+      "label": "Gentle slope, up to 2%, 39 m",
+      "confidence": "Confirmed",
+      "lengthM": 39,
+      "kind": "slope",
+      "slope": 2,
+      "measured": false
+     },
+     {
+      "icon": "check",
+      "label": "Flat footpath, 92 m",
+      "confidence": "Confirmed",
+      "lengthM": 92,
+      "kind": "flat",
+      "slope": null,
+      "measured": false
+     }
+    ]
+   },
+   {
+    "geometry": {
+     "type": "LineString",
+     "coordinates": [
+      [
+       151.11825,
+       -33.77735
+      ],
+      [
+       151.1184521,
+       -33.7774328
+      ],
+      [
+       151.1184786,
+       -33.7774526
+      ],
+      [
+       151.1184925,
+       -33.7774616
+      ],
+      [
+       151.1184843,
+       -33.7774471
+      ],
+      [
+       151.1184392,
+       -33.7774155
+      ],
+      [
+       151.1183741,
+       -33.7774093
+      ],
+      [
+       151.1182448,
+       -33.777317
+      ],
+      [
+       151.1181046,
+       -33.7772134
+      ],
+      [
+       151.1180871,
+       -33.7771639
+      ],
+      [
+       151.1180568,
+       -33.7771388
+      ],
+      [
+       151.1180389,
+       -33.7771331
+      ],
+      [
+       151.1180518,
+       -33.7771434
+      ],
+      [
+       151.1180777,
+       -33.7771612
+      ],
+      [
+       151.1181087,
+       -33.7771853
+      ],
+      [
+       151.118137,
+       -33.7772073
+      ],
+      [
+       151.1180935,
+       -33.7772442
+      ],
+      [
+       151.1180673,
+       -33.7772648
+      ],
+      [
+       151.1180074,
+       -33.7773224
+      ],
+      [
+       151.117958,
+       -33.7773698
+      ],
+      [
+       151.1179316,
+       -33.7773951
+      ],
+      [
+       151.1179141,
+       -33.7774119
+      ],
+      [
+       151.1172354,
+       -33.7769313
+      ],
+      [
+       151.1171697,
+       -33.7768895
+      ],
+      [
+       151.1170899,
+       -33.776865
+      ],
+      [
+       151.1169945,
+       -33.7768555
+      ],
+      [
+       151.1168508,
+       -33.7768682
+      ],
+      [
+       151.1162178,
+       -33.7769905
+      ],
+      [
+       151.1154843,
+       -33.7771345
+      ],
+      [
+       151.1153947,
+       -33.7771454
+      ],
+      [
+       151.1152794,
+       -33.7771537
+      ],
+      [
+       151.1147474,
+       -33.7771469
+      ],
+      [
+       151.1144872,
+       -33.7770923
+      ],
+      [
+       151.1144859,
+       -33.7770384
+      ],
+      [
+       151.1144846,
+       -33.7769863
+      ],
+      [
+       151.1144831,
+       -33.7769221
+      ],
+      [
+       151.1144516,
+       -33.7768175
+      ],
+      [
+       151.11444,
+       -33.7767466
+      ],
+      [
+       151.1144374,
+       -33.7759702
+      ],
+      [
+       151.1141588,
+       -33.7759768
+      ],
+      [
+       151.1138491,
+       -33.775979
+      ],
+      [
+       151.113516,
+       -33.7759787
+      ],
+      [
+       151.1129608,
+       -33.7759942
+      ],
+      [
+       151.112449,
+       -33.7759999
+      ],
+      [
+       151.1124487,
+       -33.7759203
+      ],
+      [
+       151.1124482,
+       -33.7757294
+      ],
+      [
+       151.1125012,
+       -33.7757075
+      ],
+      [
+       151.1130216,
+       -33.7754902
+      ],
+      [
+       151.1131447,
+       -33.7754674
+      ],
+      [
+       151.1135439,
+       -33.7754681
+      ]
+     ]
+    },
+    "distanceM": 916,
+    "minutes": 16,
+    "maxSlope": 3,
+    "stepFree": true,
+    "summary": "A longer way around, about 5 min slower, with the same slope",
+    "steps": [
+     {
+      "icon": "lift",
+      "label": "Lift at south exit",
+      "confidence": "Confirmed",
+      "lengthM": 20,
+      "kind": "lift",
+      "slope": null,
+      "measured": false
+     },
+     {
+      "icon": "check",
+      "label": "Flat footpath, 84 m",
+      "confidence": "Confirmed",
+      "lengthM": 84,
+      "kind": "flat",
+      "slope": null,
+      "measured": false
+     },
+     {
+      "icon": "alert",
+      "label": "Kerb ramp at crossing",
+      "confidence": "Not sure",
+      "lengthM": 19,
+      "kind": "crossing",
+      "slope": null,
+      "measured": false
+     },
+     {
+      "icon": "slope",
+      "label": "Gentle slope, up to 3%, 345 m",
+      "confidence": "Confirmed",
+      "lengthM": 345,
+      "kind": "slope",
+      "slope": 3,
+      "measured": false
+     },
+     {
+      "icon": "alert",
+      "label": "Kerb ramp at crossing",
+      "confidence": "Not sure",
+      "lengthM": 19,
+      "kind": "crossing",
+      "slope": null,
+      "measured": false
+     },
+     {
+      "icon": "check",
+      "label": "Flat footpath, 106 m",
+      "confidence": "Confirmed",
+      "lengthM": 106,
+      "kind": "flat",
+      "slope": null,
+      "measured": false
+     },
+     {
+      "icon": "slope",
+      "label": "Gentle slope, up to 2%, 54 m",
+      "confidence": "Confirmed",
+      "lengthM": 54,
+      "kind": "slope",
+      "slope": 2,
+      "measured": false
+     },
+     {
+      "icon": "check",
+      "label": "Flat footpath, 267 m",
+      "confidence": "Confirmed",
+      "lengthM": 267,
+      "kind": "flat",
+      "slope": null,
+      "measured": false
+     }
+    ]
+   }
+  ],
+  "options": [
+   {
+    "id": "walk",
+    "wayId": "walk",
+    "mode": "walk",
+    "minutes": 11,
+    "summary": "Walk or roll 11 min",
+    "stepFree": true,
+    "interchanges": 0,
+    "warnings": [],
+    "liftAlerts": [],
+    "stations": [],
+    "legs": [
+     {
+      "kind": "walk",
+      "geometry": {
+       "type": "LineString",
+       "coordinates": [
+        [
+         151.11825,
+         -33.77735
+        ],
+        [
+         151.1184521,
+         -33.7774328
+        ],
+        [
+         151.1183853,
+         -33.7773862
+        ],
+        [
+         151.1183478,
+         -33.777419
+        ],
+        [
+         151.1182803,
+         -33.7773726
+        ],
+        [
+         151.118183,
+         -33.7773057
+        ],
+        [
+         151.1180935,
+         -33.7772442
+        ],
+        [
+         151.1180673,
+         -33.7772648
+        ],
+        [
+         151.1177082,
+         -33.7770009
+        ],
+        [
+         151.1172909,
+         -33.776671
+        ],
+        [
+         151.1170187,
+         -33.776477
+        ],
+        [
+         151.1169686,
+         -33.7764428
+        ],
+        [
+         151.1168845,
+         -33.7763854
+        ],
+        [
+         151.1168238,
+         -33.7763439
+        ],
+        [
+         151.1168035,
+         -33.7763664
+        ],
+        [
+         151.1167377,
+         -33.7763564
+        ],
+        [
+         151.1166818,
+         -33.7763353
+        ],
+        [
+         151.1166439,
+         -33.7763165
+        ],
+        [
+         151.1166,
+         -33.7762878
+        ],
+        [
+         151.1163834,
+         -33.7760746
+        ],
+        [
+         151.1160617,
+         -33.775947
+        ],
+        [
+         151.1159506,
+         -33.7759432
+        ],
+        [
+         151.1158902,
+         -33.7759238
+        ],
+        [
+         151.1156186,
+         -33.7759199
+        ],
+        [
+         151.1155387,
+         -33.7758441
+        ],
+        [
+         151.1154596,
+         -33.7758446
+        ],
+        [
+         151.1154029,
+         -33.7758503
+        ],
+        [
+         151.1153805,
+         -33.775853
+        ],
+        [
+         151.1153467,
+         -33.7758659
+        ],
+        [
+         151.1153078,
+         -33.7758763
+        ],
+        [
+         151.1152115,
+         -33.7758859
+        ],
+        [
+         151.1146092,
+         -33.7758851
+        ],
+        [
+         151.1145612,
+         -33.7758778
+        ],
+        [
+         151.1144946,
+         -33.7758637
+        ],
+        [
+         151.1144325,
+         -33.7758537
+        ],
+        [
+         151.1143992,
+         -33.7758694
+        ],
+        [
+         151.1143871,
+         -33.7758801
+        ],
+        [
+         151.1143687,
+         -33.7758973
+        ],
+        [
+         151.114349,
+         -33.7759116
+        ],
+        [
+         151.1143256,
+         -33.7759171
+        ],
+        [
+         151.1141843,
+         -33.7759171
+        ],
+        [
+         151.1139064,
+         -33.7759191
+        ],
+        [
+         151.1138973,
+         -33.775659
+        ],
+        [
+         151.1138976,
+         -33.7755985
+        ],
+        [
+         151.1138913,
+         -33.7755379
+        ],
+        [
+         151.1138779,
+         -33.7754875
+        ],
+        [
+         151.1138454,
+         -33.7754288
+        ],
+        [
+         151.1136962,
+         -33.7753646
+        ],
+        [
+         151.1136342,
+         -33.7753627
+        ],
+        [
+         151.1136049,
+         -33.7753633
+        ],
+        [
+         151.1135439,
+         -33.7754681
+        ]
+       ]
+      },
+      "distanceM": 608,
+      "minutes": 11,
+      "maxSlope": 3,
+      "stepFree": true,
+      "steps": [
+       {
+        "icon": "lift",
+        "label": "Lift at south exit",
+        "confidence": "Confirmed",
+        "lengthM": 20,
+        "kind": "lift",
+        "slope": null,
+        "measured": false
+       },
+       {
+        "icon": "check",
+        "label": "Flat footpath, 13 m",
+        "confidence": "Confirmed",
+        "lengthM": 13,
+        "kind": "flat",
+        "slope": null,
+        "measured": false
+       },
+       {
+        "icon": "alert",
+        "label": "Kerb ramp at crossing",
+        "confidence": "Not sure",
+        "lengthM": 30,
+        "kind": "crossing",
+        "slope": null,
+        "measured": false
+       },
+       {
+        "icon": "check",
+        "label": "Flat footpath, 48 m",
+        "confidence": "Confirmed",
+        "lengthM": 48,
+        "kind": "flat",
+        "slope": null,
+        "measured": false
+       },
+       {
+        "icon": "slope",
+        "label": "Gentle slope, up to 3%, 92 m",
+        "confidence": "Confirmed",
+        "lengthM": 92,
+        "kind": "slope",
+        "slope": 3,
+        "measured": false
+       },
+       {
+        "icon": "alert",
+        "label": "Kerb ramp at crossing",
+        "confidence": "Not sure",
+        "lengthM": 17,
+        "kind": "crossing",
+        "slope": null,
+        "measured": false
+       },
+       {
+        "icon": "check",
+        "label": "Flat footpath, 24 m",
+        "confidence": "Confirmed",
+        "lengthM": 24,
+        "kind": "flat",
+        "slope": null,
+        "measured": false
+       },
+       {
+        "icon": "slope",
+        "label": "Gentle slope, up to 3%, 271 m",
+        "confidence": "Confirmed",
+        "lengthM": 271,
+        "kind": "slope",
+        "slope": 3,
+        "measured": false
+       },
+       {
+        "icon": "check",
+        "label": "Flat footpath, 92 m",
+        "confidence": "Confirmed",
+        "lengthM": 92,
+        "kind": "flat",
+        "slope": null,
+        "measured": false
+       }
+      ],
+      "source": "reachable",
+      "to": "Waranara Library"
+     }
+    ],
+    "liftStatus": [
+     {
+      "exitId": "north",
+      "exit": "North exit lift",
+      "status": "Out of service",
+      "source": "Transport for NSW",
+      "updated": "when recorded (19 Oct 2026, Sydney time)",
+      "lat": -33.7771612,
+      "lng": 151.1180777
+     },
+     {
+      "exitId": "south",
+      "exit": "South exit lift",
+      "status": "Working",
+      "source": "Transport for NSW",
+      "updated": "when recorded (19 Oct 2026, Sydney time)",
+      "lat": -33.7774328,
+      "lng": 151.1184521
+     }
+    ]
+   }
+  ],
+  "liftStatus": [
+   {
+    "exitId": "north",
+    "exit": "North exit lift",
+    "status": "Out of service",
+    "source": "Transport for NSW",
+    "updated": "when recorded (19 Oct 2026, Sydney time)",
+    "lat": -33.7771612,
+    "lng": 151.1180777
+   },
+   {
+    "exitId": "south",
+    "exit": "South exit lift",
+    "status": "Working",
+    "source": "Transport for NSW",
+    "updated": "when recorded (19 Oct 2026, Sydney time)",
+    "lat": -33.7774328,
+    "lng": 151.1184521
+   }
+  ],
+  "barriers": [],
+  "explanation": "Use the lift at the south exit, as the north exit lift is out of service. 1 min longer than the fastest route.",
+  "status": "Some details not sure",
+  "weather": {
+   "raining": false,
+   "summary": "Dry right now.",
+   "until": null,
+   "source": "Open-Meteo forecast"
+  }
+ },
+ "venue": {
+  "id": "library",
+  "name": "Waranara Library",
+  "checks": [
+   {
+    "field": "Level entrance",
+    "status": "Confirmed",
+    "source": "Macquarie University accessibility page (demo data) and 2 reviews agree (demo data)"
+   },
+   {
+    "field": "Step-free inside",
+    "status": "Confirmed",
+    "source": "Macquarie University accessibility page (demo data)"
+   },
+   {
+    "field": "Accessible toilet",
+    "status": "Confirmed",
+    "source": "Macquarie University accessibility page (demo data) and 2 reviews agree (demo data)"
+   }
+  ],
+  "checkedBy": "Sym agent",
+  "checkedAgo": "when recorded (19 Oct 2026, Sydney time)",
+  "sourceCount": 3,
+  "sources": [
+   {
+    "label": "Macquarie University accessibility page (demo data)",
+    "url": null
+   },
+   {
+    "label": "2 reviews agree (demo data)",
+    "url": null
+   },
+   {
+    "label": "Campus map lists accessible parking at C1 (demo data)",
+    "url": null
+   }
+  ]
+ }
+}
