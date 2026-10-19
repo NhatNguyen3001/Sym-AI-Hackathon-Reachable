@@ -112,10 +112,14 @@ Sydney's time zone (AEDT/AEST).
 - **Sydney only**, and not yet tested with the people it's for. That's the next step we'd most like to take.
 - **Photo reports are switched off** for now.
 
-## Built with
+## Acknowledgements
 
-FastAPI · Next.js · Valhalla · Transport for NSW Open Data · OpenStreetMap · Claude (Anthropic) · Turso · Photon ·
-Open-Meteo · Leaflet · Vercel · AWS
-
-Map data © OpenStreetMap contributors (ODbL). Built for the Sym AI Open 2026 at Macquarie University. AI coding
-assistants (Claude Code) were used under team review.
+- [Anthropic Claude](https://www.anthropic.com/) for roadwork triage and public transport explanations
+- [Transport for NSW Open Data](https://opendata.transport.nsw.gov.au) for trips, lift alerts, the stop finder and Live Traffic NSW
+- [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, [Overpass API](https://overpass-api.de/) and [Geofabrik](https://www.geofabrik.de/) for footpaths and places (map data © OpenStreetMap contributors, ODbL)
+- [Valhalla](https://github.com/valhalla/valhalla) for routing, [Photon](https://photon.komoot.io) for search, [Open-Meteo](https://open-meteo.com/) for weather
+- [Turso](https://turso.tech) for the database
+- [FastAPI](https://fastapi.tiangolo.com/), [SQLModel](https://sqlmodel.tiangolo.com/), [OSMnx](https://github.com/gboeing/osmnx), [Next.js](https://nextjs.org/), [Leaflet](https://leafletjs.com/), [react-leaflet](https://react-leaflet.js.org/), [Tailwind CSS](https://tailwindcss.com/) and [shadcn/ui](https://ui.shadcn.com/)
+- [Archify](https://github.com/tt-a1i/archify) for the architecture and workflow diagrams
+- Built for the Sym AI Open 2026 at Macquarie University
+- AI coding assistants (Claude Code) were used under team review
