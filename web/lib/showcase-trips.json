@@ -1,0 +1,78 @@
+[
+  {
+    "id": "campus",
+    "title": "Macquarie University station to Waranara Library",
+    "blurb": "A campus trip with measured slopes and both station lifts checked.",
+    "needsText": "Manual wheelchair, gentle slopes only",
+    "fromId": "mq-station",
+    "toId": "library",
+    "profile": {
+      "aid": "manual_wheelchair",
+      "maxSlope": 5,
+      "avoid": { "stairs": true, "kerbsNoRamp": true, "slipperyWhenWet": true, "uneven": true },
+      "destination": { "entrance": true, "toilet": true, "parking": false },
+      "text": ""
+    }
+  },
+  {
+    "id": "lift-out",
+    "title": "The same trip, with a station lift out",
+    "blurb": "The north exit lift is out, so the route uses the south exit and says why.",
+    "needsText": "Manual wheelchair, gentle slopes only",
+    "staged": "Example: lift out of service",
+    "fromId": "mq-station",
+    "toId": "library",
+    "profile": {
+      "aid": "manual_wheelchair",
+      "maxSlope": 5,
+      "avoid": { "stairs": true, "kerbsNoRamp": true, "slipperyWhenWet": true, "uneven": true },
+      "destination": { "entrance": true, "toilet": true, "parking": false },
+      "text": ""
+    }
+  },
+  {
+    "id": "opera-house",
+    "title": "Macquarie University to the Sydney Opera House",
+    "blurb": "Door to door by public transport: step-free walks at both ends of an accessible train trip.",
+    "needsText": "Power wheelchair, some hills",
+    "fromId": "mq-station",
+    "toQuery": "Sydney Opera House",
+    "profile": {
+      "aid": "power_wheelchair",
+      "maxSlope": 8,
+      "avoid": { "stairs": true, "kerbsNoRamp": true, "slipperyWhenWet": true, "uneven": false },
+      "destination": { "entrance": true, "toilet": true, "parking": false },
+      "text": ""
+    }
+  },
+  {
+    "id": "art-gallery",
+    "title": "Town Hall to the Art Gallery of NSW",
+    "blurb": "A city walk where slopes are estimated, and the app says so.",
+    "needsText": "Walker or frame, some hills",
+    "fromQuery": "Town Hall station",
+    "toQuery": "Art Gallery of New South Wales",
+    "profile": {
+      "aid": "walker",
+      "maxSlope": 8,
+      "avoid": { "stairs": true, "kerbsNoRamp": true, "slipperyWhenWet": true, "uneven": true },
+      "destination": { "entrance": true, "toilet": false, "parking": false },
+      "text": ""
+    }
+  },
+  {
+    "id": "bondi",
+    "title": "Bondi Junction to Bondi Beach",
+    "blurb": "A bus and a walk with a pram: not only for wheelchair users.",
+    "needsText": "Pram or stroller, some hills",
+    "fromQuery": "Bondi Junction station",
+    "toQuery": "Bondi Beach",
+    "profile": {
+      "aid": "pram",
+      "maxSlope": 8,
+      "avoid": { "stairs": true, "kerbsNoRamp": true, "slipperyWhenWet": false, "uneven": false },
+      "destination": { "entrance": false, "toilet": true, "parking": false },
+      "text": ""
+    }
+  }
+]
