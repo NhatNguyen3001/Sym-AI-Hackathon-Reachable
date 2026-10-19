@@ -7,6 +7,8 @@ import type {
 } from "./types";
 
 import { sessionId } from "./session";
+import { SHOWCASE, tripFor } from "./showcase";
+import { inBox, loadAllTrips, loadManifest, loadMapPlaces, loadMapStatus, loadTrip, loadUpdates } from "./showcaseData";
 
 // 127.0.0.1, not localhost: on Windows "localhost" tries IPv6 first and adds ~0.2 s to every request.
 export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000").replace(/\/$/, "");
@@ -77,6 +79,10 @@ async function read<T>(path: string, fallback: T, init?: RequestInit): Promise<F
 
 /** Place search. `limited` means the server's address search is down and only known places came back. */
 export async function getPlaces(q: string, { photon = true }: { photon?: boolean } = {}): Promise<Fetched<Place[]> & { limited: boolean }> {
+  if (SHOWCASE) {
+    const known = new Map((await loadAllTrips()).flatMap((r) => [r.from, r.to]).map((p) => [p.id, p]));
+    return { data: [...known.values()].filter((p) => p.name.toLowerCase().includes(q.toLowerCase())), sample: false, limited: false };
+  }
   try {
     const { body, headers } = await requestWithHeaders<Place[]>(`/places?q=${encodeURIComponent(q)}${photon ? "" : "&photon=0"}`);
     return { data: body, sample: false, limited: headers.get("X-Search-Limited") === "1" };
@@ -107,7 +113,22 @@ const SAMPLE_TRIP = { from: "mq-station", to: "library" };
 
 /** The sample route only stands in for the sample trip; any other failed trip is reported as an error. */
 /** `fresh`: after a live change (lift, barrier, weather), never reuse a request that started before it. */
-export function getRoute(from: string, to: string, profile: Profile, { fresh = false } = {}): Promise<Fetched<RouteResult>> {
+/** Showcase only: the recorded trip, or ApiError("not_in_showcase" | "showcase_missing"). */
+export async function getShowcaseRecording(from: string, to: string, trip?: string | null) {
+  const manifest = await loadManifest();
+  if (!manifest) throw new ApiError("showcase_missing", SHOWCASE_MISSING);
+  const t = tripFor(manifest, from, to, trip);
+  if (!t) throw new ApiError("not_in_showcase", "This trip isn't in the showcase. Pick one of these.");
+  const r = await loadTrip(t.id);
+  if (!r) throw new ApiError("showcase_missing", SHOWCASE_MISSING);
+  return r;
+}
+
+const SHOWCASE_MISSING = "This example couldn't load.";
+const SHOWCASE_WRITE = "Reports work in the live app.";
+
+export function getRoute(from: string, to: string, profile: Profile, { fresh = false, trip }: { fresh?: boolean; trip?: string | null } = {}): Promise<Fetched<RouteResult>> {
+  if (SHOWCASE) return getShowcaseRecording(from, to, trip).then((r) => ({ data: r.route, sample: false }));
   const run = async () => {
     if (from === SAMPLE_TRIP.from && to === SAMPLE_TRIP.to) return read<RouteResult>("/route", sample.route, jsonBody({ from, to, profile }));
     return { data: await request<RouteResult>("/route", jsonBody({ from, to, profile })), sample: false };
@@ -115,38 +136,52 @@ export function getRoute(from: string, to: string, profile: Profile, { fresh = f
   return fresh ? run() : shared(`route ${from} ${to} ${JSON.stringify(profile)}`, run);
 }
 
-export const getVenueCheck = (id: string) => read<VenueCheck>(`/venue/${encodeURIComponent(id)}/check`, sample.venue);
+export async function getVenueCheck(id: string): Promise<Fetched<VenueCheck>> {
+  if (SHOWCASE) {
+    const r = (await loadAllTrips()).find((t) => t.to.id === id && t.venue);
+    if (!r?.venue) throw new ApiError("showcase_missing", SHOWCASE_MISSING);
+    return { data: r.venue, sample: false };
+  }
+  return read<VenueCheck>(`/venue/${encodeURIComponent(id)}/check`, sample.venue);
+}
 
-export const getAmenities = () => read<AmenityPin[]>("/amenities", sample.amenities);
+export const getAmenities = (): Promise<Fetched<AmenityPin[]>> =>
+  SHOWCASE ? Promise.resolve({ data: sample.amenities, sample: false }) : read<AmenityPin[]>("/amenities", sample.amenities);
 
 /** OpenStreetMap places in a box (west, south, east, north). Empty when the API is down. */
-export const getMapPlaces = (bbox: [number, number, number, number]) =>
-  read<MapPlacePin[]>(`/map/places?bbox=${bbox.map((v) => v.toFixed(4)).join(",")}`, []);
+export const getMapPlaces = async (bbox: [number, number, number, number]): Promise<Fetched<MapPlacePin[]>> =>
+  SHOWCASE ? { data: (await loadMapPlaces()).filter((p) => inBox(p, bbox)), sample: false }
+    : read<MapPlacePin[]>(`/map/places?bbox=${bbox.map((v) => v.toFixed(4)).join(",")}`, []);
 
 /** Owner only: start a map update (the key travels in a header, never the URL). */
 export const runMapAgent = (key: string) =>
-  request<{ started: boolean }>("/agents/map/run", { method: "POST", headers: { "X-Admin-Key": key } });
+  SHOWCASE ? Promise.reject(new ApiError("showcase", SHOWCASE_WRITE)) : request<{ started: boolean }>("/agents/map/run", { method: "POST", headers: { "X-Admin-Key": key } });
 
 /** When the map agent last ran. Null when the API is down. */
-export const getMapStatus = () => read<MapStatus | null>("/agents/map/status", null);
+export const getMapStatus = async (): Promise<Fetched<MapStatus | null>> =>
+  SHOWCASE ? { data: await loadMapStatus(), sample: false } : read<MapStatus | null>("/agents/map/status", null);
 
-export const getUpdates = (type?: UpdateType | "all") =>
-  read<UpdateItem[]>(type && type !== "all" ? `/updates?type=${type}` : "/updates",
+export const getUpdates = async (type?: UpdateType | "all"): Promise<Fetched<UpdateItem[]>> =>
+  SHOWCASE ? { data: (await loadUpdates()).filter((u) => !type || type === "all" || u.type === type), sample: false } : read<UpdateItem[]>(type && type !== "all" ? `/updates?type=${type}` : "/updates",
     type && type !== "all" ? sample.updates.filter((u) => u.type === type) : sample.updates);
 
-export const getAgents = () => read<AgentCardData[]>("/agents/status", sample.agents);
+export const getAgents = (): Promise<Fetched<AgentCardData[]>> =>
+  SHOWCASE ? Promise.resolve({ data: sample.agents, sample: false }) : read<AgentCardData[]>("/agents/status", sample.agents);
 
-export const getWeather = () => read<Weather>("/weather", sample.weather);
+export const getWeather = (): Promise<Fetched<Weather>> =>
+  SHOWCASE ? Promise.resolve({ data: sample.weather, sample: false }) : read<Weather>("/weather", sample.weather);
 
 
 export function labelPhoto(file: File) {
+  if (SHOWCASE) return Promise.reject(new ApiError("showcase", SHOWCASE_WRITE));
   const form = new FormData();
   form.append("photo", file);
   return request<{ photoUrl: string; aiLabel: ReportIn["userLabel"] | null; aiText: string }>(
     "/reports/label", { method: "POST", body: form });
 }
 
-export const sendReport = (body: ReportIn) => request<{ id: string; status: string }>("/reports", jsonBody(body));
+export const sendReport = (body: ReportIn) =>
+  SHOWCASE ? Promise.reject(new ApiError("showcase", SHOWCASE_WRITE)) : request<{ id: string; status: string }>("/reports", jsonBody(body));
 
 export const photoSrc = (photoUrl: string) => `${API_URL}${photoUrl}`;
 
@@ -158,6 +193,7 @@ export function getPlace(id: string): Promise<Place | null> {
   const known = foundPlaces.get(id);
   if (known) return Promise.resolve(known);
   return shared(`place ${id}`, async () => {
+    if (SHOWCASE) return (await loadAllTrips()).flatMap((r) => [r.from, r.to]).find((p) => p.id === id) ?? null;
     try {
       const place = await request<Place>(`/places/${encodeURIComponent(id)}`);
       foundPlaces.set(id, place);

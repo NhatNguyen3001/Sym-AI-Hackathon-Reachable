@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { API_URL } from "./api";
 import { sessionId } from "./session";
+import { SHOWCASE } from "./showcase";
 
 export type ServerEvent = "barrier_changed" | "lift_changed" | "weather_changed" | "report_created" | "agent_run" | "map_updated";
 
@@ -13,7 +14,7 @@ export function useEvents(events: ServerEvent[], handler: (event: ServerEvent, d
   });
   const key = events.join(",");
   useEffect(() => {
-    if (typeof EventSource === "undefined") return;
+    if (SHOWCASE || typeof EventSource === "undefined") return;   // the showcase has no live updates
     const source = new EventSource(`${API_URL}/events?session=${encodeURIComponent(sessionId())}`);
     const listeners = key.split(",").map((name) => {
       const fn = (e: MessageEvent) => {

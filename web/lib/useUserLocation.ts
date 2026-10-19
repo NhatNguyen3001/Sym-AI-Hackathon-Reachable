@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { SHOWCASE } from "./showcase";
 
 export interface UserFix {
   lat: number;
@@ -14,7 +15,8 @@ export function useUserLocation() {
   const [status, setStatus] = useState<LocationStatus>("pending");
 
   useEffect(() => {
-    if (!("geolocation" in navigator)) {
+    // The showcase never asks where you are: visitors are anywhere in the world, and the trips are recorded.
+    if (SHOWCASE || !("geolocation" in navigator)) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- browser-only state is only readable after mount (no hydration mismatch)
       setStatus("unsupported");
       return;
