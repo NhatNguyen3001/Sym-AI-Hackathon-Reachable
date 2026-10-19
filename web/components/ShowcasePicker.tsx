@@ -3,10 +3,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { cn } from "cn";
-import { tripHref, type ShowcaseManifest } from "@/lib/showcase";
+import { GITHUB_URL, tripHref, type ShowcaseManifest } from "@/lib/showcase";
 import { loadManifest } from "@/lib/showcaseData";
-
-export const GITHUB_URL = "https://github.com/NhatNguyen3001/Sym-AI-Hackathon-Reachable";
 
 /** The showcase's front door: what Reachable is, and the five recorded trips to pick from. */
 export function ShowcasePicker({ current, note, className }: { current?: string | null; note?: string; className?: string }) {

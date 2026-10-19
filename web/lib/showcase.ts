@@ -5,6 +5,8 @@ import type { Profile } from "./types";
 
 export const SHOWCASE = process.env.NEXT_PUBLIC_SHOWCASE === "1";
 
+export const GITHUB_URL = "https://github.com/NhatNguyen3001/Sym-AI-Hackathon-Reachable";
+
 export interface ShowcaseTrip {
   id: string;
   title: string;

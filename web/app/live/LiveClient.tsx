@@ -9,6 +9,9 @@ import { getUpdates } from "@/lib/api";
 import { useEvents } from "@/lib/events";
 import { useMapStatus } from "@/lib/useMapStatus";
 import type { UpdateItem, UpdateType } from "@/lib/types";
+import { RecordedMark } from "@/components/RecordedMark";
+import { SHOWCASE } from "@/lib/showcase";
+import { loadManifest } from "@/lib/showcaseData";
 
 type Filter = UpdateType | "all";
 const FILTERS: { value: Filter; label: string }[] = [
@@ -26,6 +29,10 @@ export function LiveClient() {
   const [sample, setSample] = useState(false);
   const [announce, setAnnounce] = useState("");
   const [mapStatus, reloadMapStatus] = useMapStatus();
+  const [recordedOn, setRecordedOn] = useState<string | null>(null);
+  useEffect(() => {
+    if (SHOWCASE) loadManifest().then((m) => setRecordedOn(m?.recordedOn ?? null));
+  }, []);
 
   const loadItems = useCallback(async (f: Filter) => {
     const r = await getUpdates(f);
@@ -61,10 +68,14 @@ export function LiveClient() {
           <li><strong>Cleared</strong> — the problem is gone. People should be able to get through.</li>
         </ul>
       </section>
-      <section aria-label="Map updates" className="flex flex-wrap items-center justify-between gap-3">
-        <MapFreshness status={mapStatus} className="text-[15px]" />
-        <OwnerMapUpdate status={mapStatus} reload={reloadMapStatus} />
-      </section>
+      {SHOWCASE ? (
+        <RecordedMark recordedOn={recordedOn} className="text-[15px]" />
+      ) : (
+        <section aria-label="Map updates" className="flex flex-wrap items-center justify-between gap-3">
+          <MapFreshness status={mapStatus} className="text-[15px]" />
+          <OwnerMapUpdate status={mapStatus} reload={reloadMapStatus} />
+        </section>
+      )}
       <FilterChips label="Show" options={FILTERS} value={filter} onChange={setFilter} />
       <SampleDataBanner show={sample} />
       <p role="status" className="sr-only">{announce}</p>

@@ -12,12 +12,15 @@ import {
   Dialog, DialogContent, DialogDescription, DialogTitle,
 } from "@/components/ui/dialog";
 import { readStored, writeStored } from "@/lib/storage";
+import { SHOWCASE } from "@/lib/showcase";
 
-const LINKS = [
+const ALL_LINKS = [
   { href: "/", label: "Map", icon: MapIcon, match: (p: string) => p === "/" || p.startsWith("/route") },
   { href: "/live", label: "Live updates", icon: Bell, match: (p: string) => p.startsWith("/live") },
   { href: "/report", label: "Report a barrier", icon: TriangleAlert, match: (p: string) => p.startsWith("/report") },
 ];
+// The showcase can't take reports, so it doesn't offer them.
+const LINKS = SHOWCASE ? ALL_LINKS.filter((l) => l.href !== "/report") : ALL_LINKS;
 
 /** The name of an icon-only control: shown as a tooltip on hover or focus, and used as its accessible name. */
 function Tip({ id, children }: { id: string; children: ReactNode }) {

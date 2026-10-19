@@ -147,8 +147,8 @@ export function ExploreClient() {
       <div className="pointer-events-none absolute top-3 right-3 left-[4.5rem] z-[550] lg:top-3 lg:right-20 lg:left-auto lg:max-w-sm">
         <div className="pointer-events-auto">
           <WeatherBanner weather={weather} />
-          <MapFreshness status={mapStatus}
-            className="mt-2 ml-auto hidden w-fit rounded-full border border-line bg-surface px-3 py-1 text-ink shadow-sm lg:block" />
+          {!SHOWCASE && <MapFreshness status={mapStatus}
+            className="mt-2 ml-auto hidden w-fit rounded-full border border-line bg-surface px-3 py-1 text-ink shadow-sm lg:block" />}
         </div>
       </div>
 
@@ -189,8 +189,8 @@ export function ExploreClient() {
 
       <div className="pointer-events-none absolute inset-x-0 bottom-3 z-[600] flex flex-col gap-3 px-3 pb-[env(safe-area-inset-bottom)] lg:bottom-4 lg:left-3 lg:max-w-md lg:pb-0">
         {/* On a phone the top of the map holds the key, so when the pins were updated sits just above the search. */}
-        <MapFreshness status={mapStatus}
-          className="pointer-events-auto w-fit rounded-full border border-line bg-surface px-3 py-1 text-ink shadow-sm lg:hidden" />
+        {!SHOWCASE && <MapFreshness status={mapStatus}
+          className="pointer-events-auto w-fit rounded-full border border-line bg-surface px-3 py-1 text-ink shadow-sm lg:hidden" />}
         {selected && (
           <article className="pointer-events-auto rounded-[18px] bg-[#15201b] p-4 text-white shadow-lg">
             <p className="text-[14px] font-bold tracking-wide text-[#ffd7a8] uppercase">{HAZARD_LABEL[selected.kind]}</p>

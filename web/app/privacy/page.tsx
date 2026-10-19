@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Disclosure } from "@/components/Disclosure";
 import { AppPage, PageTitle } from "@/components/layout/Page";
+import { SHOWCASE } from "@/lib/showcase";
 
 export const metadata: Metadata = { title: "Privacy" };
 
@@ -10,7 +11,13 @@ export default function PrivacyPage() {
     <AppPage>
       <PageTitle title="Privacy" sub="What Reachable keeps, and what it doesn't. Open a question to read the answer." />
       <div className="max-w-[760px] space-y-3">
-        <Disclosure question="Do you track where I go?" defaultOpen>
+        {SHOWCASE && (
+          <Disclosure question="What does this showcase send?" defaultOpen>
+            <p>Nothing. It only loads its own files and the map pictures from OpenStreetMap. It never asks where you
+              are, and the trips are recordings made with the live app.</p>
+          </Disclosure>
+        )}
+        <Disclosure question="Do you track where I go?" defaultOpen={!SHOWCASE}>
           <p>No. When you ask for a route, we use your start and destination (and your location, if you choose
             &ldquo;Your location&rdquo;) to plan it. The trip isn&apos;t stored on our server or linked to you.</p>
         </Disclosure>
