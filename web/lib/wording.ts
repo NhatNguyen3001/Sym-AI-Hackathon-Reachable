@@ -1,6 +1,7 @@
 // Plain wording (cycle 6): how hard a stretch is for *you*, and whether to trust what we say. The API keeps its
 // codes ("Likely", "Out of service", slope %); this is the one place they become words people use.
 import type { Profile, Step } from "./types";
+import { SHOWCASE } from "./showcase";
 
 export type Difficulty = "flat" | "easy" | "tiring" | "hard" | "too-steep" | "unknown";
 
@@ -57,6 +58,9 @@ export function stepText(step: Step, profile: Profile): string {
   }
 }
 
+/** A recording is seen long after the day it was made, so it never says "today". */
+const CHECKED = SHOWCASE ? "Checked when recorded" : "Checked today";
+
 export type TrustMark = "tick" | "ruler" | "half" | "dotted" | "question" | "dash";
 
 /** Whether to trust it: words plus a mark with its own shape (never colour alone). */
@@ -64,7 +68,7 @@ export function trust(code: string): { text: string; mark: TrustMark } {
   switch (code) {
     case "Confirmed":
     case "Confirmed today":
-      return { text: "Checked today", mark: "tick" };
+      return { text: CHECKED, mark: "tick" };
     case "Measured":
       return { text: "Measured", mark: "ruler" };
     case "Likely":
@@ -142,7 +146,7 @@ export function routeTrust(status: string, steps: Step[]): string {
     return `${n} thing${n === 1 ? "" : "s"} we couldn't check`;
   }
   if (status === "Slopes estimated") return "Hills not measured";
-  if (status === "Confirmed today") return "Checked today";
+  if (status === "Confirmed today") return CHECKED;
   return status;
 }
 

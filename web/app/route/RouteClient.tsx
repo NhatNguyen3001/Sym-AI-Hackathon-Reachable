@@ -407,7 +407,7 @@ export function RouteClient() {
                 Close
               </button>
             </div>
-            <p className="mt-1 text-[14px] text-[#d5ddd8]">{lift.source}, {SHOWCASE ? lift.updated : `updated ${lift.updated}`}</p>
+            <p className="mt-1 text-[14px] text-[#d5ddd8]">{lift.source}, updated {lift.updated}</p>
             {liftAnswers[liftKey(lift)] ? (
               <p role="status" className="mt-3 text-[15px]">
                 Thanks. You said this lift is {liftAnswers[liftKey(lift)] === "working" ? "working" : "not working"}. That stays on this device.

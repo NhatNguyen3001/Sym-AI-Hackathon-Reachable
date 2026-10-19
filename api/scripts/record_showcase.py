@@ -5,7 +5,7 @@ Run from api/ with the full stack up (Valhalla, Transport for NSW and Claude key
 The lift-out trip is recorded separately against an API that uses the Transport for NSW mock (see the plan, Task 8):
   .venv/Scripts/python scripts/record_showcase.py --api http://127.0.0.1:8101 --trips lift-out --no-shared
 
-Relative times ("3 min ago") become fixed ("When recorded (19 Oct 2026, Sydney time)"), and nothing is written if
+Relative times ("3 min ago") become fixed ("when recorded (19 Oct 2026, Sydney time)"), and nothing is written if
 it contains any value from api/.env."""
 import argparse
 import json
@@ -28,7 +28,7 @@ LEAVE_IN = re.compile(r"\bLeave in \d+\s*min\b", re.I)
 
 def fix_times(obj, recorded_on: str):
     """Relative times become the recording time; ISO times (leaveAt, departAt) are kept for Sydney-time display."""
-    when = f"When recorded ({recorded_on}, Sydney time)"
+    when = f"when recorded ({recorded_on}, Sydney time)"   # reads on in "updated …", "Checked …"
     if isinstance(obj, dict):
         return {k: (when if k in TIME_KEYS and isinstance(v, str) else fix_times(v, recorded_on)) for k, v in obj.items()}
     if isinstance(obj, list):

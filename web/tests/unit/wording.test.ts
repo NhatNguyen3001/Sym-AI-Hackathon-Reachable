@@ -1,4 +1,4 @@
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 import {
   aboutMetres, difficulty, difficultyText, feelChoice, FEEL_CHOICES, fieldText, hillsSummary, liftText, routeTrust, spokenText, stepText, trust,
 } from "@/lib/wording";
@@ -119,4 +119,16 @@ test("a whole route's hills in a few words, for this person", () => {
   expect(hillsSummary([s(5), s(4.9)], withLimit(5))).toBe("2 hard bits");
   expect(hillsSummary([step({ kind: "path" })], withLimit(5))).toBe("hills not measured");
   expect(hillsSummary([], withLimit(5))).toBe("hills not measured");
+});
+
+test("the showcase never says 'today' about a recording", async () => {
+  vi.stubEnv("NEXT_PUBLIC_SHOWCASE", "1");
+  vi.resetModules();
+  try {
+    const w = await import("@/lib/wording");
+    expect(w.trust("Confirmed").text).toBe("Checked when recorded");
+    expect(w.routeTrust("Confirmed today", [])).toBe("Checked when recorded");
+  } finally {
+    vi.unstubAllEnvs();
+  }
 });

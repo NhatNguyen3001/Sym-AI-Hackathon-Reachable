@@ -8,7 +8,7 @@ _spec = importlib.util.spec_from_file_location("record_showcase", Path(__file__)
 rec = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(rec)
 
-WHEN = "When recorded (19 Oct 2026, Sydney time)"
+WHEN = "when recorded (19 Oct 2026, Sydney time)"
 
 
 def test_fix_times_rewrites_relative_times():
