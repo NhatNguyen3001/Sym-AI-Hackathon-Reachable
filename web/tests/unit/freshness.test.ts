@@ -1,4 +1,4 @@
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 import { freshnessLine } from "@/lib/freshness";
 import type { MapStatus } from "@/lib/types";
 
@@ -30,4 +30,17 @@ test("the saved copy says so, with its date", () => {
 test("a run that couldn't reach OpenStreetMap says so", () => {
   expect(freshnessLine({ ...base, places: 10, lastRun: "2026-10-17T22:42:00+00:00", failed: ["osm"] }, NOW))
     .toBe("Places and roadworks updated today, 9:42 am; couldn't reach OpenStreetMap last time");
+});
+
+test("the showcase gives the full date and Sydney time, never 'today'", async () => {
+  vi.stubEnv("NEXT_PUBLIC_SHOWCASE", "1");
+  vi.resetModules();
+  try {
+    const f = await import("@/lib/freshness");
+    const s = { ...base, places: 5534, lastRun: "2026-10-19T05:05:00+00:00" };
+    expect(f.freshnessLine(s, new Date("2026-10-19T06:00:00Z"))).toBe("Places and roadworks updated 19 Oct 2026, 4:05 pm (Sydney time)");
+    expect(f.freshnessLine(s, new Date("2026-11-30T06:00:00Z"))).toBe("Places and roadworks updated 19 Oct 2026, 4:05 pm (Sydney time)");
+  } finally {
+    vi.unstubAllEnvs();
+  }
 });

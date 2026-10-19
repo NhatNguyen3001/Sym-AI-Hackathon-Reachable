@@ -50,7 +50,7 @@ export const FILES: Record<string, unknown> = {
     { id: "osm:1", placeId: "osm:1", name: "Accessible toilet", kind: "toilet", label: "Accessible toilet", lat: -33.7757, lng: 151.1136, source: "OpenStreetMap" },
     { id: "osm:2", placeId: "osm:2", name: "Accessible parking", kind: "parking", label: "Accessible parking", lat: -33.7745, lng: 151.1150, source: "OpenStreetMap" },
   ],
-  "map-status": { lastRun: null, failed: [], snapshot: { takenOn: "2026-10-18" }, paused: true },
+  "map-status": { lastRun: "2026-10-19T05:05:00+00:00", running: false, places: 2, roadworks: 0, checked: 0, failed: [], snapshot: null, paused: false },
   updates: updates.map((u) => ({ ...u, time: WHEN })),
 };
 for (const t of trips) {

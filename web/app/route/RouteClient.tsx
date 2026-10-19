@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { cn } from "cn";
 import { ChevronLeft, ChevronRight, CircleCheck, SlidersHorizontal, TriangleAlert } from "lucide-react";
 import { NeedsTicks } from "@/components/NeedsTicks";
@@ -468,6 +469,10 @@ export function RouteClient() {
           onPointerDownCapture={(e) => { if ((e.target as HTMLElement).tagName === "INPUT") setSheetOpen(true); }}>
           {SHOWCASE ? (
             <div className="space-y-1">
+              <Link href="/" className="-ml-1 inline-flex min-h-11 items-center gap-1 rounded-[12px] px-1 text-[15px] font-bold text-primary underline">
+                <ChevronLeft aria-hidden="true" className="size-4" strokeWidth={2.6} />
+                All trips
+              </Link>
               {showcaseTrip && <p className="text-[18px] leading-snug font-bold">{from?.name ?? "…"} to {to?.name ?? "…"}</p>}
               {showcaseTrip && <p className="text-[15px] text-muted">Planned for: {showcaseTrip.needsText.toLowerCase()}</p>}
               {showcaseTrip && <RecordedMark recordedOn={recordedOn} staged={showcaseTrip.staged} />}

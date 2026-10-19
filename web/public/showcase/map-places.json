@@ -35790,16 +35790,6 @@
   "source": "OpenStreetMap"
  },
  {
-  "id": "place:osm-w444592651:pin",
-  "placeId": "place:osm-w444592651",
-  "name": "Japan Home Center",
-  "kind": "venue",
-  "label": "Wheelchair-accessible place",
-  "lat": -33.7977758,
-  "lng": 151.1807727,
-  "source": "OpenStreetMap"
- },
- {
   "id": "place:osm-w1090650041:pin",
   "placeId": "place:osm-w1090650041",
   "name": "Ippudo",
@@ -36097,16 +36087,6 @@
   "label": "Wheelchair-accessible place",
   "lat": -33.7967589,
   "lng": 151.1810727,
-  "source": "OpenStreetMap"
- },
- {
-  "id": "place:osm-w444592650:pin",
-  "placeId": "place:osm-w444592650",
-  "name": "Tom's Project",
-  "kind": "venue",
-  "label": "Wheelchair-accessible place",
-  "lat": -33.7977354,
-  "lng": 151.1810759,
   "source": "OpenStreetMap"
  },
  {
@@ -43975,8 +43955,8 @@
   "name": "Accessible parking",
   "kind": "parking",
   "label": "Accessible parking",
-  "lat": -33.8341678,
-  "lng": 151.2069378,
+  "lat": -33.8341595,
+  "lng": 151.2069326,
   "source": "OpenStreetMap"
  },
  {
@@ -44557,6 +44537,16 @@
   "label": "Accessible toilet",
   "lat": -33.8370626,
   "lng": 151.2074846,
+  "source": "OpenStreetMap"
+ },
+ {
+  "id": "place:osm-w1569388722:pin",
+  "placeId": "place:osm-w1569388722",
+  "name": "Accessible parking",
+  "kind": "parking",
+  "label": "Accessible parking",
+  "lat": -33.8324717,
+  "lng": 151.207487,
   "source": "OpenStreetMap"
  },
  {
@@ -46605,8 +46595,8 @@
   "name": "Accessible parking",
   "kind": "parking",
   "label": "Accessible parking",
-  "lat": -33.8225493,
-  "lng": 151.2109907,
+  "lat": -33.8225496,
+  "lng": 151.2109901,
   "source": "OpenStreetMap"
  },
  {

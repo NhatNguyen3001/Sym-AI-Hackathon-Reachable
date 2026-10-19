@@ -1,9 +1,9 @@
 {
- "lastRun": "2026-10-18T00:09:24.686674+00:00",
+ "lastRun": "2026-10-19T05:33:15.311682+00:00",
  "running": false,
- "places": 5534,
- "roadworks": 45,
- "checked": 0,
+ "places": 5533,
+ "roadworks": 50,
+ "checked": 107,
  "failed": [],
  "snapshot": null,
  "paused": false

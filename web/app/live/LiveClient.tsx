@@ -68,14 +68,11 @@ export function LiveClient() {
           <li><strong>Cleared</strong> — the problem is gone. People should be able to get through.</li>
         </ul>
       </section>
-      {SHOWCASE ? (
-        <RecordedMark recordedOn={recordedOn} className="text-[15px]" />
-      ) : (
-        <section aria-label="Map updates" className="flex flex-wrap items-center justify-between gap-3">
-          <MapFreshness status={mapStatus} className="text-[15px]" />
-          <OwnerMapUpdate status={mapStatus} reload={reloadMapStatus} />
-        </section>
-      )}
+      {SHOWCASE && <RecordedMark recordedOn={recordedOn} className="text-[15px]" />}
+      <section aria-label="Map updates" className="flex flex-wrap items-center justify-between gap-3">
+        <MapFreshness status={mapStatus} className="text-[15px]" />
+        {!SHOWCASE && <OwnerMapUpdate status={mapStatus} reload={reloadMapStatus} />}
+      </section>
       <FilterChips label="Show" options={FILTERS} value={filter} onChange={setFilter} />
       <SampleDataBanner show={sample} />
       <p role="status" className="sr-only">{announce}</p>

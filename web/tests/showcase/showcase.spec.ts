@@ -151,3 +151,40 @@ test("the staged lift outage says it's an example on its lift row", async ({ pag
   await page.goto(tripPath(TRIPS.find((t) => t.id === "lift-out")!));
   await expect(page.getByText(/Example set up for this showcase/).first()).toBeVisible();
 });
+
+test("the trip list folds away and opens again", async ({ page }) => {
+  await setup(page);
+  await page.goto("/");
+  const toggle = page.getByRole("button", { name: "Pick a trip" }).locator("visible=true").first();
+  await expect(toggle).toHaveAttribute("aria-expanded", "true");
+  const first = page.getByRole("link", { name: new RegExp(TRIPS[0].title) }).locator("visible=true");
+  await expect(first).toHaveCount(1);
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(first).toHaveCount(0);
+  await toggle.click();
+  await expect(first).toHaveCount(1);
+});
+
+test("GitHub is offered as the code, not a live version", async ({ page }) => {
+  await setup(page);
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: /code on GitHub/ }).locator("visible=true")).toHaveCount(1);
+  expect(await page.locator("body").innerText()).not.toMatch(/run it live/i);
+});
+
+test("the map says when its places and roadworks were updated", async ({ page }) => {
+  await setup(page);
+  await page.goto("/");
+  await expect(page.getByText(/Places and roadworks updated \d+ \w+ \d{4}, .* \(Sydney time\)/).locator("visible=true").first()).toBeVisible();
+});
+
+test("from a trip, a link goes back to all the trips", async ({ page }) => {
+  await setup(page);
+  await page.goto("/");
+  await page.getByRole("link", { name: new RegExp(TRIPS[2].title) }).locator("visible=true").first().click();
+  await expect(page.getByText("Recorded example").first()).toBeVisible();
+  await page.getByRole("link", { name: "All trips" }).locator("visible=true").first().click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole("link", { name: new RegExp(TRIPS[0].title) }).locator("visible=true")).toHaveCount(1);
+});

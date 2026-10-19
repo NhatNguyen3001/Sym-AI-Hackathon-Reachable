@@ -1,3 +1,4 @@
+import { SHOWCASE } from "./showcase";
 import type { MapStatus } from "./types";
 
 const TZ = "Australia/Sydney";
@@ -22,7 +23,11 @@ function clock(d: Date): string {
 /** The small "when was the map updated" line on the map and Live updates (spec section 5). */
 export function freshnessLine(s: MapStatus, now: Date): string {
   let line = "";
-  if (s.lastRun) {
+  if (s.lastRun && SHOWCASE) {
+    // Seen long after it was recorded, from anywhere: the full date and whose clock, never "today".
+    const run = new Date(s.lastRun);
+    line = `Places and roadworks updated ${dayMonth(run)} ${sydneyDay(run).slice(0, 4)}, ${clock(run)} (Sydney time)`;
+  } else if (s.lastRun) {
     const run = new Date(s.lastRun);
     line = sydneyDay(run) === sydneyDay(now)
       ? `Places and roadworks updated today, ${clock(run)}`

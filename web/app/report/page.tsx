@@ -12,8 +12,9 @@ export default function ReportPage() {
         <>
           <PageTitle title="Report a barrier" sub="Barrier reports work in the live app." />
           <p className="max-w-[680px] text-[18px]">
-            This is a showcase of recorded trips, so it can&apos;t take reports.{" "}
-            <a href={GITHUB_URL} className="font-bold text-primary underline">Run Reachable live from GitHub</a> to try them.
+            This site plays back trips recorded with the live app, so it can&apos;t take reports. Reachable&apos;s{" "}
+            <a href={GITHUB_URL} className="font-bold text-primary underline">code on GitHub</a> shows how reports work
+            and how to run the full app yourself.
           </p>
         </>
       ) : (
