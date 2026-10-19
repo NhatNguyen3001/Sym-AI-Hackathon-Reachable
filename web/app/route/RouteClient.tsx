@@ -344,6 +344,7 @@ export function RouteClient() {
   }
 
   async function saveFilter() {
+    if (SHOWCASE) return;
     saveProfile(profile);
     setFiltersOpen(false);
     setSheetOpen(false);
@@ -621,9 +622,12 @@ export function RouteClient() {
             </section>
           )}
 
-          <Button type="button" size="lg" className="w-full" onClick={saveFilter} disabled={saving}>
-            {saving ? "Saving…" : "Save filter"}
-          </Button>
+          {/* The showcase's needs belong to each recording: nothing to save, and the visitor's own needs stay as they are. */}
+          {!SHOWCASE && (
+            <Button type="button" size="lg" className="w-full" onClick={saveFilter} disabled={saving}>
+              {saving ? "Saving…" : "Save filter"}
+            </Button>
+          )}
         </div>
       </aside>
     </div>

@@ -11,6 +11,7 @@ import { readStored, writeStored } from "@/lib/storage";
 import { timeOfDay } from "@/lib/trip";
 import type { Guidance } from "@/lib/useGuidance";
 import type { LocationStatus } from "@/lib/useUserLocation";
+import { SHOWCASE } from "@/lib/showcase";
 
 const ICONS: Record<NavIcon, typeof Check> = {
   check: Navigation, slope: TrendingUp, alert: CircleAlert, lift: MoveVertical, crossing: ArrowUpFromLine, ride: TrainFront,
@@ -123,10 +124,13 @@ export function NavigationPanel({
   }
 
   const left = p ? p.remainingM : nav.total;
-  const minsLeft = arriveAt
+  // A recorded trip's times are from the day it was recorded: count down by distance, and show its recorded arrival
+  // (in Sydney time) rather than one worked out from the visitor's clock.
+  const minsLeft = arriveAt && !SHOWCASE
     ? Math.max(0, Math.round((new Date(arriveAt).getTime() - now) / 60000))
     : Math.max(0, Math.ceil(minutes * (nav.total > 0 ? left / nav.total : 1)));
   const eta = arriveAt ?? new Date(now + minsLeft * 60000).toISOString();
+  const arrive = !SHOWCASE ? ` · arrive ${timeOfDay(eta)}` : arriveAt ? ` · arrive ${timeOfDay(arriveAt)} (Sydney)` : "";
   const Icon = p ? ICONS[p.current.icon] ?? Navigation : Navigation;
   const NextIcon = p?.next ? ICONS[p.next.icon] ?? Navigation : Flag;
 
@@ -211,7 +215,7 @@ export function NavigationPanel({
           <div className="min-w-0">
             <p className="text-[24px] leading-tight font-bold">{minsLeft} min</p>
             <p className="text-[15px] text-muted">
-              {distanceText(left)} · arrive {timeOfDay(eta)}{previewing ? " · preview" : ""}
+              {distanceText(left)}{arrive}{previewing ? " · preview" : ""}
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-2">
@@ -219,7 +223,7 @@ export function NavigationPanel({
               className="inline-flex size-12 items-center justify-center rounded-full border border-line-strong text-ink">
               {voice ? <Volume2 aria-hidden="true" className="size-5" strokeWidth={2.4} /> : <VolumeX aria-hidden="true" className="size-5" strokeWidth={2.4} />}
             </button>
-            {previewing && (
+            {previewing && !SHOWCASE && (
               <button type="button" onClick={() => onPreview(false)}
                 className="inline-flex min-h-12 items-center rounded-full border border-line-strong px-4 text-[15px] font-bold text-ink">
                 Stop preview

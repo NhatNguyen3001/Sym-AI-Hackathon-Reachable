@@ -120,3 +120,34 @@ for (const dark of [false, true]) {
     }
   });
 }
+
+test("needs can't be saved over the visitor's own", async ({ page }) => {
+  await setup(page);
+  await page.addInitScript(() => localStorage.setItem("reachable.profile", JSON.stringify({ aid: "cane", maxSlope: 12 })));
+  await page.goto(tripPath(TRIPS[0]));
+  await expect(page.getByText("Recorded example").first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "Save filter" })).toHaveCount(0);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("reachable.profile") ?? "{}").aid)).toBe("cane");
+});
+
+test("guidance on a recorded public transport trip counts down by distance, in Sydney time", async ({ page }) => {
+  await setup(page);
+  const trip = TRIPS.find((t) => t.id === "opera-house")!;
+  // Through the picker: the real recordings' place ids differ from the fixtures'.
+  await page.goto("/");
+  await page.getByRole("link", { name: new RegExp(trip.title) }).first().click();
+  await expect(page).toHaveURL(/trip=opera-house/);
+  await page.getByRole("button", { name: "Start" }).click();
+  const progress = page.getByRole("region", { name: "Trip progress" });
+  await expect(progress).toBeVisible();
+  const text = await progress.innerText();
+  expect(text).not.toMatch(/^0 min/m);
+  expect(text).toContain("(Sydney)");
+  await expect(page.getByRole("button", { name: "Stop preview" })).toHaveCount(0);
+});
+
+test("the staged lift outage says it's an example on its lift row", async ({ page }) => {
+  await setup(page);
+  await page.goto(tripPath(TRIPS.find((t) => t.id === "lift-out")!));
+  await expect(page.getByText(/Example set up for this showcase/).first()).toBeVisible();
+});

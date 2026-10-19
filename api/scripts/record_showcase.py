@@ -38,6 +38,25 @@ def fix_times(obj, recorded_on: str):
     return obj
 
 
+STAGED_SOURCE = "Example set up for this showcase"
+
+
+def mark_staged(route: dict, staged: str | None) -> dict:
+    """A staged outage (trip 2) is credited to the example, never to Transport for NSW."""
+    if not staged:
+        return route
+
+    def fix(obj):
+        if isinstance(obj, dict):
+            if obj.get("status") == "Out of service" and "source" in obj:
+                return {**obj, "source": STAGED_SOURCE}
+            return {k: fix(v) for k, v in obj.items()}
+        if isinstance(obj, list):
+            return [fix(v) for v in obj]
+        return obj
+    return fix(route)
+
+
 def assert_no_secrets(text: str, env_path: Path) -> None:
     """Refuse to write a recording that contains any api/.env value long enough to be a secret."""
     if not env_path.exists():
@@ -79,7 +98,7 @@ def record_trip(http: httpx.Client, trip: dict) -> dict:
         "trip": {**trip, "fromId": from_id, "toId": to_id},
         "from": http.get(f"/places/{from_id}").raise_for_status().json(),
         "to": http.get(f"/places/{to_id}").raise_for_status().json(),
-        "route": route,
+        "route": mark_staged(route, trip.get("staged")),
         "venue": venue.json() if venue.status_code == 200 else None,
     }
 

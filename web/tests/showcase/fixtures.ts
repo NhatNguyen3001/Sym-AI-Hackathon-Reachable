@@ -55,7 +55,9 @@ export const FILES: Record<string, unknown> = {
 };
 for (const t of trips) {
   const [from, to] = ends[t.id];
-  const route = t.id === "opera-house" ? { ...recorded, accessible: null, steps: [], options: [transit] } : recorded;
+  // As the recorder writes it: the staged outage is credited to the example.
+  const staged = { ...recorded, liftStatus: recorded.liftStatus.map((l) => (l.status === "Out of service" ? { ...l, source: "Example set up for this showcase" } : l)) };
+  const route = t.id === "opera-house" ? { ...recorded, accessible: null, steps: [], options: [transit] } : t.staged ? staged : recorded;
   FILES[t.id] = { trip: { ...t, fromId: from, toId: to }, from: place(from), to: place(to), route,
     // As the recorder writes it: relative times rewritten.
     venue: { ...venue, id: to, checkedAgo: WHEN, checks: venue.checks.map((c) => ({ ...c, source: c.source.replace(/\d+ \w+ ago/, "when recorded") })) } };

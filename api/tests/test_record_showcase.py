@@ -48,3 +48,14 @@ def test_short_values_ignored(tmp_path):
 
 def test_missing_env_file_is_fine(tmp_path):
     rec.assert_no_secrets("{}", tmp_path / "missing.env")
+
+
+def test_staged_trip_credits_its_outage_to_the_example():
+    route = {"liftStatus": [{"exit": "North exit lift", "status": "Out of service", "source": "Transport for NSW"},
+                            {"exit": "South exit lift", "status": "Working", "source": "Transport for NSW"}],
+             "options": [{"liftStatus": [{"exit": "North exit lift", "status": "Out of service", "source": "Transport for NSW"}]}]}
+    out = rec.mark_staged(route, "Example: lift out of service")
+    assert out["liftStatus"][0]["source"] == "Example set up for this showcase"
+    assert out["liftStatus"][1]["source"] == "Transport for NSW"
+    assert out["options"][0]["liftStatus"][0]["source"] == "Example set up for this showcase"
+    assert rec.mark_staged(route, None) == route
