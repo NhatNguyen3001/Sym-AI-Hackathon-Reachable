@@ -13,6 +13,7 @@ import { readStored, writeStored } from "@/lib/storage";
 import type { AmenityPin, MapPlacePin } from "@/lib/types";
 import { ClusterLayer, type ClusterItem } from "./ClusterLayer";
 import type { UserFix } from "@/lib/useUserLocation";
+import { SHOWCASE } from "@/lib/showcase";
 
 const CAMPUS: [number, number] = [-33.7755, 151.1155];
 const COLOUR: Record<HazardKind, string> = {
@@ -155,8 +156,10 @@ interface OpenPlace {
 function PlacePopup({ place, fix, onClose }: { place: OpenPlace; fix: UserFix | null; onClose: () => void }) {
   const map = useMap();
   const go = useRef<HTMLButtonElement>(null);
+  const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const t = setTimeout(() => go.current?.focus(), 0);
+    // The showcase has no "Go here" (only its recorded trips can be shown), so focus goes to the popup itself.
+    const t = setTimeout(() => (go.current ?? box.current)?.focus(), 0);
     return () => clearTimeout(t);
   }, [place.id]);
   const away = distanceLabel(fix, place.lat, place.lng);
@@ -166,17 +169,19 @@ function PlacePopup({ place, fix, onClose }: { place: OpenPlace; fix: UserFix | 
       autoPanPaddingTopLeft={[72, 90]}
       autoPanPaddingBottomRight={[16, typeof window !== "undefined" && window.innerWidth < 1024 ? 220 : 24]}>
       {/* Leaflet only closes popups on Escape while the map itself has focus; here focus is on "Go here". */}
-      <div role="dialog" aria-label={place.name} className="min-w-[180px] text-[15px] text-ink"
+      <div ref={box} tabIndex={-1} role="dialog" aria-label={place.name} className="min-w-[180px] text-[15px] text-ink outline-none"
         onKeyDown={(e) => {
           if (e.key === "Escape") map.closePopup();
         }}>
         <p className="text-[13px] font-bold tracking-wide text-muted uppercase">{place.label}</p>
         {place.name !== place.label && <p className="text-[17px] leading-tight font-bold">{place.name}</p>}
         <p className="mt-1">{[away, place.source].filter(Boolean).join(" · ")}</p>
-        <button ref={go} type="button" onClick={place.go}
-          className="mt-2 inline-flex min-h-11 items-center rounded-full bg-primary px-4 font-bold text-white hover:bg-primary-hover">
-          Go here
-        </button>
+        {!SHOWCASE && (
+          <button ref={go} type="button" onClick={place.go}
+            className="mt-2 inline-flex min-h-11 items-center rounded-full bg-primary px-4 font-bold text-white hover:bg-primary-hover">
+            Go here
+          </button>
+        )}
       </div>
     </Popup>
   );

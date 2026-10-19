@@ -1,4 +1,4 @@
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 import { legTitle, optionTimes, optionTitle, rideDetail, selectOption, timeOfDay } from "@/lib/trip";
 import type { RideLeg, TripOption } from "@/lib/types";
 
@@ -46,4 +46,16 @@ test("options group into ways, keeping the API's order", async () => {
   expect(groups.map((g) => [g.wayId, g.options.map((o) => o.id)])).toEqual([
     ["walk", ["walk"]], ["way-a", ["transit-0", "transit-1", "transit-2"]],
   ]);
+});
+
+test("the showcase labels departure times as Sydney time", async () => {
+  vi.stubEnv("NEXT_PUBLIC_SHOWCASE", "1");
+  vi.resetModules();
+  try {
+    const t = await import("@/lib/trip");
+    expect(t.optionTimes(transit)).toBe("Leave 5:05 pm, arrive 5:29 pm (Sydney)");
+    expect(t.rideDetail(ride)).toBe("Platform 2 · departs 5:12 pm (Sydney) · 5 stops · wheelchair accessible");
+  } finally {
+    vi.unstubAllEnvs();
+  }
 });

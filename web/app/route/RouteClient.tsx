@@ -15,7 +15,11 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { TrustBadge } from "@/components/TrustBadge";
 import { TripOptions } from "@/components/TripOptions";
 import { RouteMap } from "@/components/map/RouteMap";
-import { ApiError, getPlace, getRoute, getVenueCheck } from "@/lib/api";
+import { RecordedMark } from "@/components/RecordedMark";
+import { ShowcasePicker } from "@/components/ShowcasePicker";
+import { ApiError, getPlace, getRoute, getShowcaseRecording, getVenueCheck } from "@/lib/api";
+import { SHOWCASE, type ShowcaseTrip } from "@/lib/showcase";
+import { loadManifest } from "@/lib/showcaseData";
 import { useEvents } from "@/lib/events";
 import { addTrip, loadProfile, rememberPlace, saveProfile } from "@/lib/profile";
 import { profile as defaultProfile } from "@/lib/placeholder";
@@ -54,6 +58,11 @@ export function RouteClient() {
   const fromId = params.get("from");
   const toId = params.get("to") ?? "library";
   const urlOption = params.get("option");
+  // Showcase: which recorded trip (two share the campus places).
+  const tripId = params.get("trip");
+  const [showcaseTrip, setShowcaseTrip] = useState<ShowcaseTrip | null>(null);
+  const [recordedOn, setRecordedOn] = useState<string | null>(null);
+  const [showcaseNote, setShowcaseNote] = useState<string | null>(null);
 
   const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [from, setFrom] = useState<Place | null>(null);
@@ -91,7 +100,7 @@ export function RouteClient() {
   const load = useCallback(async (p: Profile, fresh = false) => {
     if (!fromId) return;
     try {
-      const r = await getRoute(fromId, toId, p, { fresh });
+      const r = await getRoute(fromId, toId, p, { fresh, trip: tripId });
       // While guiding, an answer we can't use (no route, or the offline sample) never replaces the route being followed.
       if (guiding.current && (!r.data.ok || r.sample)) {
         setNavProblem("Couldn't update your route just now.");
@@ -104,13 +113,19 @@ export function RouteClient() {
       setSample(r.sample);
       setError(null);
       const minutes = r.data.options?.[0]?.minutes ?? r.data.accessible?.minutes;
-      if (r.data.ok && minutes && !r.sample) {
+      if (r.data.ok && minutes && !r.sample && !SHOWCASE) {
         const [f, t] = await Promise.all([findPlace(fromId), findPlace(toId)]);
         if (f) rememberPlace(f);
         if (t) rememberPlace(t);
         addTrip({ fromId, from: f?.name ?? fromId, toId, to: t?.name ?? toId, minutes });
       }
     } catch (e) {
+      if (SHOWCASE && e instanceof ApiError) {
+        // Not a recorded trip (an old link) or a recording that didn't load: offer the recorded trips instead.
+        setRoute(null);
+        setShowcaseNote(e.message);
+        return;
+      }
       if (guiding.current) {
         setNavProblem("Couldn't update your route just now.");
         return;
@@ -126,9 +141,36 @@ export function RouteClient() {
     } catch {
       setVenue(null);
     }
-  }, [fromId, toId]);
+  }, [fromId, toId, tripId]);
 
   useEffect(() => {
+    if (!SHOWCASE) return;
+    // Each recorded trip was planned for one set of needs: use those, never the visitor's saved profile.
+    let current = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- a new trip link clears the last trip's note
+    setShowcaseNote(null);
+    loadManifest().then((m) => current && setRecordedOn(m?.recordedOn ?? null));
+    if (!fromId) {
+      setShowcaseNote("Pick one of these trips.");
+      return;
+    }
+    getShowcaseRecording(fromId, toId, tripId).then((r) => {
+      if (!current) return;
+      setShowcaseTrip(r.trip);
+      setProfile(r.trip.profile);
+      setFrom(r.from);
+      setTo(r.to);
+      setRoute(null);
+      showDetails();
+      load(r.trip.profile);
+    }, (e: unknown) => current && setShowcaseNote(e instanceof ApiError ? e.message : "This example couldn't load."));
+    return () => {
+      current = false;
+    };
+  }, [load, fromId, toId, tripId]);
+
+  useEffect(() => {
+    if (SHOWCASE) return;
     const p = loadProfile();
     // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage is only readable after mount
     setProfile(p);
@@ -164,7 +206,7 @@ export function RouteClient() {
 
   function chooseOption(id: string) {
     setPickedOption(id);
-    router.replace(`${pathname}?from=${fromId}&to=${toId}&option=${id}`, { scroll: false });
+    router.replace(`${pathname}?from=${fromId}&to=${toId}${tripId ? `&trip=${tripId}` : ""}&option=${id}`, { scroll: false });
   }
 
   const ends = useMemo(() => ({
@@ -218,6 +260,7 @@ export function RouteClient() {
     setSheetOpen(false);
     setSearchOpen(false);
     setLiftOpen(null);
+    if (SHOWCASE) setPreviewing(true);   // no GPS in the showcase: the steps play as a preview
   }
 
   function endNav() {
@@ -358,7 +401,7 @@ export function RouteClient() {
                 Close
               </button>
             </div>
-            <p className="mt-1 text-[14px] text-[#d5ddd8]">{lift.source}, updated {lift.updated}</p>
+            <p className="mt-1 text-[14px] text-[#d5ddd8]">{lift.source}, {SHOWCASE ? lift.updated : `updated ${lift.updated}`}</p>
             {liftAnswers[liftKey(lift)] ? (
               <p role="status" className="mt-3 text-[15px]">
                 Thanks. You said this lift is {liftAnswers[liftKey(lift)] === "working" ? "working" : "not working"}. That stays on this device.
@@ -416,16 +459,26 @@ export function RouteClient() {
         <div className={cn("space-y-4", !sheetOpen && "max-lg:space-y-2")}
           onFocusCapture={() => setSheetOpen(true)}
           onPointerDownCapture={(e) => { if ((e.target as HTMLElement).tagName === "INPUT") setSheetOpen(true); }}>
-          <PlaceInput label="From" compact={!sheetOpen} value={from} onChange={(p) => { setFrom(p); go(p, to); }} />
-          <PlaceInput label="To" compact={!sheetOpen} value={to} onChange={(p) => { setTo(p); go(from, p); }} />
+          {SHOWCASE ? (
+            <div className="space-y-1">
+              {showcaseTrip && <p className="text-[18px] leading-snug font-bold">{from?.name ?? "…"} to {to?.name ?? "…"}</p>}
+              {showcaseTrip && <p className="text-[15px] text-muted">Planned for: {showcaseTrip.needsText.toLowerCase()}</p>}
+              {showcaseTrip && <RecordedMark recordedOn={recordedOn} staged={showcaseTrip.staged} />}
+            </div>
+          ) : (
+            <>
+              <PlaceInput label="From" compact={!sheetOpen} value={from} onChange={(p) => { setFrom(p); go(p, to); }} />
+              <PlaceInput label="To" compact={!sheetOpen} value={to} onChange={(p) => { setTo(p); go(from, p); }} />
+            </>
+          )}
           <div className="flex items-center gap-2">
-            <button type="button" aria-expanded={filtersOpen} aria-label={filtersOpen ? "Hide filter" : "Filter"}
+            {!SHOWCASE && <button type="button" aria-expanded={filtersOpen} aria-label={filtersOpen ? "Hide filter" : "Filter"}
               onClick={() => { setSheetOpen(true); setFiltersOpen((open) => !open); }}
               className={cn("inline-flex size-11 items-center justify-center rounded-full border",
                 filtersOpen ? "border-primary bg-primary text-white" : "border-line-strong bg-surface text-ink")}>
               <SlidersHorizontal aria-hidden="true" className="size-5" strokeWidth={2.4} />
-            </button>
-            {canStart && (
+            </button>}
+            {canStart && (showcaseNote === null) && (
               <button ref={startButton} type="button" onClick={startNav}
                 className="inline-flex min-h-11 items-center rounded-full bg-primary px-5 text-[15px] font-bold text-white">
                 Start
@@ -438,6 +491,7 @@ export function RouteClient() {
         </div>
 
         <div className={cn("mt-5 space-y-4 border-t border-line pt-5", !sheetOpen && "max-lg:hidden")}>
+          {SHOWCASE && showcaseNote !== null && <ShowcasePicker current={tripId} note={showcaseNote} />}
           <SampleDataBanner show={sample} />
           {route?.note && <InfoBanner>{route.note}. Sydney-wide routing is unavailable right now.</InfoBanner>}
           {route?.transitNote && (
@@ -452,8 +506,8 @@ export function RouteClient() {
               <TryAgain busy={retrying} onClick={retry} />
             </WarnBanner>
           )}
-          {!fromId && <InfoBanner>Type where you&apos;re starting from to see a route.</InfoBanner>}
-          {fromId && route === null && !error && <RouteSkeleton from={from?.name} to={to?.name} />}
+          {!fromId && !SHOWCASE && <InfoBanner>Type where you&apos;re starting from to see a route.</InfoBanner>}
+          {fromId && route === null && !error && showcaseNote === null && <RouteSkeleton from={from?.name} to={to?.name} />}
 
           {route && !route.ok && (
             <WarnBanner alert>

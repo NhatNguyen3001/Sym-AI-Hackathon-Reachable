@@ -1,4 +1,8 @@
+import { SHOWCASE } from "./showcase";
 import type { Leg, RideLeg, TripOption } from "./types";
+
+/** Recorded trips are seen from anywhere in the world, so their times say whose clock they are. */
+const ZONE = SHOWCASE ? " (Sydney)" : "";
 
 const TIME = new Intl.DateTimeFormat("en-AU", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Australia/Sydney" });
 
@@ -11,7 +15,7 @@ export function optionTitle(o: TripOption): string {
 }
 
 export const optionTimes = (o: TripOption) =>
-  o.leaveAt && o.arriveAt ? `Leave ${timeOfDay(o.leaveAt)}, arrive ${timeOfDay(o.arriveAt)}` : "";
+  o.leaveAt && o.arriveAt ? `Leave ${timeOfDay(o.leaveAt)}, arrive ${timeOfDay(o.arriveAt)}${ZONE}` : "";
 
 export function legTitle(leg: Leg): string {
   if (leg.kind === "walk") return `Walk ${leg.minutes} min to ${leg.to}`;
@@ -20,7 +24,7 @@ export function legTitle(leg: Leg): string {
 }
 
 export function rideDetail(leg: RideLeg): string {
-  const parts = [leg.from.platform, `departs ${timeOfDay(leg.departAt)}`, `${leg.stops} stop${leg.stops === 1 ? "" : "s"}`];
+  const parts = [leg.from.platform, `departs ${timeOfDay(leg.departAt)}${ZONE}`, `${leg.stops} stop${leg.stops === 1 ? "" : "s"}`];
   if (leg.wheelchairAccessible) parts.push("wheelchair accessible");
   return parts.filter(Boolean).join(" · ");
 }

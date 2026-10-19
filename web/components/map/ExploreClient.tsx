@@ -10,6 +10,8 @@ import { PlaceSearch } from "@/components/PlaceSearch";
 import { Button } from "@/components/ui/button";
 import { WeatherBanner } from "@/components/Banners";
 import { MapFreshness } from "@/components/MapFreshness";
+import { ShowcasePicker } from "@/components/ShowcasePicker";
+import { SHOWCASE } from "@/lib/showcase";
 import { getAmenities, getMapPlaces, getUpdates, getWeather } from "@/lib/api";
 import { useMapStatus } from "@/lib/useMapStatus";
 import { placesBox, SYDNEY_BOX } from "@/lib/mapBox";
@@ -150,7 +152,15 @@ export function ExploreClient() {
         </div>
       </div>
 
-      <div className="pointer-events-none absolute top-3 right-16 left-3 z-[600] hidden lg:block">
+      {SHOWCASE && (
+        <div className="pointer-events-none absolute top-3 right-16 left-3 z-[600] hidden lg:block">
+          <div className="pointer-events-auto max-h-[calc(100dvh-1.5rem)] w-[min(100%,380px)] overflow-y-auto rounded-[18px] bg-surface p-4 shadow-lg">
+            <ShowcasePicker />
+          </div>
+        </div>
+      )}
+
+      <div className={cn("pointer-events-none absolute top-3 right-16 left-3 z-[600] hidden", !SHOWCASE && "lg:block")}>
         <form onSubmit={go} className="pointer-events-none flex items-start gap-2">
           <div className="pointer-events-auto w-[min(100%,380px)] rounded-[18px] bg-surface p-3 shadow-lg">
             {needFrom && (
@@ -220,7 +230,12 @@ export function ExploreClient() {
           </article>
         )}
 
-        <form onSubmit={go} className="pointer-events-auto rounded-[22px] border border-line bg-surface p-3 shadow-lg lg:hidden">
+        {SHOWCASE && (
+          <div className="pointer-events-auto max-h-[46dvh] overflow-y-auto rounded-[22px] border border-line bg-surface p-4 shadow-lg lg:hidden">
+            <ShowcasePicker />
+          </div>
+        )}
+        <form onSubmit={go} className={cn("pointer-events-auto rounded-[22px] border border-line bg-surface p-3 shadow-lg lg:hidden", SHOWCASE && "hidden")}>
           <button
             type="button"
             aria-expanded={expanded}
